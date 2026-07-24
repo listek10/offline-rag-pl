@@ -1,0 +1,32 @@
+# Claude Code: keep shared settings.json, ignore per-machine local overrides
+.claude/settings.local.json
+
+# Dane (duże / pochodne — cały katalog: raw PDF-y, processed, qdrant_storage)
+data
+
+# Sekrety / środowisko 
+.env
+.env.*
+*.key
+*.pem
+.ipynb_checkpoints/
+.vscode/
+.idea/
+*.log
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Wyniki eksperymentów (etap 5)
+results/*.png
+
+# Cache modeli HuggingFace (jeśli ustawiony lokalnie w repo)
+.cache/
+
+NOTATKI_REKRUTER.md
+PROJECT_BRIEF.md

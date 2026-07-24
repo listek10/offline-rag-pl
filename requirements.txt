@@ -1,0 +1,22 @@
+# offline-rag-pl — zależności
+# Zasada: dopisujemy paczki dopiero na etapie, który ich realnie używa
+# (prostota przed sprytem, łatwiej wytłumaczyć po co każda z nich).
+
+# --- Etap 1: parsowanie PDF ---
+pymupdf>=1.24        # import jako "fitz"; główny parser (szybki, dobra jakość, bloki z współrzędnymi)
+# pdfplumber>=0.11   # (opcjonalnie) trudne układy / tabele — odkomentujemy w razie potrzeby
+
+# --- Etap 2: chunking ---   (czysty stdlib — chunk.py nie wymaga nic dodatkowego)
+
+# --- Etap 2: indeks (embeddingi + baza wektorowa) ---
+# UWAGA offline≠instalacja: torch pod RTX 5070 Ti (Blackwell/sm_120) wymaga CUDA 12.8.
+# Instalujemy go osobno z indeksu PyTorch (patrz README/komenda), a nie z PyPI:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu128
+torch>=2.7                     # backend obliczeń (GPU); instalacja z indeksu cu128
+sentence-transformers>=3.0     # wygodne API do modelu embeddingów (BGE-M3)
+qdrant-client>=1.10            # klient do self-hosted Qdrant (Docker)
+
+# --- Etap 3: generacja (lokalny LLM przez Ollama) ---   (dodamy później)
+# (Ollama to osobny serwer, nie paczka pip)
+
+# --- Etap 4-5: ewaluacja / reranking ---   (dodamy później)
