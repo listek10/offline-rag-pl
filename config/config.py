@@ -15,6 +15,7 @@ DATA_DIR = ROOT / "data"
 RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
 CHUNKS_PATH = PROCESSED_DIR / "chunks.jsonl"   # wynik etapu 2 (jeden chunk = jedna linia JSON)
+GOLD_PATH = ROOT / "gold_set" / "gold.jsonl"   # zbiór ewaluacyjny (etap 4)
 
 # --- Chunking (etap 2) ---
 # Mierzymy w ZNAKACH jako tani proxy długości. Dokładny pomiar w tokenach wymagałby
