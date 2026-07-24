@@ -44,3 +44,10 @@ QDRANT_DISTANCE = "cosine"     # patrz EMBED_NORMALIZE; standard dla tekstu
 
 # --- Retrieval (etap 3) ---
 TOP_K = 5                      # ile chunków pobieramy do promptu (dobierzemy pomiarem w etapie 5)
+
+# --- Generacja: lokalny LLM przez Ollama (etap 3) ---
+# Qwen2.5-7B-Instruct, kwantyzacja Q4 (~4,7 GB VRAM) — mieści się w 12 GB obok BGE-M3.
+LLM_MODEL = "qwen2.5:7b"
+OLLAMA_URL = "http://localhost:11434"
+LLM_TEMPERATURE = 0.0          # niska temperatura -> mniej "kreatywności"/zmyślania (ważne w RAG)
+LLM_NUM_CTX = 4096             # okno kontekstu; musi pomieścić prompt + pobrane chunki
