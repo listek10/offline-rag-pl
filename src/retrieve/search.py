@@ -49,34 +49,51 @@ def _get_client():
     return _client
 
 
-def search(query: str, top_k: int | None = None) -> list[dict]:
+def search(
+    query: str,
+    top_k: int | None = None,
+    rerank: bool = False,
+    candidates: int | None = None,
+) -> list[dict]:
     """
-    Zwraca listę najtrafniejszych chunków (dense retrieval) z metadanymi do cytowania.
-    Każdy wynik: {score, source, chunk_index, chunk_id, text}.
+    Zwraca listę najtrafniejszych chunków z metadanymi do cytowania.
+    Każdy wynik: {score, source, chunk_index, chunk_id, text} (+ 'rerank_score' gdy rerank=True).
+
+    rerank=False -> czysty dense (baseline): Qdrant zwraca od razu top_k.
+    rerank=True  -> dwustopniowo: pobierz `candidates` (etap 1, dense) i przesortuj cross-encoderem
+                    (etap 2), zwróć top_k. `candidates` = sufit jakości rerankingu (recall@N etapu 1).
     """
     top_k = top_k or config.TOP_K
+    n = (candidates or config.RERANK_CANDIDATES) if rerank else top_k
+
     model = _get_model()
     client = _get_client()
 
     # Pytanie -> wektor. Normalizacja identyczna jak przy indeksowaniu (patrz docstring).
     qv = model.encode([query], normalize_embeddings=config.EMBED_NORMALIZE)[0]
 
-    hits = client.query_points(
+    points = client.query_points(
         collection_name=config.QDRANT_COLLECTION,
         query=qv.tolist(),
-        limit=top_k,
+        limit=n,
     ).points
 
-    return [
+    hits = [
         {
-            "score": h.score,
-            "source": h.payload["source"],
-            "chunk_index": h.payload["chunk_index"],
-            "chunk_id": h.payload["chunk_id"],
-            "text": h.payload["text"],
+            "score": p.score,
+            "source": p.payload["source"],
+            "chunk_index": p.payload["chunk_index"],
+            "chunk_id": p.payload["chunk_id"],
+            "text": p.payload["text"],
         }
-        for h in hits
+        for p in points
     ]
+
+    if rerank:
+        from src.retrieve.rerank import rerank_hits
+        hits = rerank_hits(query, hits, top_k)
+
+    return hits[:top_k]
 
 
 def _print_hits(query: str, hits: list[dict]) -> None:

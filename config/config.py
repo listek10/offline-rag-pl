@@ -52,3 +52,8 @@ LLM_MODEL = "qwen2.5:7b"
 OLLAMA_URL = "http://localhost:11434"
 LLM_TEMPERATURE = 0.0          # niska temperatura -> mniej "kreatywności"/zmyślania (ważne w RAG)
 LLM_NUM_CTX = 4096             # okno kontekstu; musi pomieścić prompt + pobrane chunki
+
+# --- Reranking (etap 5 / checkpoint #6) ---
+# Cross-encoder wielojęzyczny (naturalna para do BGE-M3). Ocenia (pytanie, chunk) RAZEM.
+RERANK_MODEL = "BAAI/bge-reranker-v2-m3"
+RERANK_CANDIDATES = 20         # ile kandydatów z etapu 1 trafia do rerankera = SUFIT jakości (recall@N)
