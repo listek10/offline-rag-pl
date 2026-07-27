@@ -60,10 +60,40 @@ sufit recall@10 z 0.93 do 0.97 (BM25 dorzucił trafienia leksykalne, których de
 ### Jakość odpowiedzi
 | metryka | wynik |
 |---|--:|
-| refusal na pytaniach spoza korpusu | **1.00** (0.71 → 0.86 prompt → 1.00 bramka) |
+| refusal na pytaniach spoza korpusu (gold set) | 1.00 (0.71 → 0.86 prompt → 1.00 bramka) |
+| **refusal na held-oucie z hard negatives** | **0.89** ← uczciwsza liczba, patrz niżej |
 | false-refusal na pytaniach z korpusu | **0** |
 | faithfulness (sędzia: Gemma 2, niezależny od generatora) | 0.96 |
 | answer relevance | 0.97 |
+
+### Kalibracja progu bramki na HELD-OUCIE — i dlaczego 1.00 było optymistyczne
+
+Próg bramki (`RELEVANCE_GATE_MIN`) był początkowo dobrany na **tym samym gold secie**, na którym
+raportowałem `refusal` — to dopasowanie hiperparametru do zbioru testowego. Zbudowałem więc osobny,
+**nigdy nieraportowany** zbiór `gold_set/heldout_gate.jsonl` (30 pytań), w którym pytania spoza
+korpusu to w większości **hard negatives**: „na temat, ale bez odpowiedzi w naszych 5 raportach".
+
+| top-score rerankera | zakres |
+|---|--:|
+| pytania z korpusu (n=12) | 0.7376 … 0.9998 |
+| spoza korpusu: `daleki` (arytmetyka, wiedza ogólna, n=4) | 0.0000 … 0.0015 |
+| spoza korpusu: `sąsiedni-obszar` (n=6) | 0.0014 … 0.1533 |
+| spoza korpusu: **`bliski-temat` (hard negatives, n=8)** | 0.0220 … **0.9806** |
+
+**Rozkłady się nakładają** (przerwa −0.243) → nie istnieje próg z zerem przecieków i zerem błędnych
+odmów. Front kompromisu: próg 0.1 → przecieki 0.33 / FR 0 · 0.735 → 0.11 / 0 · 0.985 → 0 / **FR 0.33**.
+End-to-end na 18 pytaniach OOC: refusal **0.89 z bramką i 0.89 bez bramki** — bramka nie dodaje na
+nich nic, bo przecieki mają wysoki score. Oba przecieki to halucynacje **z cytowaniem**:
+przypisanie Danii wskaźnika 1,75% PKB (w źródle: **Norwegii**) i zamiana listy ofert w przetargu
+HX na jego rozstrzygnięcie.
+
+**Wniosek architektoniczny:** cross-encoder mierzy **trafność tematyczną**, nie **obecność
+odpowiedzi** (`relevance ≠ answerability`). To sufit tego sygnału, nie zła wartość progu — błąd
+powstaje w warstwie **generacji**, więc kontrolę trzeba postawić właśnie tam.
+
+```bash
+python src/eval/calibrate_gate.py --e2e   # rozkłady, przemiatanie progu, odmowa end-to-end
+```
 
 ---
 
@@ -115,8 +145,10 @@ src/ingest/             # parse_pdf.py (czyszczenie PDF) + chunk.py (chunking)
 src/index/build_index.py# embeddingi -> Qdrant
 src/retrieve/           # search.py (dense), bm25.py, hybrid.py (RRF), rerank.py
 src/generate/answer.py  # pętla RAG: retrieval -> bramka -> prompt -> LLM -> cytat
-src/eval/               # metrics.py, run_eval.py (retrieval), eval_answers.py (odpowiedzi)
+src/eval/               # metrics.py, run_eval.py (retrieval), eval_answers.py (odpowiedzi),
+                        # calibrate_gate.py (kalibracja progu bramki na held-oucie)
 gold_set/gold.jsonl     # zbiór ewaluacyjny (pytanie -> odpowiedź -> chunk źródłowy)
+gold_set/heldout_gate.jsonl # held-out do kalibracji progu — NIGDY nieraportowany jako metryka
 tests/                  # testy chunkingu, metryk, BM25/RRF
 ```
 
@@ -129,5 +161,9 @@ tests/                  # testy chunkingu, metryk, BM25/RRF
 - **Cytowanie per-teza** na modelu 7B bywa nieprecyzyjne (grupuje źródła).
 - **Metryki LLM-sędziego** to sygnał, nie prawda absolutna (cyrkularność mimo innego modelu) —
   zalecany ręczny sanity-check; wartości zależą od sędziego (faithfulness 0.88 Qwen vs 0.96 Gemma).
-- **Gold set n=29** (z korpusu) — liczby wciąż nieco szumne; próg bramki kalibrowany na gold secie.
+- **Gold set n=29** (z korpusu) — liczby wciąż nieco szumne. Próg bramki jest już kalibrowany na
+  **osobnym held-oucie**, nie na gold secie (patrz sekcja o kalibracji).
 - **Residual refusal:** przed bramką prosta arytmetyka przeciekała (model liczył); bramka to domyka.
+- **Bramka nie wykrywa hard negatives** („na temat, ale odpowiedzi nie ma") — zmierzone: refusal
+  0.89 na held-oucie, przecieki to błędna atrybucja podmiotu i nadinterpretacja źródła. Problem
+  leży w warstwie generacji, więc żaden próg na score retrievalu go nie usunie.
