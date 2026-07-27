@@ -2,8 +2,8 @@
 src/generate/answer.py
 Etap 3 / checkpoint #7: pełna pętla RAG.
 
-    pytanie -> retrieval (search.py) -> budowa promptu z kontekstem -> lokalny LLM (Ollama)
-    -> odpowiedź z CYTATAMI źródeł.
+    pytanie -> retrieval (hybryda dense+BM25 + rerank) -> budowa promptu z kontekstem
+    -> lokalny LLM (Ollama) -> odpowiedź z CYTATAMI źródeł.
 
 KLUCZOWE DECYZJE (i dlaczego):
 - CYTOWANIE: numerujemy chunki [1], [2]... z etykietą źródła i każemy modelowi podawać [n]
@@ -28,7 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
-from src.retrieve.search import search
+from src.retrieve.hybrid import hybrid_search
 
 # Instrukcja systemowa — tu "mieszka" polityka anty-halucynacyjna i wymóg cytowania.
 SYSTEM_PROMPT = """Jesteś skrupulatnym analitykiem. Odpowiadasz WYŁĄCZNIE na podstawie fragmentów \
@@ -77,8 +77,13 @@ def call_ollama(prompt: str) -> str:
 
 
 def answer(question: str, top_k: int | None = None) -> dict:
-    """Pełna pętla: retrieval -> prompt -> LLM. Zwraca {answer, sources}."""
-    hits = search(question, top_k=top_k)
+    """Pełna pętla: retrieval -> prompt -> LLM. Zwraca {answer, sources}.
+
+    Retrieval: HYBRYDA (dense+BM25/RRF) + reranking — konfiguracja ZMIERZONA jako najlepsza
+    (recall@1 0.85, recall@10 1.00, MRR 0.92 vs dense 0.31/0.92/0.52). Wdrażamy zwycięzcę
+    ewaluacji do realnej ścieżki, nie tylko mierzymy go w harnessie.
+    """
+    hits = hybrid_search(question, top_k=top_k, rerank=True)
     text = call_ollama(build_prompt(question, hits))
     return {"answer": text, "sources": hits}
 
