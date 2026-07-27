@@ -57,11 +57,11 @@ def build_prompt(question: str, hits: list[dict]) -> str:
     )
 
 
-def call_ollama(prompt: str, system: str = SYSTEM_PROMPT) -> str:
+def call_ollama(prompt: str, system: str = SYSTEM_PROMPT, model: str | None = None) -> str:
     """Woła lokalny serwer Ollamy (/api/generate). Bez zewnętrznych bibliotek — sam urllib.
-    `system` można nadpisać (np. do porównania promptów przed/po lub jako sędzia faithfulness)."""
+    `system`/`model` można nadpisać (np. porównanie promptów przed/po lub inny model-sędzia)."""
     payload = {
-        "model": config.LLM_MODEL,
+        "model": model or config.LLM_MODEL,
         "system": system,
         "prompt": prompt,
         "stream": False,
@@ -79,15 +79,24 @@ def call_ollama(prompt: str, system: str = SYSTEM_PROMPT) -> str:
         return json.loads(resp.read())["response"].strip()
 
 
-def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT) -> dict:
-    """Pełna pętla: retrieval -> prompt -> LLM. Zwraca {answer, sources}.
+def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
+           gate: bool = True) -> dict:
+    """Pełna pętla: retrieval -> (bramka) -> prompt -> LLM. Zwraca {answer, sources}.
 
     Retrieval: HYBRYDA (dense+BM25/RRF) + reranking — konfiguracja ZMIERZONA jako najlepsza
     (na 29 pytaniach: recall@1 0.83, recall@5 0.97, MRR 0.89 vs dense 0.45/0.76/0.62).
-    Wdrażamy zwycięzcę ewaluacji do realnej ścieżki, nie tylko mierzymy go w harnessie.
-    `system` można nadpisać (używane przez harness do porównania promptów przed/po).
+    `system`/`gate` można nadpisać (harness porównuje prompty przed/po i efekt bramki).
     """
     hits = hybrid_search(question, top_k=top_k, rerank=True)
+
+    # BRAMKA TRAFNOŚCI (guard anty-halucynacyjny): jeśli nic trafnego nie wróciło
+    # (najwyższy score rerankera < próg), odmawiamy BEZ pytania modelu. To odcina pytania
+    # spoza korpusu (np. obliczenia, wiedza ogólna) niezależnie od tego, co „chciałby" powiedzieć LLM.
+    if gate:
+        top_score = max((h.get("rerank_score", 0.0) for h in hits), default=0.0)
+        if top_score < config.RELEVANCE_GATE_MIN:
+            return {"answer": "Nie znajduję odpowiedzi w źródłach.", "sources": hits}
+
     text = call_ollama(build_prompt(question, hits), system=system)
     return {"answer": text, "sources": hits}
 

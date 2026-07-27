@@ -62,3 +62,12 @@ RERANK_CANDIDATES = 20         # ile kandydatów z etapu 1 trafia do rerankera =
 BM25_K1 = 1.5                  # nasycenie częstością termu w BM25 (standard)
 BM25_B = 0.75                  # siła normalizacji długości dokumentu w BM25 (standard)
 RRF_K = 60                     # stała Reciprocal Rank Fusion; łączymy rankingi po POZYCJI, nie po score
+
+# --- Bramka trafności (guard anty-halucynacyjny, etap 5) ---
+# Jeśli najwyższy score rerankera < progu -> kontekst nietrafny -> wymuszamy odmowę (bez pytania LLM).
+# Próg z DANYCH: pytania spoza korpusu mają top-score ≤0.025, z korpusu ≥0.387 (kalibracja na gold secie).
+RELEVANCE_GATE_MIN = 0.1
+
+# --- Sędzia faithfulness (etap 5) ---
+# INNY model niż generator (Qwen) -> mniej skorelowane błędy = mniejsza cyrkularność oceny.
+JUDGE_MODEL = "gemma2:9b"

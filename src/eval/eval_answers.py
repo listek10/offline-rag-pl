@@ -3,15 +3,14 @@ src/eval/eval_answers.py
 Etap 4/5 / checkpoint #8: ewaluacja JAKOŚCI ODPOWIEDZI (nie tylko retrievalu).
 
 Mierzymy:
-- REFUSAL accuracy „przed/po" — na pytaniach spoza korpusu, dla starego (V1) i wzmocnionego (V2)
-  promptu. Sprawdza anty-halucynację (czy model odmawia zamiast zmyślać).
-- FALSE-REFUSAL — czy wzmocniony prompt nie zaczął błędnie odmawiać na PYTANIACH Z KORPUSU
-  (to koszt twardszej instrukcji — trzeba go zmierzyć).
-- FAITHFULNESS (per-teza) i ANSWER RELEVANCE — sędzią jest lokalny Qwen.
-  UWAGA CYRKULARNOŚĆ: sędzia = model generujący. Łagodzimy oceną per-teza; traktujemy jako
-  SYGNAŁ, nie prawdę absolutną (patrz ręczny sanity-check w wydruku).
+- REFUSAL accuracy „przed/po" (pytania spoza korpusu): stary prompt (V1), wzmocniony (V2) i
+  V2 + BRAMKA TRAFNOŚCI (guard na score rerankera). Sprawdza anty-halucynację.
+- FALSE-REFUSAL — czy bramka/twardszy prompt nie zaczęły błędnie odmawiać na pytaniach z korpusu.
+- FAITHFULNESS (per-teza) i ANSWER RELEVANCE — sędzią jest INNY model (Gemma 2), nie generator
+  (Qwen), żeby zmniejszyć cyrkularność (skorelowane błędy generatora i sędziego). Wynik nadal
+  traktujemy jako SYGNAŁ + ręczny sanity-check.
 
-Uruchomienie (wolne — dużo wywołań LLM):
+Uruchomienie (wolne — dużo wywołań LLM; wymaga modelu-sędziego w Ollamie):
     python src/eval/eval_answers.py
 """
 
@@ -57,12 +56,12 @@ def to_claims(answer_text: str) -> list[str]:
 
 def judge_faithful(context: str, claim: str) -> bool:
     p = f"KONTEKST:\n{context}\n\nTWIERDZENIE: {claim}\n\nCzy twierdzenie wynika wprost z kontekstu? TAK/NIE."
-    return call_ollama(p, system=_JUDGE_FAITH).strip().upper().startswith("TAK")
+    return call_ollama(p, system=_JUDGE_FAITH, model=config.JUDGE_MODEL).strip().upper().startswith("TAK")
 
 
 def judge_relevant(question: str, ans: str) -> bool:
     p = f"PYTANIE: {question}\n\nODPOWIEDŹ: {ans}\n\nCzy odpowiedź jest na temat pytania? TAK/NIE."
-    return call_ollama(p, system=_JUDGE_REL).strip().upper().startswith("TAK")
+    return call_ollama(p, system=_JUDGE_REL, model=config.JUDGE_MODEL).strip().upper().startswith("TAK")
 
 
 def main() -> None:
@@ -70,21 +69,22 @@ def main() -> None:
     in_corpus = [g for g in gold if g["relevant_chunk_ids"]]
     ooc = [g for g in gold if not g["relevant_chunk_ids"]]
 
-    # --- 1) REFUSAL przed/po (pytania spoza korpusu) ---
-    print("=== REFUSAL accuracy na pytaniach spoza korpusu (przed/po wzmocnieniu promptu) ===")
-    for label, sysp in [("V1 (stary)", OLD_PROMPT), ("V2 (wzmocniony)", SYSTEM_PROMPT)]:
-        leaks = [g["question"] for g in ooc if not refused(answer(g["question"], system=sysp)["answer"])]
-        acc = (len(ooc) - len(leaks)) / len(ooc)
-        print(f"  {label:16} refusal={acc:.2f}   przecieki: {leaks if leaks else '—'}")
+    # --- 1) REFUSAL: prompt V1/V2 (bez bramki) + V2 z bramką ---
+    print(f"=== REFUSAL accuracy na {len(ooc)} pytaniach spoza korpusu ===")
+    for label, sysp in [("V1 (bez bramki)", OLD_PROMPT), ("V2 (bez bramki)", SYSTEM_PROMPT)]:
+        leaks = [g["question"] for g in ooc if not refused(answer(g["question"], system=sysp, gate=False)["answer"])]
+        print(f"  {label:20} refusal={(len(ooc)-len(leaks))/len(ooc):.2f}   przecieki: {leaks or '—'}")
+    leaks_g = [g["question"] for g in ooc if not refused(answer(g["question"], gate=True)["answer"])]
+    print(f"  {'V2 + BRAMKA':20} refusal={(len(ooc)-len(leaks_g))/len(ooc):.2f}   przecieki: {leaks_g or '—'}")
 
-    # --- 2) Jakość odpowiedzi na pytaniach Z KORPUSU (prompt V2) ---
-    print("\n=== Jakość odpowiedzi (V2) na pytaniach z korpusu ===")
+    # --- 2) Jakość odpowiedzi na pytaniach Z KORPUSU (ścieżka produkcyjna: V2 + bramka) ---
+    print(f"\n=== Jakość odpowiedzi (produkcja) na {len(in_corpus)} pytaniach z korpusu; sędzia = {config.JUDGE_MODEL} ===")
     faiths, rels, false_refusals = [], [], []
     for g in in_corpus:
         res = answer(g["question"])
         a = res["answer"]
         if refused(a):
-            false_refusals.append(g["id"])          # twardszy prompt zaczął błędnie odmawiać?
+            false_refusals.append(g["id"])
             continue
         rels.append(1.0 if judge_relevant(g["question"], a) else 0.0)
         claims = to_claims(a)
@@ -93,10 +93,10 @@ def main() -> None:
             faiths.append(mean([1.0 if judge_faithful(ctx, c) else 0.0 for c in claims]))
 
     print(f"  answered (nie odmówił błędnie): {len(in_corpus) - len(false_refusals)}/{len(in_corpus)}")
-    print(f"  FALSE-REFUSAL (koszt twardszego promptu): {false_refusals if false_refusals else '—'}")
+    print(f"  FALSE-REFUSAL (koszt bramki/promptu): {false_refusals or '—'}")
     print(f"  faithfulness (śr. udział tez popartych kontekstem): {mean(faiths):.2f}")
     print(f"  answer relevance (śr. na temat):                    {mean(rels):.2f}")
-    print("\n  (Sędzia = lokalny Qwen -> cyrkularność; traktować jako SYGNAŁ + sanity-check ręczny.)")
+    print(f"\n  (Sędzia = {config.JUDGE_MODEL} != generator {config.LLM_MODEL} -> mniejsza cyrkularność; nadal SYGNAŁ + sanity-check.)")
 
 
 if __name__ == "__main__":
