@@ -33,10 +33,12 @@ from src.retrieve.hybrid import hybrid_search
 # Instrukcja systemowa — tu "mieszka" polityka anty-halucynacyjna i wymóg cytowania.
 SYSTEM_PROMPT = """Jesteś skrupulatnym analitykiem. Odpowiadasz WYŁĄCZNIE na podstawie fragmentów \
 podanych w sekcji KONTEKST. Zasady:
-1. Jeśli w KONTEKŚCIE nie ma odpowiedzi, napisz dokładnie: "Nie znajduję odpowiedzi w źródłach." \
-i niczego nie zmyślaj ani nie zgaduj.
-2. Po każdej tezie podawaj numer źródła w nawiasach kwadratowych, np. [1], [2].
-3. Odpowiadaj zwięźle i rzeczowo, po polsku."""
+1. NIE korzystaj z własnej wiedzy ogólnej i NIE wykonuj obliczeń. Jedynym dopuszczalnym źródłem \
+jest KONTEKST poniżej — nawet jeśli znasz odpowiedź skądinąd.
+2. Jeśli w KONTEKŚCIE nie ma odpowiedzi — również gdy pytanie dotyczy wiedzy ogólnej, definicji \
+czy rachunków — napisz dokładnie: "Nie znajduję odpowiedzi w źródłach." i niczego nie zmyślaj.
+3. Po każdej tezie podawaj numer źródła w nawiasach kwadratowych, np. [1], [2].
+4. Odpowiadaj zwięźle i rzeczowo, po polsku."""
 
 
 def build_context(hits: list[dict]) -> str:
@@ -55,11 +57,12 @@ def build_prompt(question: str, hits: list[dict]) -> str:
     )
 
 
-def call_ollama(prompt: str) -> str:
-    """Woła lokalny serwer Ollamy (/api/generate). Bez zewnętrznych bibliotek — sam urllib."""
+def call_ollama(prompt: str, system: str = SYSTEM_PROMPT) -> str:
+    """Woła lokalny serwer Ollamy (/api/generate). Bez zewnętrznych bibliotek — sam urllib.
+    `system` można nadpisać (np. do porównania promptów przed/po lub jako sędzia faithfulness)."""
     payload = {
         "model": config.LLM_MODEL,
-        "system": SYSTEM_PROMPT,
+        "system": system,
         "prompt": prompt,
         "stream": False,
         "options": {
@@ -76,15 +79,16 @@ def call_ollama(prompt: str) -> str:
         return json.loads(resp.read())["response"].strip()
 
 
-def answer(question: str, top_k: int | None = None) -> dict:
+def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT) -> dict:
     """Pełna pętla: retrieval -> prompt -> LLM. Zwraca {answer, sources}.
 
     Retrieval: HYBRYDA (dense+BM25/RRF) + reranking — konfiguracja ZMIERZONA jako najlepsza
-    (recall@1 0.85, recall@10 1.00, MRR 0.92 vs dense 0.31/0.92/0.52). Wdrażamy zwycięzcę
-    ewaluacji do realnej ścieżki, nie tylko mierzymy go w harnessie.
+    (na 29 pytaniach: recall@1 0.83, recall@5 0.97, MRR 0.89 vs dense 0.45/0.76/0.62).
+    Wdrażamy zwycięzcę ewaluacji do realnej ścieżki, nie tylko mierzymy go w harnessie.
+    `system` można nadpisać (używane przez harness do porównania promptów przed/po).
     """
     hits = hybrid_search(question, top_k=top_k, rerank=True)
-    text = call_ollama(build_prompt(question, hits))
+    text = call_ollama(build_prompt(question, hits), system=system)
     return {"answer": text, "sources": hits}
 
 

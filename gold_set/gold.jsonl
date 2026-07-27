@@ -32,3 +32,5 @@
 {"id": "g28", "question": "Jaka organizacja jest podstawowym gwarantem bezpieczeństwa regionu Morza Bałtyckiego?", "answer": "NATO.", "type": "pojęciowe", "relevant_chunk_ids": ["Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1__11", "Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1__12"]}
 {"id": "o03", "question": "Jaki jest przepis na sernik?", "answer": "Nie znajduję odpowiedzi w źródłach.", "type": "poza-korpusem", "relevant_chunk_ids": []}
 {"id": "o04", "question": "Ile kalorii ma banan?", "answer": "Nie znajduję odpowiedzi w źródłach.", "type": "poza-korpusem", "relevant_chunk_ids": []}
+{"id": "o05", "question": "Ile to jest 15 razy 8?", "answer": "Nie znajduję odpowiedzi w źródłach.", "type": "poza-korpusem", "relevant_chunk_ids": []}
+{"id": "o06", "question": "Kto napisał 'Pana Tadeusza'?", "answer": "Nie znajduję odpowiedzi w źródłach.", "type": "poza-korpusem", "relevant_chunk_ids": []}
