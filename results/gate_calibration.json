@@ -1,0 +1,2761 @@
+{
+  "scored": [
+    {
+      "id": "h01",
+      "question": "Od czego ostatecznie zależy jakość ekspertyzy analitycznej według poradnika OSW?",
+      "label": "in_corpus",
+      "subtype": "pojeciowe",
+      "top_score": 0.968221127986908
+    },
+    {
+      "id": "h02",
+      "question": "Kto opiniuje, czy analiza spełniła swoją funkcję?",
+      "label": "in_corpus",
+      "subtype": "pojeciowe",
+      "top_score": 0.9981957077980042
+    },
+    {
+      "id": "h03",
+      "question": "Na jakich filarach opiera się od lat polska strategia odstraszania Rosji?",
+      "label": "in_corpus",
+      "subtype": "pojeciowe",
+      "top_score": 0.9993706345558167
+    },
+    {
+      "id": "h04",
+      "question": "Czym jest pułapka fałszywego symetryzmu w pracy analitycznej?",
+      "label": "in_corpus",
+      "subtype": "pojeciowe",
+      "top_score": 0.7376430630683899
+    },
+    {
+      "id": "h05",
+      "question": "Która powieść Władimira Sorokina jest wskazywana jako trafny literacki obraz dzisiejszej Rosji?",
+      "label": "in_corpus",
+      "subtype": "nazwa-wlasna",
+      "top_score": 0.9979775547981262
+    },
+    {
+      "id": "h06",
+      "question": "Dlaczego agregowanie danych o procesach międzynarodowych bywa trudne?",
+      "label": "in_corpus",
+      "subtype": "pojeciowe",
+      "top_score": 0.9343563318252563
+    },
+    {
+      "id": "h07",
+      "question": "Ilu członków zrzesza estońska Liga Obrony (Kaitseliit)?",
+      "label": "in_corpus",
+      "subtype": "nazwa-wlasna",
+      "top_score": 0.9998094439506531
+    },
+    {
+      "id": "h08",
+      "question": "W jaki sposób Finlandia zmieniła konstytucję, aby rozszerzyć uprawnienia inwigilacyjne SUPO?",
+      "label": "in_corpus",
+      "subtype": "faktograficzne",
+      "top_score": 0.9953181147575378
+    },
+    {
+      "id": "h09",
+      "question": "Dlaczego NATO nie prowadzi w Arktyce regularnych ćwiczeń ani nie ma tam stałego kontyngentu?",
+      "label": "in_corpus",
+      "subtype": "pojeciowe",
+      "top_score": 0.9991763234138489
+    },
+    {
+      "id": "h10",
+      "question": "W którym roku Norwegia ustanowiła 200-milową strefę ochronną rybołówstwa wokół Svalbardu?",
+      "label": "in_corpus",
+      "subtype": "faktograficzne",
+      "top_score": 0.9828042984008789
+    },
+    {
+      "id": "h11",
+      "question": "Które państwo sprawuje przewodnictwo w NORDEFCO w 2026 roku?",
+      "label": "in_corpus",
+      "subtype": "nazwa-wlasna",
+      "top_score": 0.9995519518852234
+    },
+    {
+      "id": "h12",
+      "question": "Do ilu tysięcy żołnierzy ma wzrosnąć rozwinięcie mobilizacyjne szwedzkich sił zbrojnych na czas wojny?",
+      "label": "in_corpus",
+      "subtype": "faktograficzne",
+      "top_score": 0.9996964931488037
+    },
+    {
+      "id": "h13",
+      "question": "Ilu żołnierzy liczy szwedzki batalion zmechanizowany stacjonujący na Gotlandii?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.6186177134513855
+    },
+    {
+      "id": "h14",
+      "question": "Jaki jest budżet obronny Litwy w 2026 roku?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.18432500958442688
+    },
+    {
+      "id": "h15",
+      "question": "Ile okrętów podwodnych ma marynarka wojenna Norwegii?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.8827032446861267
+    },
+    {
+      "id": "h16",
+      "question": "Kiedy Islandia planuje utworzyć własne siły zbrojne?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.2660010755062103
+    },
+    {
+      "id": "h17",
+      "question": "Ilu członków liczy łotewska Gwardia Narodowa (Zemessardze)?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.021986283361911774
+    },
+    {
+      "id": "h18",
+      "question": "Ile wynoszą wydatki obronne Danii jako procent PKB?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.9806273579597473
+    },
+    {
+      "id": "h19",
+      "question": "Jakie myśliwce wybrała Finlandia w przetargu HX?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.6825752854347229
+    },
+    {
+      "id": "h20",
+      "question": "Jaki jest roczny budżet Rady Arktycznej?",
+      "label": "out_of_corpus",
+      "subtype": "bliski-temat",
+      "top_score": 0.034858450293540955
+    },
+    {
+      "id": "h21",
+      "question": "Jakie państwa tworzą sojusz AUKUS?",
+      "label": "out_of_corpus",
+      "subtype": "sasiedni-obszar",
+      "top_score": 0.019847789779305458
+    },
+    {
+      "id": "h22",
+      "question": "Jakie są przyczyny wojny domowej w Sudanie?",
+      "label": "out_of_corpus",
+      "subtype": "sasiedni-obszar",
+      "top_score": 0.0014307928504422307
+    },
+    {
+      "id": "h23",
+      "question": "Jakie zdolności ma izraelski system obrony powietrznej Żelazna Kopuła?",
+      "label": "out_of_corpus",
+      "subtype": "sasiedni-obszar",
+      "top_score": 0.003917889203876257
+    },
+    {
+      "id": "h24",
+      "question": "W jaki sposób Chiny militaryzują Morze Południowochińskie?",
+      "label": "out_of_corpus",
+      "subtype": "sasiedni-obszar",
+      "top_score": 0.15328682959079742
+    },
+    {
+      "id": "h25",
+      "question": "Jakie skutki miało trzęsienie ziemi w Turcji w 2023 roku?",
+      "label": "out_of_corpus",
+      "subtype": "sasiedni-obszar",
+      "top_score": 0.0017486278666183352
+    },
+    {
+      "id": "h26",
+      "question": "Jak przebiegała reforma emerytalna we Francji w 2023 roku?",
+      "label": "out_of_corpus",
+      "subtype": "sasiedni-obszar",
+      "top_score": 0.0045276000164449215
+    },
+    {
+      "id": "h27",
+      "question": "Ile to jest 37 razy 12?",
+      "label": "out_of_corpus",
+      "subtype": "daleki",
+      "top_score": 0.0015146039659157395
+    },
+    {
+      "id": "h28",
+      "question": "Jaka jest najwyższa góra Afryki?",
+      "label": "out_of_corpus",
+      "subtype": "daleki",
+      "top_score": 0.0010421199258416891
+    },
+    {
+      "id": "h29",
+      "question": "Jak zrobić domowy chleb na zakwasie?",
+      "label": "out_of_corpus",
+      "subtype": "daleki",
+      "top_score": 4.898869519820437e-05
+    },
+    {
+      "id": "h30",
+      "question": "Kto skomponował IX Symfonię?",
+      "label": "out_of_corpus",
+      "subtype": "daleki",
+      "top_score": 0.00012350946781225502
+    }
+  ],
+  "summary": {
+    "n_in_corpus": 12,
+    "n_out_of_corpus": 18,
+    "min_in": {
+      "id": "h04",
+      "subtype": "pojeciowe",
+      "score": 0.7376430630683899,
+      "question": "Czym jest pułapka fałszywego symetryzmu w pracy analitycznej?"
+    },
+    "max_ooc": {
+      "id": "h18",
+      "subtype": "bliski-temat",
+      "score": 0.9806273579597473,
+      "question": "Ile wynoszą wydatki obronne Danii jako procent PKB?"
+    },
+    "gap": -0.243,
+    "separable": false,
+    "max_threshold_without_false_refusal": 0.735,
+    "recommended_threshold": null,
+    "current_threshold": 0.1,
+    "sweep": [
+      {
+        "threshold": 0.0,
+        "leak_rate": 1.0,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h17",
+          "h18",
+          "h19",
+          "h20",
+          "h21",
+          "h22",
+          "h23",
+          "h24",
+          "h25",
+          "h26",
+          "h27",
+          "h28",
+          "h29",
+          "h30"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.005,
+        "leak_rate": 0.5555555555555556,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h17",
+          "h18",
+          "h19",
+          "h20",
+          "h21",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.01,
+        "leak_rate": 0.5555555555555556,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h17",
+          "h18",
+          "h19",
+          "h20",
+          "h21",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.015,
+        "leak_rate": 0.5555555555555556,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h17",
+          "h18",
+          "h19",
+          "h20",
+          "h21",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.02,
+        "leak_rate": 0.5,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h17",
+          "h18",
+          "h19",
+          "h20",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.025,
+        "leak_rate": 0.4444444444444444,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h20",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.03,
+        "leak_rate": 0.4444444444444444,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h20",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.035,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.04,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.045,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.05,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.055,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.06,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.065,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.07,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.075,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.08,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.085,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.09,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.095,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.1,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.105,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.11,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.115,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.12,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.125,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.13,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.135,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.14,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.145,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.15,
+        "leak_rate": 0.3888888888888889,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19",
+          "h24"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.155,
+        "leak_rate": 0.3333333333333333,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.16,
+        "leak_rate": 0.3333333333333333,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.165,
+        "leak_rate": 0.3333333333333333,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.17,
+        "leak_rate": 0.3333333333333333,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.175,
+        "leak_rate": 0.3333333333333333,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.18,
+        "leak_rate": 0.3333333333333333,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h14",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.185,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.19,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.195,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.2,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.205,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.21,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.215,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.22,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.225,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.23,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.235,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.24,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.245,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.25,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.255,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.26,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.265,
+        "leak_rate": 0.2777777777777778,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h16",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.27,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.275,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.28,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.285,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.29,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.295,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.3,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.305,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.31,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.315,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.32,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.325,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.33,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.335,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.34,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.345,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.35,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.355,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.36,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.365,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.37,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.375,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.38,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.385,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.39,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.395,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.4,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.405,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.41,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.415,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.42,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.425,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.43,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.435,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.44,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.445,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.45,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.455,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.46,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.465,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.47,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.475,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.48,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.485,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.49,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.495,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.5,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.505,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.51,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.515,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.52,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.525,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.53,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.535,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.54,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.545,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.55,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.555,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.56,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.565,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.57,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.575,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.58,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.585,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.59,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.595,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.6,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.605,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.61,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.615,
+        "leak_rate": 0.2222222222222222,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h13",
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.62,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.625,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.63,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.635,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.64,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.645,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.65,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.655,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.66,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.665,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.67,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.675,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.68,
+        "leak_rate": 0.16666666666666666,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18",
+          "h19"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.685,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.69,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.695,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.7,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.705,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.71,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.715,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.72,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.725,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.73,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.735,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.0,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": []
+      },
+      {
+        "threshold": 0.74,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.745,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.75,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.755,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.76,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.765,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.77,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.775,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.78,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.785,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.79,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.795,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.8,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.805,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.81,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.815,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.82,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.825,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.83,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.835,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.84,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.845,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.85,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.855,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.86,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.865,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.87,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.875,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.88,
+        "leak_rate": 0.1111111111111111,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h15",
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.885,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.89,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.895,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.9,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.905,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.91,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.915,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.92,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.925,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.93,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.08333333333333333,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04"
+        ]
+      },
+      {
+        "threshold": 0.935,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.16666666666666666,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.94,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.16666666666666666,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.945,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.16666666666666666,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.95,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.16666666666666666,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.955,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.16666666666666666,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.96,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.16666666666666666,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.965,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.16666666666666666,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.97,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.25,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h01",
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.975,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.25,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h01",
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.98,
+        "leak_rate": 0.05555555555555555,
+        "false_refusal_rate": 0.25,
+        "leaks": [
+          "h18"
+        ],
+        "false_refusals": [
+          "h01",
+          "h04",
+          "h06"
+        ]
+      },
+      {
+        "threshold": 0.985,
+        "leak_rate": 0.0,
+        "false_refusal_rate": 0.3333333333333333,
+        "leaks": [],
+        "false_refusals": [
+          "h01",
+          "h04",
+          "h06",
+          "h10"
+        ]
+      },
+      {
+        "threshold": 0.99,
+        "leak_rate": 0.0,
+        "false_refusal_rate": 0.3333333333333333,
+        "leaks": [],
+        "false_refusals": [
+          "h01",
+          "h04",
+          "h06",
+          "h10"
+        ]
+      },
+      {
+        "threshold": 0.995,
+        "leak_rate": 0.0,
+        "false_refusal_rate": 0.3333333333333333,
+        "leaks": [],
+        "false_refusals": [
+          "h01",
+          "h04",
+          "h06",
+          "h10"
+        ]
+      },
+      {
+        "threshold": 1.0,
+        "leak_rate": 0.0,
+        "false_refusal_rate": 1.0,
+        "leaks": [],
+        "false_refusals": [
+          "h01",
+          "h02",
+          "h03",
+          "h04",
+          "h05",
+          "h06",
+          "h07",
+          "h08",
+          "h09",
+          "h10",
+          "h11",
+          "h12"
+        ]
+      }
+    ]
+  }
+}
