@@ -57,3 +57,8 @@ LLM_NUM_CTX = 4096             # okno kontekstu; musi pomieścić prompt + pobra
 # Cross-encoder wielojęzyczny (naturalna para do BGE-M3). Ocenia (pytanie, chunk) RAZEM.
 RERANK_MODEL = "BAAI/bge-reranker-v2-m3"
 RERANK_CANDIDATES = 20         # ile kandydatów z etapu 1 trafia do rerankera = SUFIT jakości (recall@N)
+
+# --- Hybryda: BM25 (leksykalne) + RRF (etap 5) ---
+BM25_K1 = 1.5                  # nasycenie częstością termu w BM25 (standard)
+BM25_B = 0.75                  # siła normalizacji długości dokumentu w BM25 (standard)
+RRF_K = 60                     # stała Reciprocal Rank Fusion; łączymy rankingi po POZYCJI, nie po score
