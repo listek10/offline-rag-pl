@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 import urllib.request
 from pathlib import Path
 
@@ -82,8 +83,15 @@ def call_ollama(prompt: str, system: str = SYSTEM_PROMPT, model: str | None = No
 REFUSAL_TEXT = "Nie znajduję odpowiedzi w źródłach."
 
 
+def _ms(t0: float) -> int:
+    """Czas etapu w milisekundach. Mierzymy W ŚRODKU pętli, bo tylko ona zna granice etapów —
+    warstwa serwująca zobaczyłaby wyłącznie czas całości."""
+    return round((time.perf_counter() - t0) * 1000)
+
+
 def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
-           gate: bool = True, verify: bool | None = None) -> dict:
+           gate: bool = True, verify: bool | None = None,
+           on_event=None) -> dict:
     """Pełna pętla: retrieval -> (guard #2 bramka) -> prompt -> LLM -> (guard #3 weryfikacja).
 
     Zwraca {answer, sources, blocked_by?, rejected_answer?, grounding?}.
@@ -92,28 +100,57 @@ def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
     (na 29 pytaniach: recall@1 0.83, recall@5 0.97, MRR 0.89 vs dense 0.45/0.76/0.62).
     `system`/`gate`/`verify` można nadpisać — harness mierzy efekt każdego guardu OSOBNO
     (przecieki i false-refusale), bo guard bez zmierzonego kosztu to nie zabezpieczenie.
+
+    `on_event` (opcjonalny) dostaje zdarzenia o granicach etapów — używa go warstwa serwująca,
+    żeby pokazać postęp w UI. Domyślnie None => no-op, więc CLI i harness działają bez zmian.
+    Emitujemy ETAPY, a nie tokeny odpowiedzi: guard #3 może odpowiedź odrzucić, więc pokazanie
+    jej w trakcie generowania zniweczyłoby sens tego guardu.
     """
     verify = config.VERIFY_GROUNDING if verify is None else verify
+    emit = on_event or (lambda **_: None)
+
+    emit(event="stage", stage="retrieval", status="start")
+    t = time.perf_counter()
     hits = hybrid_search(question, top_k=top_k, rerank=True)
+    # top_score liczymy ZAWSZE (nie tylko przy włączonej bramce), bo UI pokazuje tę liczbę
+    # także w trybie demo z rozbrojoną bramką — inaczej nie dałoby się porównać „przed/po".
+    top_score = max((h.get("rerank_score", 0.0) for h in hits), default=0.0)
+    emit(event="stage", stage="retrieval", status="done", ms=_ms(t),
+         top_score=top_score, hits=hits)
 
     # GUARD #2 — BRAMKA TRAFNOŚCI: jeśli nic trafnego nie wróciło (najwyższy score rerankera
     # < próg), odmawiamy BEZ pytania modelu. Odcina pytania spoza tematyki korpusu (obliczenia,
     # wiedza ogólna, inne regiony) niezależnie od tego, co „chciałby" powiedzieć LLM.
     # Czego NIE odcina: pytań NA TEMAT, na które korpus nie ma odpowiedzi — patrz guard #3.
     if gate:
-        top_score = max((h.get("rerank_score", 0.0) for h in hits), default=0.0)
-        if top_score < config.RELEVANCE_GATE_MIN:
+        passed = top_score >= config.RELEVANCE_GATE_MIN
+        emit(event="stage", stage="gate", status="done", passed=passed,
+             top_score=top_score, threshold=config.RELEVANCE_GATE_MIN)
+        if not passed:
+            # Etapy, które NIGDY się nie wykonają, muszą to powiedzieć wprost — inaczej panel
+            # przebiegu wisiałby w „w toku" i użytkownik czekałby na coś, co nie nadejdzie.
+            emit(event="stage", stage="generation", status="not_run")
+            emit(event="stage", stage="verify", status="not_run")
             return {"answer": REFUSAL_TEXT, "sources": hits, "blocked_by": "gate"}
+    else:
+        emit(event="stage", stage="gate", status="skipped")
 
     context = build_context(hits)
+    emit(event="stage", stage="generation", status="start")
+    t = time.perf_counter()
     text = call_ollama(build_prompt(question, hits), system=system)
+    emit(event="stage", stage="generation", status="done", ms=_ms(t))
 
     # GUARD #3 — WERYFIKACJA UGRUNTOWANIA: odpowiedź już powstała, więc dopiero TERAZ widać
     # błędy generacji (błędna atrybucja podmiotu, oferta podana jako rozstrzygnięcie). Sędzia
     # (inny model niż generator) ocenia każdą tezę; za mało popartych -> odmowa zamiast publikacji.
     if verify and not refused(text):
         from src.generate.verify import grounded_fraction
+        emit(event="stage", stage="verify", status="start")
+        t = time.perf_counter()
         frac, verdicts = grounded_fraction(context, text)
+        emit(event="stage", stage="verify", status="done", ms=_ms(t),
+             grounded_fraction=frac, verdicts=verdicts)
         if frac < config.VERIFY_MIN_SUPPORTED:
             # Zachowujemy odrzuconą odpowiedź i werdykty — bez tego guard byłby czarną skrzynką
             # (nie dałoby się sprawdzić, czy ubił halucynację, czy trafną parafrazę).
@@ -121,6 +158,9 @@ def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
                     "rejected_answer": text, "grounding": verdicts}
         return {"answer": text, "sources": hits, "grounding": verdicts}
 
+    # `skipped` = wyłączone przełącznikiem; `not_run` = model odmówił sam (guard #1), więc nie
+    # ma czego weryfikować. Dwa różne powody, dwa różne komunikaty w UI.
+    emit(event="stage", stage="verify", status="skipped" if not verify else "not_run")
     return {"answer": text, "sources": hits}
 
 
