@@ -1,0 +1,685 @@
+{
+  "backend": "vllm",
+  "model": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+  "when": "2026-07-28 19:53",
+  "rows": [
+    {
+      "id": "g00",
+      "question": "Które państwa tworzą arktyczny kwartet NATO?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.9737338423728943,
+      "answer": "USA, Kanada, Dania i Norwegia tworzą arktyczny kwartet NATO [1].",
+      "tokens": 26,
+      "ms": 1460,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "USA, Kanada, Dania i Norwegia tworzą arktyczny kwartet NATO .",
+          "grounded": true,
+          "reason": "Tekst mówi o \"arktycznym kwartecie\" składającym się z USA, Kanady, Danii i Norwegii, które uważnie śledzą sytuację międzynarodową i klimatyczną za kołem podbiegunowym."
+        }
+      ]
+    },
+    {
+      "id": "g01",
+      "question": "Dlaczego kontrola nad Grenlandią jest ważna dla Danii?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9921435117721558,
+      "answer": "Kontrola nad Grenlandią jest ważna dla Danii, ponieważ pozwala temu małemu krajowi zasiadać w Radzie Arktycznej i zabierać głos w sprawach regionu na równi z USA czy Rosją [1]. Bez Grenlandii ranga stosunków duńsko-amerykańskich obniżyłaby się [1].\n\nDodatkowo, kontrola nad Grenlandią wzmacnia prestiż Kopenhagi i pozwalają temu kraju odgrywać większą rolę na arenie międzynarodowej [3]. Kontrola nad polityką zagraniczną, bezpieczeństwie i obronie Grenlandii, oraz udział w spotkaniach Rady Arktycznej wzmacniają prestiż Kopenhagi [4].\n\nKontrola nad Grenlandią również umożliwia utrzymanie unii z Grenlandią, co jest priorytetem dannej polityki arktycznej [3]. Bez Grenlandii Kopenhaga mogłaby spadnąć do „drugiej ligi” sojuszników USA [4].\n\nKontrola nad Grenlandią pozwala na monitorowanie przepływu morskiego między Wielką Brytanią a Islandią, co jest ważne dla bezpieczeństwa Danii [2].\n\nKontrola nad Grenlandią umożliwia also wspieranie rozwój gospodarczy wyspy, co jest ważne dla interesów finansowych Danii [4].",
+      "tokens": 329,
+      "ms": 6222,
+      "grounded_fraction": 0.875,
+      "verdicts": [
+        {
+          "claim": "Kontrola nad Grenlandią jest ważna dla Danii, ponieważ pozwala temu małemu krajowi zasiadać w Radzie Arktycznej i zabierać głos w sprawach regionu na równi z USA czy Rosją .",
+          "grounded": true,
+          "reason": "Kontekst mówi o tym, że Dania chce odgrywać rolę lidera pokojowej współpracy w regionie i że kontrola nad Grenlandią pozwala jej zasiadać w Radzie Arktycznej i zabierać głos w sprawach regionu na równi z USA czy Rosją."
+        },
+        {
+          "claim": "Bez Grenlandii ranga stosunków duńsko-amerykańskich obniżyłaby się .",
+          "grounded": true,
+          "reason": "W kontekście opisano, że Dania chce odgrywać rolę lidera pokojowej współpracy w regionie i że sprawowanie kontroli nad Grenlandią wzmacnia prestiż Kopenhagi na arenie międzynarodowej."
+        },
+        {
+          "claim": "Dodatkowo, kontrola nad Grenlandią wzmacnia prestiż Kopenhagi i pozwalają temu kraju odgrywać większą rolę na arenie międzynarodowej .",
+          "grounded": true,
+          "reason": "Tekst mówi o tym, że sprawowanie kontroli nad Grenlandią przez Danię wzmacnia jej prestiż i pozwala odgrywać większą rolę na arenie międzynarodowej."
+        },
+        {
+          "claim": "Kontrola nad polityką zagraniczną, bezpieczeństwie i obronie Grenlandii, oraz udział w spotkaniach Rady Arktycznej wzmacniają prestiż Kopenhagi .",
+          "grounded": true,
+          "reason": "Tekst mówi o tym, że sprawowanie kontroli nad polityką zagraniczną, bezpieczeństwem i obroną Grenlandii, oraz udział w spotkaniach Rady Arktycznej wzmacniają prestiż Kopenhagi."
+        },
+        {
+          "claim": "Kontrola nad Grenlandią również umożliwia utrzymanie unii z Grenlandią, co jest priorytetem dannej polityki arktycznej .",
+          "grounded": true,
+          "reason": "Tekst mówi o duńskiej polityce arktycznej i jej priorytetach, w tym o utrzymaniu unii z Grenlandią."
+        },
+        {
+          "claim": "Bez Grenlandii Kopenhaga mogłaby spadnąć do „drugiej ligi” sojuszników USA .",
+          "grounded": true,
+          "reason": "W tekście opisano, że amerykańska obecność wojskowa na Grenlandii i dwustronna umowa o jej obronę z 1951 r. podnoszą rangę relacji Danii ze Stanami Zjednoczonymi."
+        },
+        {
+          "claim": "Kontrola nad Grenlandią pozwala na monitorowanie przepływu morskiego między Wielką Brytanią a Islandią, co jest ważne dla bezpieczeństwa Danii .",
+          "grounded": false,
+          "reason": "Tekst mówi o inwestycjach Danii w monitoring Arktyki i zwiększaniu widoczności Sił Zbrojnych Danii w regionie, ale nie wspomina o monitorowaniu przepływu morskiego między Wielką Brytanią a Islandią."
+        },
+        {
+          "claim": "Kontrola nad Grenlandią umożliwia also wspieranie rozwój gospodarczy wyspy, co jest ważne dla interesów finansowych Danii .",
+          "grounded": true,
+          "reason": "Tekst mówi o tym, że Dania wspiera rozwój gospodarczy Grenlandii poprzez inwestycje w lotniska czy odnawialne źródła energii, aby przyciągnąć Nuuk i utrzymać status quo między Kopenhagą a Nuuk."
+        }
+      ]
+    },
+    {
+      "id": "g02",
+      "question": "Kiedy rozpoczęła się pełnoskalowa rosyjska agresja na Ukrainę?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.980686604976654,
+      "answer": "Rozpoczęła się 24 lutego 2022 r. [1]",
+      "tokens": 23,
+      "ms": 1337,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Rozpoczęła się 24 lutego 2022 r.",
+          "grounded": true,
+          "reason": "Tekst mówi o rozpoczęciu pełnoskalowej rosyjskiej agresji na Ukrainę 24 lutego 2022 roku."
+        }
+      ]
+    },
+    {
+      "id": "g03",
+      "question": "Jaki procent światowych zasobów ropy i gazu kryje Arktyka?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.9993276596069336,
+      "answer": "Arktyka kryje szacunkowo ok. 13% globalnych zasobów ropy i 30% gazu (ok. 84% tamtejszych węglowodorów to złoża offshore) [1].",
+      "tokens": 58,
+      "ms": 1895,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Arktyka kryje szacunkowo ok. 13% globalnych zasobów ropy i 30% gazu (ok. 84% tamtejszych węglowodorów to złoża offshore) .",
+          "grounded": true,
+          "reason": "Kontekst mówi o szacunkowej ilości zasobów ropy i gazu w Arktyce, podając konkretne procentowe wartości dla obu surowców."
+        }
+      ]
+    },
+    {
+      "id": "g04",
+      "question": "Co to jest NORDEFCO i kiedy powstała?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.7687755227088928,
+      "answer": "NORDEFCO to format współpracy obronnej między Danią, Islandią, Norwegią, Finlandią i Szwecją. Pochodzi z 2009 roku [3].",
+      "tokens": 45,
+      "ms": 1759,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "NORDEFCO to format współpracy obronnej między Danią, Islandią, Norwegią, Finlandią i Szwecją.",
+          "grounded": true,
+          "reason": "W tekście opisano NORDEFCO jako format współpracy obronnej państw nordyckich, w skład którego wchodzą Dania, Norwegia, Finlandia i Szwecja."
+        },
+        {
+          "claim": "Pochodzi z 2009 roku .",
+          "grounded": true,
+          "reason": "Tekst mówi o rozpoczęciu współpracy NORDEFCO w 2009 roku, a także o deklaracji solidarności Szwecji z 2010-2014 rokiem."
+        }
+      ]
+    },
+    {
+      "id": "g05",
+      "question": "Gdzie mieści się dowództwo Bałtyckiej Grupy Zadaniowej (CTF Baltic)?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.999006450176239,
+      "answer": "Dowództwo Bałtyckiej Grupy Zadaniowej (CTF Baltic) mieści się w Rostocku [2].",
+      "tokens": 33,
+      "ms": 1496,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Dowództwo Bałtyckiej Grupy Zadaniowej (CTF Baltic) mieści się w Rostocku .",
+          "grounded": true,
+          "reason": "W tekście opisano, że CTF Baltic zostało sformowane na bazie dowództwa marynarki wojennej RFN w Rostocku i będzie tam działać do 2028 roku."
+        }
+      ]
+    },
+    {
+      "id": "g06",
+      "question": "Które państwa należą do Rady Państw Morza Bałtyckiego (RPMB)?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.9997001886367798,
+      "answer": "Rada Państw Morza Bałtyckiego (RPMB) składa się z Danii, Estonii, Finlandii, Niemiec, Islandii, Litwy, Łotwy, Norwegii, Polski, Szwecji i Unii Europejskiej. [1]",
+      "tokens": 64,
+      "ms": 1932,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Rada Państw Morza Bałtyckiego (RPMB) składa się z Danii, Estonii, Finlandii, Niemiec, Islandii, Litwy, Łotwy, Norwegii, Polski, Szwecji i Unii Europejskiej.",
+          "grounded": true,
+          "reason": "Tekst mówi o członkach Rady Państw Morza Bałtyckiego (RPMB) i wymienia ich nazwy."
+        }
+      ]
+    },
+    {
+      "id": "g07",
+      "question": "Co to jest Balticconnector?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.3866100609302521,
+      "answer": "Balticconnector to fińsko-estoński gazociąg, którego uszkodzenie miało miejsce w październiku 2023 roku, co spowodowało rozmieszczenie na Bałtyku grupy okrętów i aktywację po raz pierwszy wspólnej odpowiedzi JEF – Joint Response Option (listopad 2023) [1].",
+      "tokens": 90,
+      "ms": 2182,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Balticconnector to fińsko-estoński gazociąg, którego uszkodzenie miało miejsce w październiku 2023 roku, co spowodowało rozmieszczenie na Bałtyku grupy okrętów i aktywację po raz pierwszy wspólnej odpowiedzi JEF – Joint Response Option (listopad 2023) .",
+          "grounded": true,
+          "reason": "Raport opisuje działania JEF, NORDEFCO i innych organizacji w regionie Morza Bałtyckiego, w tym uszkodzenie fińsko-estońskiego gazociągu Balticconnector w październiku 2023 roku, co doprowadziło do reakcji JEF."
+        }
+      ]
+    },
+    {
+      "id": "g08",
+      "question": "Kto przewodzi Połączonym Siłom Ekspedycyjnym (JEF)?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.9967427849769592,
+      "answer": "Przewodnictwo Połączonych Sił Ekspedycyjnych (JEF) przewidza Wielka Brytania [1].",
+      "tokens": 37,
+      "ms": 1660,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Przewodnictwo Połączonych Sił Ekspedycyjnych (JEF) przewidza Wielka Brytania .",
+          "grounded": true,
+          "reason": "W tekście z [5] czytamy, że Szwecja dołączyła do brytyjskich Połączonych Sił Ekspedycyjnych (JEF) w 2017 roku."
+        }
+      ]
+    },
+    {
+      "id": "g09",
+      "question": "Od którego roku działa misja Baltic Air Policing?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.995442271232605,
+      "answer": "Od 2004 roku działa misja Baltic Air Policing [2].",
+      "tokens": 18,
+      "ms": 1256,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Od 2004 roku działa misja Baltic Air Policing .",
+          "grounded": true,
+          "reason": "W tekście opisano, że od 2004 roku w regionie działa natowska misja nadzoru przestrzeni powietrznej państw bałtyckich Baltic Air Policing (BAP)."
+        }
+      ]
+    },
+    {
+      "id": "g10",
+      "question": "Czy państwa nordyckie pogłębiają współpracę obronną?",
+      "type": "parafraza",
+      "in_corpus": true,
+      "top_score": 0.9975486397743225,
+      "answer": "Tak, państwa nordyckie pogłębiają współpracę obronną. Dokumenty pokazują, że podpisano wiele porozumień i umów na zwiększanie współpracy obronnej, takich jak Plan działania dla wzmocnienia współpracy obronnej podpisany w 2014 roku [3], trójstronne porozumienie z 2018 roku na pogłębianie współpracy wojskowej [1], a także nowy umowy dwustronne o współpracy obronnej ze Stanami Zjednoczonymi [4][5].",
+      "tokens": 138,
+      "ms": 3188,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Tak, państwa nordyckie pogłębiają współpracę obronną.",
+          "grounded": true,
+          "reason": "Tekst mówi o wzmacnianiu współpracy wojskowej między Szwecją, Finlandią, Norwegią i Danią w ramach NORDEFCO oraz z USA."
+        },
+        {
+          "claim": "Dokumenty pokazują, że podpisano wiele porozumień i umów na zwiększanie współpracy obronnej, takich jak Plan działania dla wzmocnienia współpracy obronnej podpisany w 2014 roku , trójstronne porozumienie z 2018 roku na pogłębianie współpracy wojskowej , a także nowy umowy dwustronne o współpracy obronnej ze Stanami Zjednoczonymi .",
+          "grounded": true,
+          "reason": "Teksty opisują podpisanie wielu porozumień i umów na zwiększanie współpracy obronnej między Szwecją, Finlandią, USA i Norwegią."
+        }
+      ]
+    },
+    {
+      "id": "g11",
+      "question": "Co dla regionu Morza Bałtyckiego zmieniło wejście Finlandii i Szwecji do NATO?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9993249177932739,
+      "answer": "Wejście Finlandii i Szwecji do NATO zmieniało region geostrategicznie, tworząc nową strukturę bezpieczeństwa dla Morza Bałtyckiego [1]. Finlandia i Szwecja są teraz pełnymi członkami Sojuszu, co zwiększa obecność wojskową sojuszników na północnej flance regionu [4]. To zwiększa bezpieczeństwo nie tylko dla Morza Bałtyckiego, ale także dla Dalekiej Północy, w tym arktycznej części Norwegii [2]. Nowe członkostwo wzmocnia also sytuację strategiczną państw bałtyckich i północnej Norwegii [4].",
+      "tokens": 171,
+      "ms": 3703,
+      "grounded_fraction": 0.75,
+      "verdicts": [
+        {
+          "claim": "Wejście Finlandii i Szwecji do NATO zmieniało region geostrategicznie, tworząc nową strukturę bezpieczeństwa dla Morza Bałtyckiego .",
+          "grounded": true,
+          "reason": "Tekst mówi o tym, że wejście Finlandii i Szwecji do NATO zmieniło region geostrategicznie, tworząc nową strukturę bezpieczeństwa dla Morza Bałtyckiego."
+        },
+        {
+          "claim": "Finlandia i Szwecja są teraz pełnymi członkami Sojuszu, co zwiększa obecność wojskową sojuszników na północnej flance regionu .",
+          "grounded": false,
+          "reason": "Tekst mówi o tym, że Finlandia i Szwecja złożyły wnioski o członkostwo w NATO, a ich przynależność do Sojuszu prawdopodobnie zwiększy obecność wojskową sojuszników na północnej flance."
+        },
+        {
+          "claim": "To zwiększa bezpieczeństwo nie tylko dla Morza Bałtyckiego, ale także dla Dalekiej Północy, w tym arktycznej części Norwegii .",
+          "grounded": true,
+          "reason": "Tekst mówi o członkostwie Szwecji i Finlandii w NATO i jego wpływie na bezpieczeństwo regionu Morza Bałtyckiego oraz Dalekiej Północy, w tym arktycznej części Norwegii."
+        },
+        {
+          "claim": "Nowe członkostwo wzmocnia also sytuację strategiczną państw bałtyckich i północnej Norwegii .",
+          "grounded": true,
+          "reason": "Tekst mówi o tym, że akcesja Szwecji i Finlandii do NATO zwiększy obecność wojskową sojuszników na północnej flance, w tym w arktycznej części Półwyspu Skandynawskiego, a także ograniczy Moskwie możliwość wywierania presji militarnej na ten obszar."
+        }
+      ]
+    },
+    {
+      "id": "g12",
+      "question": "Kiedy Rosja opuściła Radę Państw Morza Bałtyckiego?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.9921956062316895,
+      "answer": "Rosja opuściła Radę Państw Morza Bałtyckiego w 2022 r. [1]",
+      "tokens": 29,
+      "ms": 1166,
+      "grounded_fraction": 0.0,
+      "verdicts": [
+        {
+          "claim": "Rosja opuściła Radę Państw Morza Bałtyckiego w 2022 r.",
+          "grounded": false,
+          "reason": "Raport mówi o tym, że Rosja wystąpiła z Euroarktycznej Rady w 2023 r., a nie z Radą Państw Morza Bałtyckiego."
+        }
+      ]
+    },
+    {
+      "id": "o00",
+      "question": "Jaka jest stolica Australii?",
+      "type": "poza-korpusem",
+      "in_corpus": false,
+      "top_score": 0.010039716958999634,
+      "answer": "Nie znajduję odpowiedzi w źródłach.",
+      "tokens": 13,
+      "ms": 1130,
+      "grounded_fraction": null
+    },
+    {
+      "id": "o01",
+      "question": "Kto wygrał piłkarskie Mistrzostwa Świata w 2018 roku?",
+      "type": "poza-korpusem",
+      "in_corpus": false,
+      "top_score": 7.658200775040314e-05,
+      "answer": "Nie znajduję odpowiedzi w źródłach.",
+      "tokens": 13,
+      "ms": 1167,
+      "grounded_fraction": null
+    },
+    {
+      "id": "o02",
+      "question": "Ile to jest pierwiastek kwadratowy z 144?",
+      "type": "poza-korpusem",
+      "in_corpus": false,
+      "top_score": 0.010342863388359547,
+      "answer": "12 [3]",
+      "tokens": 6,
+      "ms": 813,
+      "grounded_fraction": null
+    },
+    {
+      "id": "g13",
+      "question": "Jaki odsetek mieszkańców mogą przyjąć fińskie schrony dla ludności?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.9977619647979736,
+      "answer": "65% [1]",
+      "tokens": 7,
+      "ms": 996,
+      "grounded_fraction": 1.0,
+      "verdicts": []
+    },
+    {
+      "id": "g14",
+      "question": "Z jakiej doktryny wywodzi się koncepcja bezpieczeństwa całościowego?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9956647753715515,
+      "answer": "Koncepcja bezpieczeństwa całościowego wywodzi się z zimnowojennej doktryny obrony totalnej [3].",
+      "tokens": 31,
+      "ms": 1272,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Koncepcja bezpieczeństwa całościowego wywodzi się z zimnowojennej doktryny obrony totalnej .",
+          "grounded": true,
+          "reason": "Raport mówi o koncepcji bezpieczeństwa całościowego jako wywodzącej się z zimnowojennej doktryny obrony totalnej, która pojawiła się w Szwecji na początku lat pięćdziesiątych."
+        }
+      ]
+    },
+    {
+      "id": "g15",
+      "question": "Czym jest obrona cywilna według raportu o obronie totalnej?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9712998867034912,
+      "answer": "Obrona cywilna to działania ukierunkowane na ochronę ludności, zakładów pracy i urządzeń użyteczności publicznej oraz dóbr kultury, ratowanie i udzielanie pomocy poszkodowanym w czasie wojny, współdziałanie w zwalczaniu klęsk żywiołowych i zagrożeń środowiska oraz usuwaniu ich skutków [5].",
+      "tokens": 93,
+      "ms": 2282,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Obrona cywilna to działania ukierunkowane na ochronę ludności, zakładów pracy i urządzeń użyteczności publicznej oraz dóbr kultury, ratowanie i udzielanie pomocy poszkodowanym w czasie wojny, współdziałanie w zwalczaniu klęsk żywiołowych i zagrożeń środowiska oraz usuwaniu ich skutków .",
+          "grounded": true,
+          "reason": "Tekst opisuje obronę cywilną jako działania ukierunkowane na ochronę ludności, zakładów pracy i urządzeń użyteczności publicznej oraz dóbr kultury, ratowanie i udzielanie pomocy poszkodowanym w czasie wojny, współdziałanie w zwalczaniu klęsk żywiołowych i zagrożeń środowiska oraz usuwaniu ich skutków."
+        }
+      ]
+    },
+    {
+      "id": "g16",
+      "question": "Jakiego pojęcia używa NATO zamiast 'obrony cywilnej'?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.987533450126648,
+      "answer": "NATO używa pojęcia 'gotowości cywilnej' zamiast 'obrony cywilnej' [1].",
+      "tokens": 28,
+      "ms": 1203,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "NATO używa pojęcia 'gotowości cywilnej' zamiast 'obrony cywilnej' .",
+          "grounded": true,
+          "reason": "Tekst mówi o tym, że NATO używa pojęcia \"gotowości cywilnej\" (civil preparedness), które oznacza zapewnienie prawidłowego funkcjonowania administracji w sytuacji kryzysowej i w czasie wojny."
+        }
+      ]
+    },
+    {
+      "id": "g17",
+      "question": "Co umożliwiło Szwecji porozumienie Host Nation Support z 2014 r.?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.9835165143013,
+      "answer": "Porozumienie Host Nation Support z 2014 r. umożliwiło Szwecji wzmacnianie kooperacji z Sojuszem [1].",
+      "tokens": 39,
+      "ms": 1546,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Porozumienie Host Nation Support z 2014 r. umożliwiło Szwecji wzmacnianie kooperacji z Sojuszem .",
+          "grounded": true,
+          "reason": "Kontekst mówi o porozumieniu Host Nation Support podpisanym w 2014 roku przez Szwecję i NATO, które umożliwia wykorzystanie terytorium szwedzkiego przez siły natowskie."
+        }
+      ]
+    },
+    {
+      "id": "g18",
+      "question": "Na czym polega szwedzka koncepcja rozproszonego bazowania sił powietrznych?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9442794919013977,
+      "answer": "Szwedzka koncepcja rozproszonego bazowania sił powietrznych polega na wykorzystywaniu odcinków krajowych autostrad do startów i lądowań [1].",
+      "tokens": 52,
+      "ms": 1793,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Szwedzka koncepcja rozproszonego bazowania sił powietrznych polega na wykorzystywaniu odcinków krajowych autostrad do startów i lądowań .",
+          "grounded": true,
+          "reason": "Tekst mówi o szwedzkich siłach powietrznych, które miały wdrożyć koncepcję rozproszonego bazowania, w tym wykorzystywanie odcinków krajowych autostrad do startów i lądowań."
+        }
+      ]
+    },
+    {
+      "id": "g19",
+      "question": "Czy Szwecja zakłada możliwość rosyjskiego ataku w razie konfliktu NATO–Rosja?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9971889853477478,
+      "answer": "Tak, Szwecja zakłada możliwość rosyjskiego ataku w razie konfliktu NATO–Rosja. To wyraźnie wynika z tekstu [1] i [2], gdzie podkreślono, że Szwecja nie wyklucza ataku zbrojnego ze strony Rosji w takim scenariuszu. [1] [2]",
+      "tokens": 87,
+      "ms": 2283,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Tak, Szwecja zakłada możliwość rosyjskiego ataku w razie konfliktu NATO–Rosja.",
+          "grounded": true,
+          "reason": "Kontekst mówi o tym, że szwedzki rząd nie ma wątpliwości, że Szwecja będzie włączona w kryzysy i konflikty militarne w regionie nordycko-bałtyckim, jeśli dojdzie do nich na linii NATO–Rosja."
+        },
+        {
+          "claim": "To wyraźnie wynika z tekstu i , gdzie podkreślono, że Szwecja nie wyklucza ataku zbrojnego ze strony Rosji w takim scenariuszu.",
+          "grounded": true,
+          "reason": "Tekst mówi o potencjalnym ataku zbrojnym Rosji na Szwecję w przypadku konfliktu militarnego w regionie nordycko-bałtyckim, a także o obawach Szwecji przed ograniczeniem swojej suwerenności."
+        }
+      ]
+    },
+    {
+      "id": "g20",
+      "question": "Jaka jest słabość prognozy trójscenariuszowej (optymistyczny/pesymistyczny/średni)?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9466367363929749,
+      "answer": "Słabość prognozy trójscenariuszowej polega na tym, że jest niemal bezwartościowa dla decydenta, ponieważ nie pomaga mu podjąć decyzję w sytuacji, gdy „wszystko się może zdarzyć”. Bez oszacowania prawdopodobieństwa wystąpienia poszczególnych scenariuszy, prognoza trójscenariuszowa staje się niemal bezwartościowa. [1]",
+      "tokens": 111,
+      "ms": 2593,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Słabość prognozy trójscenariuszowej polega na tym, że jest niemal bezwartościowa dla decydenta, ponieważ nie pomaga mu podjąć decyzję w sytuacji, gdy „wszystko się może zdarzyć”.",
+          "grounded": true,
+          "reason": "Tekst mówi o wadach prognozy trójscenariuszowej i tym, że bez określenia prawdopodobieństwa scenariuszy jest ona niemal bezwartościowa dla decydenta."
+        },
+        {
+          "claim": "Bez oszacowania prawdopodobieństwa wystąpienia poszczególnych scenariuszy, prognoza trójscenariuszowa staje się niemal bezwartościowa.",
+          "grounded": true,
+          "reason": "Tekst mówi o tym, że prognoza trójscenariuszowa jest niemal bezwartościowa bez oszacowania prawdopodobieństwa wystąpienia poszczególnych scenariuszy, ponieważ nie pomaga decydentowi w podjęciu decyzji."
+        }
+      ]
+    },
+    {
+      "id": "g21",
+      "question": "Jak poradnik analityczny OSW radzi podejść do sztucznej inteligencji?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.8547118306159973,
+      "answer": "Poradnik analityczny OSW nie bezpośrednio komentuje sztuczna inteligencję w kontekście jej zastosowań w analizie. Jednak zasada empatii poznawczej, która jest kluczowa dla doradztwa, może być zastosowana do zrozumienia, jak sztuczna inteligencja może pomóc analitykom w przetwarzaniu dużych zbiorów danych i wykrywaniu trendów. [2]",
+      "tokens": 112,
+      "ms": 2674,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Poradnik analityczny OSW nie bezpośrednio komentuje sztuczna inteligencję w kontekście jej zastosowań w analizie.",
+          "grounded": true,
+          "reason": "Teksty z poradnika analitycznego OSW mówią o AI jako potencjalnym narzędzie wspierającym analityków, ale nie komentują bezpośrednio jej zastosowań w analizie."
+        },
+        {
+          "claim": "Jednak zasada empatii poznawczej, która jest kluczowa dla doradztwa, może być zastosowana do zrozumienia, jak sztuczna inteligencja może pomóc analitykom w przetwarzaniu dużych zbiorów danych i wykrywaniu trendów.",
+          "grounded": true,
+          "reason": "Tekst mówi o empatii poznawczej jako kluczowej dla doradztwa, a także o tym, jak sztuczna inteligencja może pomóc analitykom w przetwarzaniu danych."
+        }
+      ]
+    },
+    {
+      "id": "g22",
+      "question": "Który traktat z 1920 r. przyznaje Norwegii suwerenność nad Svalbardem?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.9985900521278381,
+      "answer": "[N1] Traktat Spitsbergeński z 1920 r. przyznaje Norwegii suwerenne prawa do archipelagu Svalbard, a jednocześnie zapewnia kilkudziesięciu innym sygnatariuszom, w tym Polsce, równy dostęp do wysp i możliwość prowadzenia tam działalności gospodarczej.",
+      "tokens": 85,
+      "ms": 2242,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "[N1] Traktat Spitsbergeński z 1920 r. przyznaje Norwegii suwerenne prawa do archipelagu Svalbard, a jednocześnie zapewnia kilkudziesięciu innym sygnatariuszom, w tym Polsce, równy dostęp do wysp i możliwość prowadzenia tam działalności gospodarczej.",
+          "grounded": true,
+          "reason": "Kontekst mówi o Traktacie Spitsbergeńskim z 1920 r., który przyznaje Norwegii suwerenne prawa do archipelagu Svalbard, a jednocześnie zapewnia innym sygnatariuszom, w tym Polsce, równy dostęp do wysp i możliwość prowadzenia tam działalności gospodarczej."
+        }
+      ]
+    },
+    {
+      "id": "g23",
+      "question": "Ilu ludzi zamieszkuje Arktykę i jaka część mieszka w Rosji?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.9894780516624451,
+      "answer": "Zamieszkuje go ok. 4 mln osób ([1]). Połowa z nich, czyli ok. 2 mln, mieszka w Rosji ([1]).",
+      "tokens": 39,
+      "ms": 1572,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Zamieszkuje go ok. 4 mln osób ().",
+          "grounded": true,
+          "reason": "Raport mówi o tym, że Arktykę zamieszkuje około 4 milionów ludzi, z czego połowa żyje w Rosji."
+        },
+        {
+          "claim": "Połowa z nich, czyli ok. 2 mln, mieszka w Rosji ().",
+          "grounded": true,
+          "reason": "Kontekst mówi o tym, że około 4 milionów osób zamieszkuje Arktykę, z czego połowa żyje w Rosji."
+        }
+      ]
+    },
+    {
+      "id": "g24",
+      "question": "Jaki akt prawa międzynarodowego reguluje przede wszystkim sytuację w Arktyce?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.9994150400161743,
+      "answer": "Przedstawiony akt prawa międzynarodowego regulujący przede wszystkim sytuację w Arktyce to Konwencja Narodów Zjednoczonych o prawie morza z 1982 r. [1].",
+      "tokens": 55,
+      "ms": 1577,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Przedstawiony akt prawa międzynarodowego regulujący przede wszystkim sytuację w Arktyce to Konwencja Narodów Zjednoczonych o prawie morza z 1982 r. .",
+          "grounded": true,
+          "reason": "Tekst mówi o Konwencji Narodów Zjednoczonych o prawie morza z 1982 r. jako dokumencie regulującym sytuację w Arktyce i podkreśla, że państwa nadbrzeżne Oceanu Arktycznego potwierdziły jej zastosowanie w Deklaracji z Ilulissat."
+        }
+      ]
+    },
+    {
+      "id": "g25",
+      "question": "W którym roku państwa arktyczne potwierdziły prawo morza jako podstawę współpracy (Deklaracja z Ilulissat)?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.9986341595649719,
+      "answer": "W 2008 r. państwa arktyczne potwierdziły prawo morza jako podstawę współpracy (Deklaracja z Ilulissat) [2].",
+      "tokens": 44,
+      "ms": 1442,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "W 2008 r. państwa arktyczne potwierdziły prawo morza jako podstawę współpracy (Deklaracja z Ilulissat) .",
+          "grounded": true,
+          "reason": "Kontekst mówi o Deklaracji z Ilulissat podpisanej w 2008 roku przez kraje nadbrzeżne Oceanu Arktycznego, które potwierdziły prawo morza jako podstawę współpracy regionalnej."
+        }
+      ]
+    },
+    {
+      "id": "g26",
+      "question": "Dokąd i od kiedy zostanie przeniesione dowództwo CTF Baltic?",
+      "type": "faktograficzne",
+      "in_corpus": true,
+      "top_score": 0.999133288860321,
+      "answer": "Dowództwo CTF Baltic zostanie przeniesione do Gdyni, od 2028 roku [1].",
+      "tokens": 30,
+      "ms": 1436,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Dowództwo CTF Baltic zostanie przeniesione do Gdyni, od 2028 roku .",
+          "grounded": true,
+          "reason": "Raport mówi o tym, że CTF Baltic będzie rotować i od 2028 r. zostanie przeniesione do Gdyni w ramach polskiego Centrum Operacji Morskich – Dowództwo Komponentu Morskiego."
+        }
+      ]
+    },
+    {
+      "id": "g27",
+      "question": "Co to jest Baltic Sentry?",
+      "type": "nazwa-własna",
+      "in_corpus": true,
+      "top_score": 0.9116396307945251,
+      "answer": "Baltic Sentry to seria wzmocnionych działań NATO służących ochronie podwodnej krytycznej infrastruktury w basenie Morza Bałtyckiego. Uruchomione w styczniu 2025 r., cele Baltic Sentry obejmują poprawę rozpoznania i odstraszanie wrogich aktywności. [3]",
+      "tokens": 90,
+      "ms": 2224,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Baltic Sentry to seria wzmocnionych działań NATO służących ochronie podwodnej krytycznej infrastruktury w basenie Morza Bałtyckiego.",
+          "grounded": true,
+          "reason": "Tekst mówi o Baltic Sentry jako serii wzmocnionych działań NATO służących ochronie podwodnej krytycznej infrastruktury w basenie Morza Bałtyckiego, a kontekst potwierdza to twierdzenie."
+        },
+        {
+          "claim": "Uruchomione w styczniu 2025 r., cele Baltic Sentry obejmują poprawę rozpoznania i odstraszanie wrogich aktywności.",
+          "grounded": true,
+          "reason": "Tekst mówi o działaniach Baltic Sentry, które rozpoczęły się w styczniu 2025 roku i mają na celu ochronę podwodnej krytycznej infrastruktury w basenie Morza Bałtyckiego poprzez poprawę rozpoznania i odstraszanie wrogich aktywności."
+        }
+      ]
+    },
+    {
+      "id": "g28",
+      "question": "Jaka organizacja jest podstawowym gwarantem bezpieczeństwa regionu Morza Bałtyckiego?",
+      "type": "pojęciowe",
+      "in_corpus": true,
+      "top_score": 0.9999452829360962,
+      "answer": "Podstawowym gwarantem bezpieczeństwa regionu Morza Bałtyckiego jest NATO [1], [2].",
+      "tokens": 27,
+      "ms": 1208,
+      "grounded_fraction": 1.0,
+      "verdicts": [
+        {
+          "claim": "Podstawowym gwarantem bezpieczeństwa regionu Morza Bałtyckiego jest NATO , .",
+          "grounded": true,
+          "reason": "Tekst mówi o NATO jako podstawowej organizacji gwarantującej bezpieczeństwo regionu Morza Bałtyckiego."
+        }
+      ]
+    },
+    {
+      "id": "o03",
+      "question": "Jaki jest przepis na sernik?",
+      "type": "poza-korpusem",
+      "in_corpus": false,
+      "top_score": 4.2900039261439815e-05,
+      "answer": "Nie znajduję odpowiedzi w źródłach.",
+      "tokens": 13,
+      "ms": 1149,
+      "grounded_fraction": null
+    },
+    {
+      "id": "o04",
+      "question": "Ile kalorii ma banan?",
+      "type": "poza-korpusem",
+      "in_corpus": false,
+      "top_score": 5.847766806255095e-05,
+      "answer": "Nie znajduję odpowiedzi w źródłach.",
+      "tokens": 13,
+      "ms": 1081,
+      "grounded_fraction": null
+    },
+    {
+      "id": "o05",
+      "question": "Ile to jest 15 razy 8?",
+      "type": "poza-korpusem",
+      "in_corpus": false,
+      "top_score": 0.004166493657976389,
+      "answer": "120 [1]",
+      "tokens": 7,
+      "ms": 1144,
+      "grounded_fraction": null
+    },
+    {
+      "id": "o06",
+      "question": "Kto napisał 'Pana Tadeusza'?",
+      "type": "poza-korpusem",
+      "in_corpus": false,
+      "top_score": 0.02505396492779255,
+      "answer": "Nie znajduję odpowiedzi w źródłach.",
+      "tokens": 13,
+      "ms": 1182,
+      "grounded_fraction": null
+    }
+  ]
+}
