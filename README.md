@@ -61,7 +61,8 @@ sufit recall@10 z 0.93 do 0.97 (BM25 dorzucił trafienia leksykalne, których de
 | metryka | wynik |
 |---|--:|
 | refusal — pytania spoza korpusu (gold set, n=7) | 1.00 (0.71 → 0.86 prompt → 1.00 +bramka) |
-| refusal — **hard negatives held-out (n=8), pełne 3 guardy** | **7/8** (guard #3 łapie atrybucję, której bramka nie) |
+| refusal — **held-out spoza korpusu (n=17), pełne 3 guardy** | **1.00** (guard #1+#2: 0.94 — bramka nie dodaje nic) |
+| false-refusal na held-oucie z korpusu (n=13), 3 guardy | **0.15** (2/13, oba przez guard #3) |
 | false-refusal na pytaniach z korpusu — bramka (#2) | **0** |
 | false-refusal dodane przez weryfikację (guard #3) | **2/29 (7%)** — świadomy koszt |
 | faithfulness (sędzia: Gemma 2, niezależny od generatora) | 0.96 |
@@ -76,17 +77,34 @@ korpusu to w większości **hard negatives**: „na temat, ale bez odpowiedzi w 
 
 | top-score rerankera | zakres |
 |---|--:|
-| pytania z korpusu (n=12) | 0.7376 … 0.9998 |
+| pytania z korpusu (n=13) | 0.7376 … 0.9998 |
 | spoza korpusu: `daleki` (arytmetyka, wiedza ogólna, n=4) | 0.0000 … 0.0015 |
 | spoza korpusu: `sąsiedni-obszar` (n=6) | 0.0014 … 0.1533 |
-| spoza korpusu: **`bliski-temat` (hard negatives, n=8)** | 0.0220 … **0.9806** |
+| spoza korpusu: **`bliski-temat` (hard negatives, n=7)** | 0.0220 … **0.8827** |
 
-**Rozkłady się nakładają** (przerwa −0.243) → nie istnieje próg z zerem przecieków i zerem błędnych
-odmów. Front kompromisu: próg 0.1 → przecieki 0.33 / FR 0 · 0.735 → 0.11 / 0 · 0.985 → 0 / **FR 0.33**.
-End-to-end na 18 pytaniach OOC: refusal **0.89 z bramką i 0.89 bez bramki** — bramka nie dodaje na
-nich nic, bo przecieki mają wysoki score. Oba przecieki to halucynacje **z cytowaniem**:
-przypisanie Danii wskaźnika 1,75% PKB (w źródle: **Norwegii**) i zamiana listy ofert w przetargu
-HX na jego rozstrzygnięcie.
+> **Rewizja zbioru (28.07): jedno pytanie było błędnie oznaczone.** `h18` („Ile wynoszą wydatki
+> obronne Danii jako procent PKB?") miało etykietę `out_of_corpus`, ale korpus na nie **odpowiada** —
+> `Polarny-kwartet` chunk #97: „**Dania** (…) zbyt małe wydatki obronne (5,3 mld dolarów, **tj. 1,3%
+> PKB w 2021 r.**)". Po przeniesieniu do `in_corpus` maksimum hard negatives spada z 0.9806 (h18) na
+> **0.8827** (h15, „liczba okrętów podwodnych Norwegii" — tej danej w korpusie faktycznie nie ma,
+> sprawdzone). Liczby niżej są policzone **po** tej poprawce. Diagnoza się nie zmienia: rozkłady
+> nadal się nakładają, `relevance ≠ answerability` obowiązuje. Zmieniła się jedna liczba, nie wniosek —
+> i to jest właśnie powód, dla którego trzymam surowe dane w repo, a nie tylko wynik w prezentacji.
+
+**Rozkłady się nakładają** (przerwa −0.145) → nie istnieje próg z zerem przecieków i zerem błędnych
+odmów. Front kompromisu: próg 0.1 → przecieki 0.35 / FR 0 · 0.735 → 0.06 / 0 · 0.985 → 0 / **FR 0.38**.
+
+End-to-end na held-oucie (17 pytań spoza korpusu + 13 z korpusu), **zmierzone po poprawce etykiety**:
+
+| konfiguracja | refusal spoza korpusu | false-refusal na pytaniach z korpusu |
+|---|--:|--:|
+| sam prompt (guard #1) | 0.94 | 0.00 |
+| + bramka 0.35 (guard #2) | 0.94 | 0.00 |
+| + weryfikacja tez (guard #3) | **1.00** | **0.15** (h03, h05) |
+
+**Bramka nie dodaje tu NIC** (0.94 → 0.94): jedyny przeciek, `h19`, ma score wyżej niż najsłabsze
+pytanie z korpusu, więc żaden próg go nie usunie bez strat. Domyka go dopiero guard #3, płacąc
+15% błędnych odmów na held-oucie — tu widać cały koszt tej decyzji, nie tylko jej zysk.
 
 **Wniosek architektoniczny:** cross-encoder mierzy **trafność tematyczną**, nie **obecność
 odpowiedzi** (`relevance ≠ answerability`). To sufit tego sygnału, nie zła wartość progu — błąd
@@ -100,12 +118,21 @@ python src/eval/calibrate_gate.py --e2e   # rozkłady, przemiatanie progu, odmow
 Skoro błąd powstaje w warstwie generacji, kontrolę postawiłem właśnie tam: po wygenerowaniu
 odpowiedzi **inny model-sędzia (Gemma)** sprawdza KAŻDĄ tezę przeciw kontekstowi; za mało popartych
 → odmowa (`src/generate/verify.py`).
-- **Wartość:** na 8 hard negatives z held-outu pełne 3 guardy odmawiają **7/8**. Guard #3 sam łapie
-  h18 („wydatki obronne Danii jako % PKB" — w źródle to liczba **Norwegii**), którego bramka
-  przepuszcza (score 0.98).
-- **Koszt (zmierzony, nie założony):** **+7% false-refusal** (2/29) na poprawnych pytaniach z korpusu —
-  `VERIFY_MIN_SUPPORTED=1.0` wymaga poparcia WSZYSTKICH tez.
-- **Residual:** h19 (lista ofert przetargu podana jako rozstrzygnięcie) wciąż przecieka — 1/8.
+- **Wartość:** na held-oucie domyka to, czego bramka nie potrafi — refusal spoza korpusu
+  **0.94 → 1.00** (przeciek `h19`, „lista ofert w przetargu HX podana jako rozstrzygnięcie",
+  ma score wyższy niż najsłabsze poprawne pytanie, więc progiem go nie usuniesz).
+- **Koszt (zmierzony, nie założony):** **0.15 false-refusal** na held-oucie (2/13) i **7%** (2/29) na
+  gold secie — `VERIFY_MIN_SUPPORTED=1.0` wymaga poparcia WSZYSTKICH tez.
+- **Guard #3 jest STOCHASTYCZNY i to widać w danych, nie tylko w zastrzeżeniu:** `h19` przeciekł
+  w pomiarze z 28.07, a w powtórce został złapany; `h18` odwrotnie. Pojedynczy przebieg nie jest
+  dowodem na zachowanie tego guardu wobec KONKRETNEGO pytania — tylko rozkład na całym zbiorze.
+- **Residual failure mode (najważniejsze ograniczenie, zreprodukowane na żywo):** pytanie „wydatki
+  obronne **Danii** jako % PKB" jest w korpusie (1,3% PKB, chunk #97), ale pipeline odpowiada
+  **1,75% PKB** — liczbą **Norwegii** z chunka #98 — i **wszystkie trzy guardy to przepuszczają**.
+  Poprawny fragment był w kontekście na pozycji [3] (score 0.962). Sędzia uzasadnił TAK słowami
+  *„zwiększenie budżetu resortu obrony **Norwegii**"* — czyli **sam nazwał właściwy podmiot i mimo to
+  zagłosował za tezą o Danii**. Wniosek: weryfikacja per-teza łapie brak poparcia, ale nie łapie
+  konsekwentnie **podmiany podmiotu**, gdy w kontekście stoją obok siebie dwie liczby tego samego typu.
 - **Trade-off (kontekst wywiadowczy):** fałszywa odmowa = ponowne zapytanie analityka; pewna
   halucynacja = błędna decyzja. Dlatego surowy próg (1.0) jest uzasadniony.
 
@@ -323,6 +350,14 @@ tests/                  # chunking, metryki, BM25/RRF, mostek strumienia, kontra
 - **vLLM nie zmieści się obok retrievalu na 12 GB VRAM** (zmierzone: CUDA OOM). Domyślnym backendem
   aplikacji zostaje Ollama; vLLM jest przełączalną opcją pod obciążenia wsadowe i dedykowane GPU.
 - **Hard negatives** („na temat, ale odpowiedzi nie ma") — bramka ich nie łapie (`relevance ≠
-  answerability`); dołożony guard #3 (weryfikacja ugruntowania po generacji) łapie **7/8** na
-  held-oucie, ale kosztem **~7% false-refusal** na poprawnych odpowiedziach i z 1 przeciekiem
-  (h19, oferta jako fakt). System nie jest tu idealny — każdą warstwę mierzę osobno.
+  answerability`); dołożony guard #3 (weryfikacja ugruntowania po generacji) podnosi refusal na
+  held-oucie **0.94 → 1.00**, ale kosztem **0.15 false-refusal** (2/13) tam i ~7% (2/29) na gold
+  secie. System nie jest tu idealny — każdą warstwę mierzę osobno.
+- **Podmiana podmiotu przechodzi przez wszystkie trzy guardy** (zreprodukowane): na pytanie o wydatki
+  obronne **Danii** pipeline podaje **1,75% PKB**, czyli liczbę **Norwegii**, choć poprawne 1,3% jest
+  w kontekście. Sędzia głosuje TAK, uzasadniając to zdaniem o Norwegii. To najpoważniejsze znane
+  ograniczenie tej architektury — patrz sekcja o guardzie #3.
+- **Jakość etykiet zbioru ewaluacyjnego jest częścią systemu:** jedno pytanie held-outu (`h18`) było
+  błędnie oznaczone jako „spoza korpusu", co zawyżało raportowaną przerwę rozkładów (−0.243 zamiast
+  −0.145). Znalazłem to dopiero na demo z prawdziwymi modelami — stąd zasada trzymania surowych
+  score'ów w repo, bo bez nich taka pomyłka jest niewykrywalna.
