@@ -60,9 +60,10 @@ sufit recall@10 z 0.93 do 0.97 (BM25 dorzucił trafienia leksykalne, których de
 ### Jakość odpowiedzi
 | metryka | wynik |
 |---|--:|
-| refusal na pytaniach spoza korpusu (gold set) | 1.00 (0.71 → 0.86 prompt → 1.00 bramka) |
-| **refusal na held-oucie z hard negatives** | **0.89** ← uczciwsza liczba, patrz niżej |
-| false-refusal na pytaniach z korpusu | **0** |
+| refusal — pytania spoza korpusu (gold set, n=7) | 1.00 (0.71 → 0.86 prompt → 1.00 +bramka) |
+| refusal — **hard negatives held-out (n=8), pełne 3 guardy** | **7/8** (guard #3 łapie atrybucję, której bramka nie) |
+| false-refusal na pytaniach z korpusu — bramka (#2) | **0** |
+| false-refusal dodane przez weryfikację (guard #3) | **2/29 (7%)** — świadomy koszt |
 | faithfulness (sędzia: Gemma 2, niezależny od generatora) | 0.96 |
 | answer relevance | 0.97 |
 
@@ -94,6 +95,19 @@ powstaje w warstwie **generacji**, więc kontrolę trzeba postawić właśnie ta
 ```bash
 python src/eval/calibrate_gate.py --e2e   # rozkłady, przemiatanie progu, odmowa end-to-end
 ```
+
+### Guard #3 — weryfikacja ugruntowania po generacji (zmierzona)
+Skoro błąd powstaje w warstwie generacji, kontrolę postawiłem właśnie tam: po wygenerowaniu
+odpowiedzi **inny model-sędzia (Gemma)** sprawdza KAŻDĄ tezę przeciw kontekstowi; za mało popartych
+→ odmowa (`src/generate/verify.py`).
+- **Wartość:** na 8 hard negatives z held-outu pełne 3 guardy odmawiają **7/8**. Guard #3 sam łapie
+  h18 („wydatki obronne Danii jako % PKB" — w źródle to liczba **Norwegii**), którego bramka
+  przepuszcza (score 0.98).
+- **Koszt (zmierzony, nie założony):** **+7% false-refusal** (2/29) na poprawnych pytaniach z korpusu —
+  `VERIFY_MIN_SUPPORTED=1.0` wymaga poparcia WSZYSTKICH tez.
+- **Residual:** h19 (lista ofert przetargu podana jako rozstrzygnięcie) wciąż przecieka — 1/8.
+- **Trade-off (kontekst wywiadowczy):** fałszywa odmowa = ponowne zapytanie analityka; pewna
+  halucynacja = błędna decyzja. Dlatego surowy próg (1.0) jest uzasadniony.
 
 ---
 
@@ -164,6 +178,7 @@ tests/                  # testy chunkingu, metryk, BM25/RRF
 - **Gold set n=29** (z korpusu) — liczby wciąż nieco szumne. Próg bramki jest już kalibrowany na
   **osobnym held-oucie**, nie na gold secie (patrz sekcja o kalibracji).
 - **Residual refusal:** przed bramką prosta arytmetyka przeciekała (model liczył); bramka to domyka.
-- **Bramka nie wykrywa hard negatives** („na temat, ale odpowiedzi nie ma") — zmierzone: refusal
-  0.89 na held-oucie, przecieki to błędna atrybucja podmiotu i nadinterpretacja źródła. Problem
-  leży w warstwie generacji, więc żaden próg na score retrievalu go nie usunie.
+- **Hard negatives** („na temat, ale odpowiedzi nie ma") — bramka ich nie łapie (`relevance ≠
+  answerability`); dołożony guard #3 (weryfikacja ugruntowania po generacji) łapie **7/8** na
+  held-oucie, ale kosztem **~7% false-refusal** na poprawnych odpowiedziach i z 1 przeciekiem
+  (h19, oferta jako fakt). System nie jest tu idealny — każdą warstwę mierzę osobno.

@@ -17,17 +17,14 @@ Uruchomienie (wolne — dużo wywołań LLM; wymaga modelu-sędziego w Ollamie):
 from __future__ import annotations
 
 import json
-import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
 from src.eval.metrics import mean
-from src.generate.answer import SYSTEM_PROMPT, answer, build_context, call_ollama
-from src.ingest.chunk import split_sentences
-
-REFUSAL = "nie znajduję odpowiedzi w źródłach"
+from src.generate.answer import SYSTEM_PROMPT, answer, build_context, call_ollama, refused
+from src.generate.verify import to_claims  # jedna definicja „tezy" dla runtime i ewaluacji
 
 # Poprzednia (słabsza) wersja promptu — do porównania „przed/po".
 OLD_PROMPT = (
@@ -43,15 +40,6 @@ _JUDGE_FAITH = ("Jesteś surowym weryfikatorem faktów. Oceniasz, czy TWIERDZENI
                 "z KONTEKSTU. Odpowiadasz jednym słowem: TAK albo NIE.")
 _JUDGE_REL = ("Oceniasz, czy ODPOWIEDŹ odnosi się do PYTANIA (jest na temat). "
               "Odpowiadasz jednym słowem: TAK albo NIE.")
-
-
-def refused(text: str) -> bool:
-    return REFUSAL in text.lower()
-
-
-def to_claims(answer_text: str) -> list[str]:
-    txt = re.sub(r"\[\d+\]", "", answer_text)          # usuń markery cytowań [n]
-    return [s for s in split_sentences(txt) if len(s) > 15]
 
 
 def judge_faithful(context: str, claim: str) -> bool:
@@ -71,31 +59,49 @@ def main() -> None:
 
     # --- 1) REFUSAL: prompt V1/V2 (bez bramki) + V2 z bramką ---
     print(f"=== REFUSAL accuracy na {len(ooc)} pytaniach spoza korpusu ===")
-    for label, sysp in [("V1 (bez bramki)", OLD_PROMPT), ("V2 (bez bramki)", SYSTEM_PROMPT)]:
-        leaks = [g["question"] for g in ooc if not refused(answer(g["question"], system=sysp, gate=False)["answer"])]
+    for label, sysp in [("V1 (bez guardów)", OLD_PROMPT), ("V2 (bez guardów)", SYSTEM_PROMPT)]:
+        leaks = [g["question"] for g in ooc
+                 if not refused(answer(g["question"], system=sysp, gate=False, verify=False)["answer"])]
         print(f"  {label:20} refusal={(len(ooc)-len(leaks))/len(ooc):.2f}   przecieki: {leaks or '—'}")
-    leaks_g = [g["question"] for g in ooc if not refused(answer(g["question"], gate=True)["answer"])]
+    leaks_g = [g["question"] for g in ooc
+               if not refused(answer(g["question"], gate=True, verify=False)["answer"])]
     print(f"  {'V2 + BRAMKA':20} refusal={(len(ooc)-len(leaks_g))/len(ooc):.2f}   przecieki: {leaks_g or '—'}")
+    leaks_v = [g["question"] for g in ooc if not refused(answer(g["question"])["answer"])]
+    print(f"  {'V2 + BRAMKA + WERYF':20} refusal={(len(ooc)-len(leaks_v))/len(ooc):.2f}   przecieki: {leaks_v or '—'}")
 
-    # --- 2) Jakość odpowiedzi na pytaniach Z KORPUSU (ścieżka produkcyjna: V2 + bramka) ---
-    print(f"\n=== Jakość odpowiedzi (produkcja) na {len(in_corpus)} pytaniach z korpusu; sędzia = {config.JUDGE_MODEL} ===")
-    faiths, rels, false_refusals = [], [], []
+    # --- 2) Jakość odpowiedzi na pytaniach Z KORPUSU ---
+    # UWAGA METODOLOGICZNA: faithfulness liczymy z guard #3 WYŁĄCZONYM (verify=False).
+    # Z włączonym guardem odpowiedzi niepoparte kontekstem są odrzucane PRZED pomiarem, więc
+    # faithfulness wyszłoby ~1.00 z konstrukcji — metryka mierzyłaby własny filtr, nie generator
+    # (to samo w naturze błędu, co kalibrowanie progu na zbiorze, na którym się raportuje).
+    # Efekt guardu #3 raportujemy osobno: jako refusal wyżej i false-refusal niżej.
+    print(f"\n=== Jakość odpowiedzi na {len(in_corpus)} pytaniach z korpusu; sędzia = {config.JUDGE_MODEL} ===")
+    from src.generate.verify import grounded_fraction
+
+    faiths, rels, fr_gate, fr_verify = [], [], [], []
     for g in in_corpus:
-        res = answer(g["question"])
+        res = answer(g["question"], verify=False)
         a = res["answer"]
         if refused(a):
-            false_refusals.append(g["id"])
+            fr_gate.append(g["id"])
             continue
+        ctx = build_context(res["sources"])
         rels.append(1.0 if judge_relevant(g["question"], a) else 0.0)
         claims = to_claims(a)
         if claims:
-            ctx = build_context(res["sources"])
             faiths.append(mean([1.0 if judge_faithful(ctx, c) else 0.0 for c in claims]))
+        # Guard #3 symulowany na TEJ SAMEJ odpowiedzi — bez powtórnej generacji. Wynik jest
+        # identyczny jak w produkcji (ta sama odpowiedź, ten sam sędzia), a kosztuje tylko
+        # wywołania sędziego. Mierzy KOSZT guardu: ile poprawnych odpowiedzi by ubił.
+        if grounded_fraction(ctx, a)[0] < config.VERIFY_MIN_SUPPORTED:
+            fr_verify.append(g["id"])
 
-    print(f"  answered (nie odmówił błędnie): {len(in_corpus) - len(false_refusals)}/{len(in_corpus)}")
-    print(f"  FALSE-REFUSAL (koszt bramki/promptu): {false_refusals or '—'}")
-    print(f"  faithfulness (śr. udział tez popartych kontekstem): {mean(faiths):.2f}")
-    print(f"  answer relevance (śr. na temat):                    {mean(rels):.2f}")
+    print(f"  answered (prompt+bramka):                {len(in_corpus) - len(fr_gate)}/{len(in_corpus)}")
+    print(f"  FALSE-REFUSAL prompt+bramka:             {fr_gate or '—'}")
+    print(f"  FALSE-REFUSAL dodane przez guard #3:     {fr_verify or '—'}  "
+          f"({len(fr_verify)/len(in_corpus):.2f} z {len(in_corpus)})")
+    print(f"  faithfulness (bez guardu #3 — patrz uwaga w kodzie): {mean(faiths):.2f}")
+    print(f"  answer relevance (śr. na temat):                     {mean(rels):.2f}")
     print(f"\n  (Sędzia = {config.JUDGE_MODEL} != generator {config.LLM_MODEL} -> mniejsza cyrkularność; nadal SYGNAŁ + sanity-check.)")
 
 

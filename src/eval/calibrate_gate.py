@@ -172,25 +172,44 @@ def report(scored: list[dict], s: dict) -> None:
         print("         (c) mocniejszy sygnał (np. średnia top-3 zamiast max, + pokrycie leksykalne).")
 
 
-def e2e_refusal(scored: list[dict]) -> None:
-    """DIAGNOSTYKA: bramka to tylko PIERWSZA warstwa — druga to instrukcja odmowy w promptcie.
+def e2e_refusal(scored: list[dict]) -> dict:
+    """POMIAR END-TO-END trzech warstw obrony — OBIE strony błędu naraz.
 
-    Przeciek przez bramkę nie oznacza automatycznie halucynacji: LLM z kontekstem "na temat, ale
-    bez odpowiedzi" może sam odmówić. Dlatego mierzymy odmowę END-TO-END na pytaniach spoza
-    korpusu z held-outu, osobno z bramką i bez niej — żeby zobaczyć, ile bramka realnie dodaje
-    ponad prompt, a nie zakładać tego z rozkładu score'ów.
+    Rozkład score'ów mówi tylko o bramce. Ale przeciek przez bramkę nie oznacza automatycznie
+    halucynacji (LLM z kontekstem „na temat, ale bez odpowiedzi" może sam odmówić), a guard #3
+    może z kolei ubić poprawną PARAFRAZĘ. Dlatego dla każdej konfiguracji mierzymy jednocześnie:
+      - refusal na 18 pytaniach SPOZA korpusu (ile złego zatrzymujemy),
+      - false-refusal na 12 pytaniach Z korpusu (ile dobrego przy tym tracimy).
+    Bez drugiej kolumny pierwsza jest bez znaczenia — próg 999 daje refusal 1.00 i bezużyteczny system.
     """
-    from src.eval.eval_answers import refused
-    from src.generate.answer import answer
+    from src.generate.answer import answer, refused
 
     ooc = [r for r in scored if r["label"] == "out_of_corpus"]
-    print(f"\n=== ODMOWA END-TO-END na {len(ooc)} pytaniach spoza korpusu (held-out) ===")
-    for label, gate in [("bez bramki (sam prompt)", False), (f"z bramką ({config.RELEVANCE_GATE_MIN})", True)]:
-        leaks = []
+    ins = [r for r in scored if r["label"] == "in_corpus"]
+    configs = [
+        ("sam prompt (guard #1)", False, False),
+        (f"+ bramka {config.RELEVANCE_GATE_MIN} (#2)", True, False),
+        ("+ weryfikacja tez (#3)", True, True),
+    ]
+    print(f"\n=== END-TO-END na held-oucie: {len(ooc)} pytań OOC + {len(ins)} z korpusu ===")
+    print(f"  {'konfiguracja':30} {'refusal OOC':>12} {'false-ref IN':>13}   szczegóły")
+    results = {}
+    for label, gate, verify in configs:
+        leaks, frs = [], []
         for r in ooc:
-            if not refused(answer(r["question"], gate=gate)["answer"]):
+            if not refused(answer(r["question"], gate=gate, verify=verify)["answer"]):
                 leaks.append(f"{r['id']}({r['subtype'][:6]})")
-        print(f"  {label:26} refusal={(len(ooc)-len(leaks))/len(ooc):.2f}   przecieki: {', '.join(leaks) or '—'}")
+        for r in ins:
+            res = answer(r["question"], gate=gate, verify=verify)
+            if refused(res["answer"]):
+                frs.append(f"{r['id']}({res.get('blocked_by', 'prompt')})")
+        refusal = (len(ooc) - len(leaks)) / len(ooc)
+        fr = len(frs) / len(ins)
+        print(f"  {label:30} {refusal:12.2f} {fr:13.2f}   przecieki: {', '.join(leaks) or '—'}"
+              f"{'  | FR: ' + ', '.join(frs) if frs else ''}")
+        results[label] = {"refusal_ooc": refusal, "false_refusal_in": fr,
+                          "leaks": leaks, "false_refusals": frs}
+    return results
 
 
 def main() -> None:
@@ -207,12 +226,11 @@ def main() -> None:
     s = summarize(scored)
     report(scored, s)
 
-    if "--e2e" in sys.argv:
-        e2e_refusal(scored)
+    e2e = e2e_refusal(scored) if "--e2e" in sys.argv else None
 
     OUT_PATH.parent.mkdir(exist_ok=True)
-    OUT_PATH.write_text(json.dumps({"scored": scored, "summary": s}, ensure_ascii=False, indent=2),
-                        encoding="utf-8")
+    OUT_PATH.write_text(json.dumps({"scored": scored, "summary": s, "e2e": e2e},
+                                   ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\nZapisano: {OUT_PATH}")
 
 

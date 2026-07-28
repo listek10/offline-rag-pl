@@ -63,10 +63,22 @@ BM25_K1 = 1.5                  # nasycenie częstością termu w BM25 (standard)
 BM25_B = 0.75                  # siła normalizacji długości dokumentu w BM25 (standard)
 RRF_K = 60                     # stała Reciprocal Rank Fusion; łączymy rankingi po POZYCJI, nie po score
 
-# --- Bramka trafności (guard anty-halucynacyjny, etap 5) ---
+# --- Bramka trafności (guard #2, etap 5) ---
 # Jeśli najwyższy score rerankera < progu -> kontekst nietrafny -> wymuszamy odmowę (bez pytania LLM).
-# Próg z DANYCH: pytania spoza korpusu mają top-score ≤0.025, z korpusu ≥0.387 (kalibracja na gold secie).
-RELEVANCE_GATE_MIN = 0.1
+# Próg SKALIBROWANY NA HELD-OUCIE (`gold_set/heldout_gate.jsonl`, nigdy nieraportowanym jako metryka),
+# a nie na gold secie — inaczej dopasowywalibyśmy hiperparametr do zbioru testowego.
+# Dane z kalibracji: OOC `daleki` ≤0.0015, OOC `sąsiedni-obszar` ≤0.1533, najsłabsze pytanie
+# Z KORPUSU 0.7376 -> 0.35 daje ~0.2 marginesu w obie strony przy false-refusal = 0.
+# ŚWIADOME OGRANICZENIE: hard negatives („na temat, ale odpowiedzi nie ma") mają score do 0.98,
+# więc ta bramka ich NIE łapie — to sufit sygnału (relevance != answerability). Stąd guard #3 niżej.
+RELEVANCE_GATE_MIN = 0.35
+
+# --- Weryfikacja ugruntowania po generacji (guard #3, etap 5) ---
+# Sprawdzamy KAŻDĄ tezę odpowiedzi przeciw kontekstowi modelem-sędzią; jeśli udział tez popartych
+# < progu -> odmawiamy zamiast publikować. Atakuje failure mode niewidoczny dla bramki: błędną
+# atrybucję podmiotu (np. liczba Norwegii przypisana Danii) i zamianę oferty/planu na fakt.
+VERIFY_GROUNDING = True
+VERIFY_MIN_SUPPORTED = 1.0     # 1.0 = wszystkie tezy muszą być poparte (kalibrowane na held-oucie)
 
 # --- Sędzia faithfulness (etap 5) ---
 # INNY model niż generator (Qwen) -> mniej skorelowane błędy = mniejsza cyrkularność oceny.

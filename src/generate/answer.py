@@ -79,31 +79,67 @@ def call_ollama(prompt: str, system: str = SYSTEM_PROMPT, model: str | None = No
         return json.loads(resp.read())["response"].strip()
 
 
+REFUSAL_TEXT = "Nie znajduję odpowiedzi w źródłach."
+
+
 def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
-           gate: bool = True) -> dict:
-    """Pełna pętla: retrieval -> (bramka) -> prompt -> LLM. Zwraca {answer, sources}.
+           gate: bool = True, verify: bool | None = None) -> dict:
+    """Pełna pętla: retrieval -> (guard #2 bramka) -> prompt -> LLM -> (guard #3 weryfikacja).
+
+    Zwraca {answer, sources, blocked_by?, rejected_answer?, grounding?}.
 
     Retrieval: HYBRYDA (dense+BM25/RRF) + reranking — konfiguracja ZMIERZONA jako najlepsza
     (na 29 pytaniach: recall@1 0.83, recall@5 0.97, MRR 0.89 vs dense 0.45/0.76/0.62).
-    `system`/`gate` można nadpisać (harness porównuje prompty przed/po i efekt bramki).
+    `system`/`gate`/`verify` można nadpisać — harness mierzy efekt każdego guardu OSOBNO
+    (przecieki i false-refusale), bo guard bez zmierzonego kosztu to nie zabezpieczenie.
     """
+    verify = config.VERIFY_GROUNDING if verify is None else verify
     hits = hybrid_search(question, top_k=top_k, rerank=True)
 
-    # BRAMKA TRAFNOŚCI (guard anty-halucynacyjny): jeśli nic trafnego nie wróciło
-    # (najwyższy score rerankera < próg), odmawiamy BEZ pytania modelu. To odcina pytania
-    # spoza korpusu (np. obliczenia, wiedza ogólna) niezależnie od tego, co „chciałby" powiedzieć LLM.
+    # GUARD #2 — BRAMKA TRAFNOŚCI: jeśli nic trafnego nie wróciło (najwyższy score rerankera
+    # < próg), odmawiamy BEZ pytania modelu. Odcina pytania spoza tematyki korpusu (obliczenia,
+    # wiedza ogólna, inne regiony) niezależnie od tego, co „chciałby" powiedzieć LLM.
+    # Czego NIE odcina: pytań NA TEMAT, na które korpus nie ma odpowiedzi — patrz guard #3.
     if gate:
         top_score = max((h.get("rerank_score", 0.0) for h in hits), default=0.0)
         if top_score < config.RELEVANCE_GATE_MIN:
-            return {"answer": "Nie znajduję odpowiedzi w źródłach.", "sources": hits}
+            return {"answer": REFUSAL_TEXT, "sources": hits, "blocked_by": "gate"}
 
+    context = build_context(hits)
     text = call_ollama(build_prompt(question, hits), system=system)
+
+    # GUARD #3 — WERYFIKACJA UGRUNTOWANIA: odpowiedź już powstała, więc dopiero TERAZ widać
+    # błędy generacji (błędna atrybucja podmiotu, oferta podana jako rozstrzygnięcie). Sędzia
+    # (inny model niż generator) ocenia każdą tezę; za mało popartych -> odmowa zamiast publikacji.
+    if verify and not refused(text):
+        from src.generate.verify import grounded_fraction
+        frac, verdicts = grounded_fraction(context, text)
+        if frac < config.VERIFY_MIN_SUPPORTED:
+            # Zachowujemy odrzuconą odpowiedź i werdykty — bez tego guard byłby czarną skrzynką
+            # (nie dałoby się sprawdzić, czy ubił halucynację, czy trafną parafrazę).
+            return {"answer": REFUSAL_TEXT, "sources": hits, "blocked_by": "verify",
+                    "rejected_answer": text, "grounding": verdicts}
+        return {"answer": text, "sources": hits, "grounding": verdicts}
+
     return {"answer": text, "sources": hits}
+
+
+def refused(text: str) -> bool:
+    """Czy model sam odmówił (guard #1 = instrukcja w promptcie). Jedno miejsce na tę regułę,
+    żeby harness ewaluacyjny i runtime nie rozjechały się w definicji odmowy."""
+    return REFUSAL_TEXT.lower().rstrip(".") in text.lower()
 
 
 def _print(question: str, result: dict) -> None:
     print(f"\nPYTANIE: {question}\n")
     print(result["answer"])
+    if result.get("blocked_by"):
+        # Pokazujemy, KTÓRY guard zablokował i dlaczego — inaczej odmowa jest nieodróżnialna od
+        # „model nic nie wie", a użytkownik nie wie, czy szukać dalej.
+        print(f"\n[zablokowane przez guard: {result['blocked_by']}]")
+        for v in result.get("grounding") or []:
+            if not v["grounded"]:
+                print(f"  NIEPOPARTA TEZA: {v['claim'][:110]}\n    sędzia: {v['reason'][:150]}")
     print("\nŹRÓDŁA (kandydaci przekazani do modelu):")
     for i, h in enumerate(result["sources"], 1):
         print(f"  [{i}] {h['source']} #{h['chunk_index']}  (score {h['score']:.3f})")
