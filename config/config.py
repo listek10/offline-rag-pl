@@ -54,6 +54,38 @@ OLLAMA_URL = "http://localhost:11434"
 LLM_TEMPERATURE = 0.0          # niska temperatura -> mniej "kreatywności"/zmyślania (ważne w RAG)
 LLM_NUM_CTX = 4096             # okno kontekstu; musi pomieścić prompt + pobrane chunki
 
+# --- Backend serwowania LLM (etap 7 / checkpoint #9 cz. 2) ---
+# Przełącznik silnika: Ollama (dev, prosty) vs vLLM (produkcyjny throughput). Domyślnie
+# "ollama", żeby zmiana była ADDYTYWNA — bez ustawienia env cały projekt działa jak dotąd.
+# Nadpisywalny środowiskiem, bo benchmark odpala oba backendy pod rząd i nie może
+# edytować configu między przebiegami:
+#     LLM_BACKEND=vllm python src/eval/bench_llm.py
+LLM_BACKEND = os.environ.get("LLM_BACKEND", "ollama")   # "ollama" | "vllm"
+
+# vLLM wystawia API ZGODNE Z OPENAI (/v1/chat/completions) — wołamy je własnym urllib,
+# bez biblioteki `openai` (zasada: cienka własna warstwa, mniej zależności).
+# Port 8001, bo 8000/8100 zajmuje warstwa serwująca UI.
+VLLM_URL = "http://localhost:8001/v1"
+# GGUF (format Ollamy) w vLLM jest eksperymentalny i wolny -> kwantyzacja AWQ.
+# UWAGA: AWQ != Q4_K_M numerycznie, więc po przełączeniu backendu trzeba PONOWNIE zmierzyć
+# jakość na gold secie, nie tylko szybkość (zmieniamy silnik ORAZ kwantyzację).
+VLLM_MODEL = "Qwen/Qwen2.5-7B-Instruct-AWQ"
+# Musi równać się LLM_NUM_CTX, inaczej benchmark porównywałby różne okna kontekstu.
+VLLM_MAX_MODEL_LEN = 4096
+# vLLM PREALOKUJE ten ułamek CAŁEGO VRAM-u na starcie (domyślnie 0.9) i trzyma go do końca
+# procesu — to cena PagedAttention (pula bloków KV-cache z góry, bez fragmentacji).
+# 0.9 x 12,2 GB = 11 GB -> nie zostaje miejsca na BGE-M3 + reranker (~2,5 GB) => OOM.
+# 0.7 -> ~8,5 GB budżetu; po wagach AWQ (~5,5 GB) zostaje ~3 GB puli KV, a KV Qwena 2.5-7B
+# to ~56 KB/token (28 warstw x 4 głowy KV GQA x 128 x 2 x fp16) = ~229 MB na sekwencję przy
+# 4096 -> ~13 sekwencji naraz. Niżej (0.5) pula spada do ~2-3 sekwencji i continuous batching
+# nie ma czego batchować — czyli sam odbieram vLLM-owi jego przewagę.
+VLLM_GPU_MEMORY_UTILIZATION = 0.7
+
+# Sztywny limit tokenów wyjścia dla BENCHMARKU (nie dla produkcji, gdzie model kończy sam).
+# Bez niego oba silniki generowałyby różną liczbę tokenów i porównanie tokenów/s byłoby fikcją.
+BENCH_MAX_TOKENS = 256
+BENCH_CONCURRENCY = (1, 4, 8)   # vLLM wygrywa przepustowością POD OBCIĄŻENIEM, nie przy 1
+
 # --- Reranking (etap 5 / checkpoint #6) ---
 # Cross-encoder wielojęzyczny (naturalna para do BGE-M3). Ocenia (pytanie, chunk) RAZEM.
 RERANK_MODEL = "BAAI/bge-reranker-v2-m3"

@@ -3,7 +3,7 @@ src/generate/answer.py
 Etap 3 / checkpoint #7: pełna pętla RAG.
 
     pytanie -> retrieval (hybryda dense+BM25 + rerank) -> budowa promptu z kontekstem
-    -> lokalny LLM (Ollama) -> odpowiedź z CYTATAMI źródeł.
+    -> lokalny LLM (Ollama albo vLLM, patrz `config.LLM_BACKEND`) -> odpowiedź z CYTATAMI źródeł.
 
 KLUCZOWE DECYZJE (i dlaczego):
 - CYTOWANIE: numerujemy chunki [1], [2]... z etykietą źródła i każemy modelowi podawać [n]
@@ -21,15 +21,19 @@ Uruchomienie (wymaga: Qdrant w Dockerze + Ollama z modelem):
 
 from __future__ import annotations
 
-import json
 import sys
 import time
-import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
 from src.retrieve.hybrid import hybrid_search
+
+# Transport do modelu mieszka w `llm.py` (etap 7): tam siedzi przełącznik Ollama <-> vLLM.
+# `call_ollama` RE-EKSPORTUJEMY, bo `verify.py` i `eval_answers.py` importują je z tego modułu
+# i mają celowo trafiać ZAWSZE do Ollamy (sędzia Gemma stoi na Ollamie, nawet gdy generator
+# liczy na vLLM — dwa silniki na jednym GPU 12 GB naraz się nie zmieszczą).
+from src.generate.llm import call_llm, call_ollama  # noqa: F401  (re-eksport dla starych importów)
 
 # Instrukcja systemowa — tu "mieszka" polityka anty-halucynacyjna i wymóg cytowania.
 SYSTEM_PROMPT = """Jesteś skrupulatnym analitykiem. Odpowiadasz WYŁĄCZNIE na podstawie fragmentów \
@@ -56,28 +60,6 @@ def build_prompt(question: str, hits: list[dict]) -> str:
         f"PYTANIE: {question}\n\n"
         f"ODPOWIEDŹ (z cytatami [n]):"
     )
-
-
-def call_ollama(prompt: str, system: str = SYSTEM_PROMPT, model: str | None = None) -> str:
-    """Woła lokalny serwer Ollamy (/api/generate). Bez zewnętrznych bibliotek — sam urllib.
-    `system`/`model` można nadpisać (np. porównanie promptów przed/po lub inny model-sędzia)."""
-    payload = {
-        "model": model or config.LLM_MODEL,
-        "system": system,
-        "prompt": prompt,
-        "stream": False,
-        "options": {
-            "temperature": config.LLM_TEMPERATURE,  # 0.0 -> mniej zmyślania
-            "num_ctx": config.LLM_NUM_CTX,
-        },
-    }
-    req = urllib.request.Request(
-        f"{config.OLLAMA_URL}/api/generate",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=180) as resp:
-        return json.loads(resp.read())["response"].strip()
 
 
 REFUSAL_TEXT = "Nie znajduję odpowiedzi w źródłach."
@@ -138,7 +120,9 @@ def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
     context = build_context(hits)
     emit(event="stage", stage="generation", status="start")
     t = time.perf_counter()
-    text = call_ollama(build_prompt(question, hits), system=system)
+    # Generator idzie przez dyspozytor => backend (Ollama/vLLM) jest jedną zmienną w configu,
+    # a nie zmianą w pętli RAG. Sędzia guarda #3 celowo NIE korzysta z dyspozytora.
+    text = call_llm(build_prompt(question, hits), system=system)
     emit(event="stage", stage="generation", status="done", ms=_ms(t))
 
     # GUARD #3 — WERYFIKACJA UGRUNTOWANIA: odpowiedź już powstała, więc dopiero TERAZ widać
