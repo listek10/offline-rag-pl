@@ -1,0 +1,30 @@
+{"id": "h01", "question": "Od czego ostatecznie zależy jakość ekspertyzy analitycznej według poradnika OSW?", "label": "in_corpus", "subtype": "pojeciowe"}
+{"id": "h02", "question": "Kto opiniuje, czy analiza spełniła swoją funkcję?", "label": "in_corpus", "subtype": "pojeciowe"}
+{"id": "h03", "question": "Na jakich filarach opiera się od lat polska strategia odstraszania Rosji?", "label": "in_corpus", "subtype": "pojeciowe"}
+{"id": "h04", "question": "Czym jest pułapka fałszywego symetryzmu w pracy analitycznej?", "label": "in_corpus", "subtype": "pojeciowe"}
+{"id": "h05", "question": "Która powieść Władimira Sorokina jest wskazywana jako trafny literacki obraz dzisiejszej Rosji?", "label": "in_corpus", "subtype": "nazwa-wlasna"}
+{"id": "h06", "question": "Dlaczego agregowanie danych o procesach międzynarodowych bywa trudne?", "label": "in_corpus", "subtype": "pojeciowe"}
+{"id": "h07", "question": "Ilu członków zrzesza estońska Liga Obrony (Kaitseliit)?", "label": "in_corpus", "subtype": "nazwa-wlasna"}
+{"id": "h08", "question": "W jaki sposób Finlandia zmieniła konstytucję, aby rozszerzyć uprawnienia inwigilacyjne SUPO?", "label": "in_corpus", "subtype": "faktograficzne"}
+{"id": "h09", "question": "Dlaczego NATO nie prowadzi w Arktyce regularnych ćwiczeń ani nie ma tam stałego kontyngentu?", "label": "in_corpus", "subtype": "pojeciowe"}
+{"id": "h10", "question": "W którym roku Norwegia ustanowiła 200-milową strefę ochronną rybołówstwa wokół Svalbardu?", "label": "in_corpus", "subtype": "faktograficzne"}
+{"id": "h11", "question": "Które państwo sprawuje przewodnictwo w NORDEFCO w 2026 roku?", "label": "in_corpus", "subtype": "nazwa-wlasna"}
+{"id": "h12", "question": "Do ilu tysięcy żołnierzy ma wzrosnąć rozwinięcie mobilizacyjne szwedzkich sił zbrojnych na czas wojny?", "label": "in_corpus", "subtype": "faktograficzne"}
+{"id": "h13", "question": "Ilu żołnierzy liczy szwedzki batalion zmechanizowany stacjonujący na Gotlandii?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h14", "question": "Jaki jest budżet obronny Litwy w 2026 roku?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h15", "question": "Ile okrętów podwodnych ma marynarka wojenna Norwegii?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h16", "question": "Kiedy Islandia planuje utworzyć własne siły zbrojne?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h17", "question": "Ilu członków liczy łotewska Gwardia Narodowa (Zemessardze)?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h18", "question": "Ile wynoszą wydatki obronne Danii jako procent PKB?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h19", "question": "Jakie myśliwce wybrała Finlandia w przetargu HX?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h20", "question": "Jaki jest roczny budżet Rady Arktycznej?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h21", "question": "Jakie państwa tworzą sojusz AUKUS?", "label": "out_of_corpus", "subtype": "sasiedni-obszar"}
+{"id": "h22", "question": "Jakie są przyczyny wojny domowej w Sudanie?", "label": "out_of_corpus", "subtype": "sasiedni-obszar"}
+{"id": "h23", "question": "Jakie zdolności ma izraelski system obrony powietrznej Żelazna Kopuła?", "label": "out_of_corpus", "subtype": "sasiedni-obszar"}
+{"id": "h24", "question": "W jaki sposób Chiny militaryzują Morze Południowochińskie?", "label": "out_of_corpus", "subtype": "sasiedni-obszar"}
+{"id": "h25", "question": "Jakie skutki miało trzęsienie ziemi w Turcji w 2023 roku?", "label": "out_of_corpus", "subtype": "sasiedni-obszar"}
+{"id": "h26", "question": "Jak przebiegała reforma emerytalna we Francji w 2023 roku?", "label": "out_of_corpus", "subtype": "sasiedni-obszar"}
+{"id": "h27", "question": "Ile to jest 37 razy 12?", "label": "out_of_corpus", "subtype": "daleki"}
+{"id": "h28", "question": "Jaka jest najwyższa góra Afryki?", "label": "out_of_corpus", "subtype": "daleki"}
+{"id": "h29", "question": "Jak zrobić domowy chleb na zakwasie?", "label": "out_of_corpus", "subtype": "daleki"}
+{"id": "h30", "question": "Kto skomponował IX Symfonię?", "label": "out_of_corpus", "subtype": "daleki"}
