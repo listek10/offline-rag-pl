@@ -210,6 +210,16 @@ def ask(req: AskRequest) -> StreamingResponse:
     return StreamingResponse(linie(), media_type="application/x-ndjson")
 
 
+# --- Frontend ----------------------------------------------------------------------------
+# Statyki serwuje sam FastAPI — nie ma osobnego serwera WWW, bo to aplikacja lokalna.
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.get("/")
+def index() -> FileResponse:
+    return FileResponse(STATIC_DIR / "index.html")
+
+
 def main() -> None:
     import uvicorn
     uvicorn.run(app, host=config.SERVE_HOST, port=config.SERVE_PORT)

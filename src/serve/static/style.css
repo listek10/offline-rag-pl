@@ -1,0 +1,68 @@
+/* Motyw idzie za ustawieniem systemu — bez przełącznika, bo to stan trzymany bez powodu. */
+:root {
+  --bg: #ffffff; --fg: #1a1a1a; --muted: #6b7280; --line: #e5e7eb;
+  --ok: #15803d; --bad: #b91c1c; --accent: #1d4ed8; --panel: #f9fafb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111317; --fg: #e5e7eb; --muted: #9ca3af; --line: #2a2f37;
+    --ok: #4ade80; --bad: #f87171; --accent: #93b4ff; --panel: #171a1f;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 1.25rem; background: var(--bg); color: var(--fg);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+header { display: flex; justify-content: space-between; align-items: baseline;
+         border-bottom: 1px solid var(--line); padding-bottom: .6rem; }
+h1 { font-size: 1.05rem; margin: 0; letter-spacing: .02em; }
+h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em;
+     color: var(--muted); margin: 0 0 .5rem; }
+.health { font-size: .82rem; color: var(--muted); }
+.dot { display: inline-block; width: .55rem; height: .55rem; border-radius: 50%;
+       margin: 0 .3rem 0 .7rem; background: var(--muted); }
+.dot.ok { background: var(--ok); } .dot.bad { background: var(--bad); }
+
+form { margin: 1rem 0; }
+.row { display: flex; gap: .5rem; align-items: center; }
+.toggles { margin-top: .5rem; gap: 1.1rem; font-size: .84rem; color: var(--muted); flex-wrap: wrap; }
+.toggles input[type=number] { width: 4rem; }
+input, button {
+  font: inherit; color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: .5rem .6rem;
+}
+#question { flex: 1; }
+button { cursor: pointer; background: var(--accent); color: #fff; border-color: transparent;
+         padding: .5rem 1.1rem; }
+button:disabled { opacity: .55; cursor: progress; }
+
+main { display: grid; grid-template-columns: minmax(0, 1fr) 22rem; gap: 1.25rem; }
+@media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+.answer { white-space: pre-wrap; min-height: 3rem; }
+.cite { color: var(--accent); text-decoration: none; font-weight: 600; }
+.cite:hover { text-decoration: underline; }
+.blocked { border-left: 3px solid var(--bad); background: var(--panel);
+           padding: .6rem .8rem; margin-bottom: .8rem; font-size: .9rem; }
+.rejected { white-space: pre-wrap; color: var(--muted); font-size: .9rem;
+            border-left: 3px solid var(--line); padding-left: .7rem; }
+.verdicts { list-style: none; padding: 0; margin: .8rem 0 0; font-size: .86rem; }
+.verdicts li { border-left: 3px solid var(--bad); padding: .3rem .7rem; margin-bottom: .5rem; }
+.verdicts li.ok { border-left-color: var(--ok); }
+.verdicts .reason { color: var(--muted); }
+
+.stages { list-style: none; padding: 0; margin: 0 0 1.2rem; font-size: .86rem; }
+.stages li { display: flex; justify-content: space-between; gap: .6rem;
+             padding: .28rem 0; border-bottom: 1px dashed var(--line); }
+.stages .detail { color: var(--muted); font-variant-numeric: tabular-nums; }
+.stages li.pending { opacity: .5; }
+.stages li.skipped .detail, .stages li.not_run .detail { font-style: italic; }
+
+.sources details { border: 1px solid var(--line); border-radius: 6px;
+                   padding: .45rem .6rem; margin-bottom: .5rem; background: var(--panel); }
+.sources summary { cursor: pointer; font-size: .86rem; }
+.sources .chunk { white-space: pre-wrap; font-size: .84rem; color: var(--muted);
+                  margin-top: .5rem; max-height: 16rem; overflow: auto; }
+.sources details.hl { outline: 2px solid var(--accent); }
+.muted { color: var(--muted); font-size: .8rem; }
