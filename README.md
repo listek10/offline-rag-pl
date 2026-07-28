@@ -113,7 +113,9 @@ odpowiedzi **inny model-sędzia (Gemma)** sprawdza KAŻDĄ tezę przeciw konteks
 
 ## Stack
 - **Python 3.11**, orkiestracja = cienka własna warstwa (bez LangChain)
-- **Ollama** + **Qwen2.5-7B** (kwantyzacja Q4, GPU) — LLM serwowany lokalnie
+- **Ollama** + **Qwen2.5-7B** (kwantyzacja Q4, GPU) — LLM serwowany lokalnie (domyślny backend)
+- **vLLM 0.26** + **Qwen2.5-7B-Instruct-AWQ** — alternatywny backend pod przepustowość
+  (×3,4 tok/s przy 4+ równoległych żądaniach; patrz sekcja „Serwowanie LLM")
 - **BGE-M3** (sentence-transformers) — embeddingi wielojęzyczne (1024D)
 - **Qdrant** (Docker) — baza wektorowa (metryka cosine, indeks HNSW)
 - **bge-reranker-v2-m3** — cross-encoder do rerankingu
@@ -197,6 +199,89 @@ Trzy rzeczy, które te liczby pokazują:
 
 ---
 
+## Serwowanie LLM: Ollama vs vLLM (zmierzone)
+
+Brief zakładał „Ollama na start, vLLM docelowo". Backend jest **jedną zmienną**
+(`config.LLM_BACKEND`, nadpisywalną środowiskiem), a nie zmianą w pętli RAG — `src/generate/llm.py`
+to cienki dyspozytor na `urllib` (bez biblioteki `openai`, bez klienta Ollamy).
+
+```bash
+# vLLM żyje w OSOBNYM env conda: przyciąga własny torch (2.11+cu130), a stack retrievalowy
+# stoi na cu128 zbudowanym pod Blackwella (sm_120) — wspólna instalacja zdegradowałaby BGE-M3.
+conda create -n vllm-server python=3.11 && conda activate vllm-server && pip install vllm==0.26.0
+python src/serve/vllm_serve.py                 # parametry z configu; HF_HUB_OFFLINE=1
+
+python src/eval/bench_llm.py --prepare                                # prompty raz, na wolnej karcie
+LLM_BACKEND=vllm python src/eval/bench_llm.py --label vllm-awq-util070
+python src/eval/bench_llm.py --compare
+```
+
+### DOWÓD — przepustowość (Qwen2.5-7B, prompty RAG ~2 400 tokenów, 256 tok. wyjścia, temp 0)
+
+| równoległość | Ollama Q4 [tok/s] | vLLM AWQ [tok/s] | zmiana | p95 Ollama [s] | p95 vLLM [s] |
+|---|---|---|---|---|---|
+| 1 | 29,7 | 36,9 | ×1,24 | 3,74 | 2,16 |
+| 4 | 38,3 | 128,2 | **×3,35** | 9,38 | 1,14 |
+| 8 | 37,6 | 127,3 | **×3,39** | 12,39 | 1,29 |
+
+Ollama saturuje się na ~38 tok/s (z 4 na 8 klientów zysk zerowy, p95 rośnie o trzecią część) —
+vLLM utrzymuje ~128 tok/s przy p95 **8× niższym**. Mechanizm: dekodowanie jest ograniczone
+przepustowością pamięci (na każdy token GPU czyta całe wagi), więc continuous batching czyta wagi
+raz dla wielu żądań. Przy równoległości 1 przewaga jest niewielka (×1,24) — i to jest oczekiwane:
+vLLM optymalizuje przepustowość serwera, nie czas jednego zapytania.
+
+### Cena: prealokacja VRAM (PagedAttention) — i realne ograniczenie tej maszyny
+
+vLLM zajmuje swój budżet na starcie i trzyma do końca procesu. Rozkład z logu przy `--util 0.7`
+na 12 GB (widoczne 11,5 GiB):
+
+```
+wagi AWQ 5,29 GiB + szczyt aktywacji 1,04 + non-torch 0,11 + grafy CUDA 0,38 = 6,82 GiB
+pula KV-cache: 1,61 GiB = 30 048 tokenów -> MAKS. RÓWNOLEGŁOŚĆ 7,34x przy oknie 4 096
+```
+1,61 GiB / 30 048 tokenów = **56 KB/token**, dokładnie tyle, ile daje arytmetyka Qwena 2.5-7B
+(28 warstw × 4 głowy KV z GQA × 128 × 2 (K,V) × 2 B) — stąd wiadomo, ile sekwencji się zmieści,
+zanim cokolwiek uruchomimy.
+
+- Zejście `--util` 0,70 → 0,62 **nic nie zmieniło** (135–139 vs 127–128 tok/s): pula KV była i tak
+  większa, niż potrzebują 8 żądania. Poniżej ~0,62 serwer nie wstaje — sam narzut to 6,82 GiB.
+- **vLLM i stack retrievalowy nie mieszczą się razem na 12 GB.** Sprawdzone: przy działającym vLLM
+  serwer UI dostaje CUDA OOM przy ładowaniu cross-encodera, a zapytanie pada na
+  `CUBLAS_STATUS_ALLOC_FAILED`. Ollama tego problemu nie ma, bo ładuje leniwie i **zwalnia** kartę
+  po bezczynności (`keep_alive`).
+- **Wniosek architektoniczny:** na tym sprzęcie Ollama zostaje pod interaktywne UI (grzecznie dzieli
+  GPU z BGE-M3), a vLLM ma sens tam, gdzie liczy się przepustowość i można rozdzielić etapy w
+  czasie — czyli w ewaluacji wsadowej (prompty przygotowane wcześniej, potem sam LLM). Na
+  dedykowanym GPU produkcyjnym ten kompromis znika.
+
+### DOWÓD — jakość po zmianie kwantyzacji Q4_K_M → AWQ
+
+Zmiana backendu zmienia DWIE rzeczy: silnik i kwantyzację (inne zaokrąglenia wag = inny model
+numerycznie). Szybszy silnik z gorszymi odpowiedziami byłby regresją, więc jakość zmierzono na tych
+samych promptach (`src/eval/compare_backends.py`, bramka wyłączona — mierzymy sam model):
+
+| metryka | Ollama Q4_K_M | vLLM AWQ |
+|---|---|---|
+| ugruntowanie tez (sędzia Gemma, n=29) | 0,943 | 0,953 |
+| odpowiedzi z cytatem `[n]` | 0,966 | 0,966 |
+| false-refusal na pytaniach z korpusu | 0,0 | 0,0 |
+| odmowa spoza korpusu (guard #1, sam prompt) | 0,857 | **0,714** |
+
+Wierność i cytowanie bez zmian. Jedyna regresja: AWQ przepuścił **oba** pytania arytmetyczne
+(„√144", „15 × 8"), Q4_K_M jedno — ale ich score rerankera to 0,004 i 0,010, więc **bramka (0,35)
+zatrzymuje je przed modelem** i odmowa end-to-end zostaje 1,00. Praktyczny argument za obronnością
+warstwową: pogorszenie jednego guardu nie przebiło się na wynik pipeline'u.
+
+### Pułapka offline warta zapamiętania
+
+Pierwszy start vLLM padł na `Could not find nvcc` — FlashInfer **kompiluje kernel samplingu JIT-em**
+przy starcie i wymaga pełnego CUDA toolkitu, którego koła pip nie zawierają. Rozwiązanie:
+`VLLM_USE_FLASHINFER_SAMPLER=0` (generujemy zachłannie, `temperature=0`, więc nic nie tracimy).
+Wniosek ogólniejszy dla środowiska air-gapped: kernele kompilowane na maszynie docelowej to
+zależność od toolchainu, którego tam zwykle nie ma.
+
+---
+
 ## Struktura repo
 ```
 config/config.py        # WSZYSTKIE parametry (chunk size, top_k, modele, progi) w jednym miejscu
@@ -204,9 +289,13 @@ src/ingest/             # parse_pdf.py (czyszczenie PDF) + chunk.py (chunking)
 src/index/build_index.py# embeddingi -> Qdrant
 src/retrieve/           # search.py (dense), bm25.py, hybrid.py (RRF), rerank.py
 src/generate/answer.py  # pętla RAG: retrieval -> bramka -> prompt -> LLM -> cytat (+ on_event dla UI)
+src/generate/llm.py     # dyspozytor backendów LLM (Ollama /api/generate vs vLLM /v1/chat/completions)
+src/generate/verify.py  # guard #3: weryfikacja ugruntowania tez po generacji (sędzia Gemma)
 src/serve/              # api.py (3 endpointy), stream.py (mostek callback->iterator), static/ (UI)
+src/serve/vllm_serve.py # start serwera vLLM z parametrami z configu (osobne env conda, offline)
 src/eval/               # metrics.py, run_eval.py (retrieval), eval_answers.py (odpowiedzi),
-                        # calibrate_gate.py (kalibracja progu bramki na held-oucie)
+                        # calibrate_gate.py (kalibracja progu bramki na held-oucie),
+                        # bench_llm.py (przepustowość backendów), compare_backends.py (jakość)
 gold_set/gold.jsonl     # zbiór ewaluacyjny (pytanie -> odpowiedź -> chunk źródłowy)
 gold_set/heldout_gate.jsonl # held-out do kalibracji progu — NIGDY nieraportowany jako metryka
 docs/specs/, docs/plans/# spec i plan implementacji UI (decyzje + odrzucone alternatywy)
@@ -225,6 +314,9 @@ tests/                  # chunking, metryki, BM25/RRF, mostek strumienia, kontra
 - **Gold set n=29** (z korpusu) — liczby wciąż nieco szumne. Próg bramki jest już kalibrowany na
   **osobnym held-oucie**, nie na gold secie (patrz sekcja o kalibracji).
 - **Residual refusal:** przed bramką prosta arytmetyka przeciekała (model liczył); bramka to domyka.
+  Na kwantyzacji AWQ przecieka o jedno pytanie więcej niż na Q4_K_M — bramka nadal to domyka.
+- **vLLM nie zmieści się obok retrievalu na 12 GB VRAM** (zmierzone: CUDA OOM). Domyślnym backendem
+  aplikacji zostaje Ollama; vLLM jest przełączalną opcją pod obciążenia wsadowe i dedykowane GPU.
 - **Hard negatives** („na temat, ale odpowiedzi nie ma") — bramka ich nie łapie (`relevance ≠
   answerability`); dołożony guard #3 (weryfikacja ugruntowania po generacji) łapie **7/8** na
   held-oucie, ale kosztem **~7% false-refusal** na poprawnych odpowiedziach i z 1 przeciekiem
