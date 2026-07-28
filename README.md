@@ -152,18 +152,65 @@ python src/eval/eval_answers.py   # odpowiedzi: refusal, faithfulness, relevance
 
 ---
 
+## UI — lokalny panel analityka
+
+```bash
+python src/serve/api.py                    # potem: http://127.0.0.1:8000
+SERVE_PORT=8100 python src/serve/api.py    # gdy 8000 jest zajęte
+```
+
+Jeden ekran: po lewej odpowiedź z **klikalnymi cytatami** `[n]`, po prawej **panel diagnostyczny**
+— etapy pipeline'u z czasami, wynik bramki (`score` vs próg), werdykty sędziego per teza i źródła
+z pełnym tekstem chunka. Przełączniki `bramka` / `weryfikacja` / `top_k` pozwalają pokazać
+**„przed/po" na żywo**: to samo pytanie z rozbrojonym guardem przecieka halucynacją.
+
+### Zmierzone czasy etapów (RTX 5070 Ti, Qwen2.5-7B Q4 + Gemma 2 9B jako sędzia)
+
+| scenariusz | retrieval | generacja | weryfikacja | **total** | źródła na ekranie |
+|---|--:|--:|--:|--:|--:|
+| pytanie z korpusu | 923 ms | 3665 ms | 9049 ms | **13,6 s** | **+0,98 s** |
+| pytanie odcięte bramką | 648 ms | nie uruchomiono | nie uruchomiono | **0,65 s** | +0,71 s |
+| pytanie trudne (dłuższa odpowiedź) | 683 ms | 6268 ms | 13665 ms | **20,6 s** | +0,74 s |
+
+Trzy rzeczy, które te liczby pokazują:
+- **Guard #3 kosztuje 2,2-2,5× tyle, co sama generacja** — weryfikacja to osobne wywołanie sędziego
+  na każdą tezę. To najdroższa warstwa w systemie i teraz mam to policzone, nie oszacowane.
+- **Bramka jest też optymalizacją opóźnienia:** odmowa w 0,65 s zamiast 13,6 s, bo LLM nie jest
+  w ogóle pytany.
+- **Źródła są na ekranie po ~1 s, odpowiedź po 13-20 s.** Dlatego wysyłamy je w zdarzeniu
+  `retrieval`, a nie razem z odpowiedzią — użytkownik czyta fragmenty, gdy model jeszcze pracuje.
+
+### Decyzje projektowe warte odnotowania
+
+- **FastAPI + statyczny HTML/vanilla JS** — dwie zależności, bez npm i build-stepu (Streamlit
+  wciąga ~30 paczek tranzytywnych i przeładowuje skrypt przy każdej interakcji, co grozi
+  ładowaniem BGE-M3 za każdym kliknięciem).
+- **`POST` + NDJSON, nie SSE** — `EventSource` nie obsługuje POST, więc pytanie musiałoby jechać
+  w query stringu, a stamtąd do logów dostępowych i historii przeglądarki.
+- **Nie strumieniujemy tokenów odpowiedzi, tylko etapy** — guard #3 ocenia odpowiedź *po*
+  generacji i może ją odrzucić; streaming pokazałby halucynację przed werdyktem sędziego.
+- **Modele ładowane raz, przy starcie** (rozgrzewka ~10 s) — nie przy pierwszym pytaniu.
+- **Trzy źródła odmowy rozróżnione w UI** — guard #1 (model sam), #2 (bramka), #3 (weryfikacja)
+  znaczą różne rzeczy; zlanie ich w jedno „nie znajduję odpowiedzi" gubi informację, czy szukać dalej.
+- **Wyjście LLM-a traktowane jak tekst niezaufany** — wstawiane przez `textContent`/węzły DOM,
+  nigdy `innerHTML` (w kontekście bywają znaczniki z PDF-a).
+
+---
+
 ## Struktura repo
 ```
 config/config.py        # WSZYSTKIE parametry (chunk size, top_k, modele, progi) w jednym miejscu
 src/ingest/             # parse_pdf.py (czyszczenie PDF) + chunk.py (chunking)
 src/index/build_index.py# embeddingi -> Qdrant
 src/retrieve/           # search.py (dense), bm25.py, hybrid.py (RRF), rerank.py
-src/generate/answer.py  # pętla RAG: retrieval -> bramka -> prompt -> LLM -> cytat
+src/generate/answer.py  # pętla RAG: retrieval -> bramka -> prompt -> LLM -> cytat (+ on_event dla UI)
+src/serve/              # api.py (3 endpointy), stream.py (mostek callback->iterator), static/ (UI)
 src/eval/               # metrics.py, run_eval.py (retrieval), eval_answers.py (odpowiedzi),
                         # calibrate_gate.py (kalibracja progu bramki na held-oucie)
 gold_set/gold.jsonl     # zbiór ewaluacyjny (pytanie -> odpowiedź -> chunk źródłowy)
 gold_set/heldout_gate.jsonl # held-out do kalibracji progu — NIGDY nieraportowany jako metryka
-tests/                  # testy chunkingu, metryk, BM25/RRF
+docs/specs/, docs/plans/# spec i plan implementacji UI (decyzje + odrzucone alternatywy)
+tests/                  # chunking, metryki, BM25/RRF, mostek strumienia, kontrakt API, logika app.js
 ```
 
 ---
