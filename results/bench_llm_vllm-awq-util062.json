@@ -1,0 +1,49 @@
+{
+  "label": "vllm-awq-util062",
+  "backend": "vllm",
+  "model": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+  "max_tokens": 256,
+  "n_requests": 8,
+  "when": "2026-07-28 19:43",
+  "levels": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "ok": 8,
+      "errors": [],
+      "wall_s": 15.73,
+      "completion_tokens": 595,
+      "tokens_per_s": 37.8,
+      "requests_per_s": 0.509,
+      "lat_p50_s": 1.78,
+      "lat_p95_s": 2.14,
+      "lat_max_s": 4.96
+    },
+    {
+      "concurrency": 4,
+      "requests": 8,
+      "ok": 8,
+      "errors": [],
+      "wall_s": 4.24,
+      "completion_tokens": 574,
+      "tokens_per_s": 135.2,
+      "requests_per_s": 1.885,
+      "lat_p50_s": 0.8,
+      "lat_p95_s": 1.52,
+      "lat_max_s": 4.24
+    },
+    {
+      "concurrency": 8,
+      "requests": 8,
+      "ok": 8,
+      "errors": [],
+      "wall_s": 4.29,
+      "completion_tokens": 595,
+      "tokens_per_s": 138.7,
+      "requests_per_s": 1.864,
+      "lat_p50_s": 1.03,
+      "lat_p95_s": 1.66,
+      "lat_max_s": 4.29
+    }
+  ]
+}

@@ -25,6 +25,12 @@ venv/
 # Wyniki eksperymentów (etap 5)
 results/*.png
 
+# Etap 7: cache promptów do benchmarku i porównania backendów — w pełni regenerowalny
+# (`--prepare`) i zawiera surowy tekst korpusu, więc nie trzymamy go w repo.
+# Same WYNIKI (bench_llm_*.json, backend_answers_*.json) commitujemy — to dowód pomiarów.
+results/bench_prompts.json
+results/backend_prompts.json
+
 # Cache modeli HuggingFace (jeśli ustawiony lokalnie w repo)
 .cache/
 
