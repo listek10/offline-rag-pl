@@ -20,3 +20,11 @@ qdrant-client>=1.10            # klient do self-hosted Qdrant (Docker)
 # (Ollama to osobny serwer, nie paczka pip)
 
 # --- Etap 4-5: ewaluacja / reranking ---   (dodamy później)
+
+# --- Etap 6: warstwa serwująca (UI) ---
+# Cienki serwer HTTP nad istniejącą pętlą RAG. Świadomie BEZ Streamlita/Gradio:
+# tamte wciągają ~30 zależności tranzytywnych i przeładowują cały skrypt przy każdej
+# interakcji (ryzyko ładowania BGE-M3 za każdym kliknięciem). Tu: 2 paczki, proces długo żyjący.
+fastapi>=0.115       # routing + walidacja wejścia (Pydantic) + OpenAPI /docs
+uvicorn>=0.30        # serwer ASGI
+# pytest>=8.0        # testy (dev); httpx (wymagany przez TestClient) jest już w środowisku
