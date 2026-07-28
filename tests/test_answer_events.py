@@ -29,7 +29,9 @@ def collected(monkeypatch):
     """Zbiera zdarzenia i pozwala testowi ustawić zachowanie retrievalu/LLM-a/sędziego."""
     events: list[dict] = []
     monkeypatch.setattr(answer_mod, "hybrid_search", lambda q, top_k=None, rerank=False: [_hit(0.9)])
-    monkeypatch.setattr(answer_mod, "call_ollama", lambda *a, **k: "Norwegia daje 1,75% PKB [1].")
+    # Podmieniamy DYSPOZYTOR (`call_llm`), nie konkretny backend: od etapu 7 pętla RAG woła
+    # generator przez niego, więc to jest jedyny szew, który izoluje test od Ollamy i vLLM naraz.
+    monkeypatch.setattr(answer_mod, "call_llm", lambda *a, **k: "Norwegia daje 1,75% PKB [1].")
     return events
 
 
