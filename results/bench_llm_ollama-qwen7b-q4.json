@@ -1,0 +1,49 @@
+{
+  "label": "ollama-qwen7b-q4",
+  "backend": "ollama",
+  "model": "qwen2.5:7b",
+  "max_tokens": 256,
+  "n_requests": 8,
+  "when": "2026-07-28 19:21",
+  "levels": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "ok": 8,
+      "errors": [],
+      "wall_s": 23.69,
+      "completion_tokens": 703,
+      "tokens_per_s": 29.7,
+      "requests_per_s": 0.338,
+      "lat_p50_s": 3.11,
+      "lat_p95_s": 3.74,
+      "lat_max_s": 5.23
+    },
+    {
+      "concurrency": 4,
+      "requests": 8,
+      "ok": 8,
+      "errors": [],
+      "wall_s": 18.29,
+      "completion_tokens": 700,
+      "tokens_per_s": 38.3,
+      "requests_per_s": 0.437,
+      "lat_p50_s": 7.95,
+      "lat_p95_s": 9.38,
+      "lat_max_s": 10.56
+    },
+    {
+      "concurrency": 8,
+      "requests": 8,
+      "ok": 8,
+      "errors": [],
+      "wall_s": 18.61,
+      "completion_tokens": 700,
+      "tokens_per_s": 37.6,
+      "requests_per_s": 0.43,
+      "lat_p50_s": 7.87,
+      "lat_p95_s": 12.39,
+      "lat_max_s": 18.61
+    }
+  ]
+}
