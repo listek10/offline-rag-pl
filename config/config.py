@@ -83,3 +83,12 @@ VERIFY_MIN_SUPPORTED = 1.0     # 1.0 = wszystkie tezy muszą być poparte (kalib
 # --- Sędzia faithfulness (etap 5) ---
 # INNY model niż generator (Qwen) -> mniej skorelowane błędy = mniejsza cyrkularność oceny.
 JUDGE_MODEL = "gemma2:9b"
+
+# --- Warstwa serwująca / UI (etap 6) ---
+# 127.0.0.1, nie 0.0.0.0: aplikacja jest lokalna i nie ma się wystawiać w sieci.
+SERVE_HOST = "127.0.0.1"
+SERVE_PORT = 8000
+# Rozgrzewka przy starcie: jedno zapytanie na śmieci wciąga BGE-M3 i cross-encoder do VRAM,
+# żeby PIERWSZE pytanie użytkownika było szybkie (w CLI ten koszt płaci się przy każdym
+# uruchomieniu). Wyłączamy w testach — nie chcemy tam GPU.
+SERVE_WARMUP = True
