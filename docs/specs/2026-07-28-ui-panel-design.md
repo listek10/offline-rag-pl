@@ -126,8 +126,13 @@ Wyjście — jedna linia = jedno zdarzenie JSON:
 {"event":"stage","stage":"generation","status":"done","ms":8100}
 {"event":"stage","stage":"verify","status":"done","ms":11200,"grounded_fraction":1.0,
  "verdicts":[{"claim":"…","grounded":true,"reason":"…"}]}
-{"event":"final","answer":"…","blocked_by":null,"rejected_answer":null,"total_ms":19700}
+{"event":"final","answer":"…","blocked_by":null,"self_refused":false,
+ "rejected_answer":null,"grounding":[…],"total_ms":19700}
 ```
+
+`self_refused` jest osobnym polem, bo guard #1 **nie ustawia `blocked_by`** — model odmawia sam,
+z instrukcji w promptcie, i `answer()` zwraca zwykły tekst. Rozpoznajemy to helperem `refused()`
+(patrz tabela trzech źródeł odmowy niżej).
 
 Zdarzenie błędu (zamiast `final`):
 
