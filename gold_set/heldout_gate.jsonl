@@ -15,7 +15,7 @@
 {"id": "h15", "question": "Ile okrętów podwodnych ma marynarka wojenna Norwegii?", "label": "out_of_corpus", "subtype": "bliski-temat"}
 {"id": "h16", "question": "Kiedy Islandia planuje utworzyć własne siły zbrojne?", "label": "out_of_corpus", "subtype": "bliski-temat"}
 {"id": "h17", "question": "Ilu członków liczy łotewska Gwardia Narodowa (Zemessardze)?", "label": "out_of_corpus", "subtype": "bliski-temat"}
-{"id": "h18", "question": "Ile wynoszą wydatki obronne Danii jako procent PKB?", "label": "out_of_corpus", "subtype": "bliski-temat"}
+{"id": "h18", "question": "Ile wynoszą wydatki obronne Danii jako procent PKB?", "label": "in_corpus", "subtype": "faktograficzne"}
 {"id": "h19", "question": "Jakie myśliwce wybrała Finlandia w przetargu HX?", "label": "out_of_corpus", "subtype": "bliski-temat"}
 {"id": "h20", "question": "Jaki jest roczny budżet Rady Arktycznej?", "label": "out_of_corpus", "subtype": "bliski-temat"}
 {"id": "h21", "question": "Jakie państwa tworzą sojusz AUKUS?", "label": "out_of_corpus", "subtype": "sasiedni-obszar"}

@@ -215,8 +215,19 @@ def e2e_refusal(scored: list[dict]) -> dict:
 def main() -> None:
     use_cache = "--cache" in sys.argv
     if use_cache and OUT_PATH.exists():
-        scored = json.loads(OUT_PATH.read_text(encoding="utf-8"))["scored"]
-        print(f"(z cache: {OUT_PATH})")
+        # Z cache bierzemy TYLKO score'y (drogie, wymagają GPU) — ETYKIETY czytamy zawsze
+        # ze zbioru. Wcześniej cache podawał też `label`, więc poprawka błędnie oznaczonego
+        # pytania (h18: korpus ma odpowiedź, chunk #97) nie miała ŻADNEGO efektu przy --cache.
+        # Cichy brak reakcji na zmianę danych jest gorszy niż jawny błąd, stąd też ostrzeżenie.
+        cached = {r["id"]: r["top_score"] for r in
+                  json.loads(OUT_PATH.read_text(encoding="utf-8"))["scored"]}
+        rows = load_heldout()
+        brak = [r["id"] for r in rows if r["id"] not in cached]
+        if brak:
+            sys.exit(f"Cache nie zawiera score'ów dla: {', '.join(brak)}. "
+                     f"Uruchom bez --cache (policzy je na GPU).")
+        scored = [{**r, "top_score": cached[r["id"]]} for r in rows]
+        print(f"(score'y z cache: {OUT_PATH}; etykiety ze zbioru: {HELDOUT_PATH.name})")
     else:
         rows = load_heldout()
         print(f"Held-out: {len(rows)} pytań z {HELDOUT_PATH.name}")
