@@ -221,3 +221,11 @@ def test_zdarzenia_ida_po_HTTP_w_trakcie_pracy_a_nie_hurtem_na_koncu(monkeypatch
 ])
 def test_zle_wejscie_daje_422(payload):
     assert client.post("/api/ask", json=payload).status_code == 422
+
+
+def test_strona_glowna_serwuje_html_z_formularzem():
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers["content-type"]
+    assert 'id="ask-form"' in resp.text        # kotwica dla app.js
+    assert 'id="stages"' in resp.text          # panel przebiegu

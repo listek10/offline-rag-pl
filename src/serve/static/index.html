@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>offline-rag-pl</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>offline-rag-pl</h1>
+    <div id="health" class="health">sprawdzam stan usług…</div>
+  </header>
+
+  <form id="ask-form" autocomplete="off">
+    <div class="row">
+      <input id="question" type="text" maxlength="500" required
+             placeholder="Które państwa tworzą arktyczny kwartet NATO?">
+      <button id="submit" type="submit">Zapytaj</button>
+    </div>
+    <div class="row toggles">
+      <label><input id="gate" type="checkbox" checked> bramka trafności</label>
+      <label><input id="verify" type="checkbox" checked> weryfikacja ugruntowania</label>
+      <label>top_k <input id="top_k" type="number" min="1" value="5"></label>
+      <span id="config-note" class="muted"></span>
+    </div>
+  </form>
+
+  <main>
+    <section id="answer-panel">
+      <h2>Odpowiedź</h2>
+      <div id="blocked" class="blocked" hidden></div>
+      <div id="answer" class="answer"></div>
+      <details id="rejected-box" hidden>
+        <summary>Odrzucona odpowiedź (nie została opublikowana)</summary>
+        <div id="rejected" class="rejected"></div>
+      </details>
+      <ul id="verdicts" class="verdicts"></ul>
+    </section>
+
+    <aside id="diag">
+      <h2>Przebieg</h2>
+      <ol id="stages" class="stages"></ol>
+      <h2>Źródła</h2>
+      <div id="sources" class="sources"></div>
+    </aside>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
