@@ -40,6 +40,25 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 _state = {"warm": False}
 
 
+# --- Wejście ------------------------------------------------------------------------------
+# Walidację robi Pydantic (złe wejście => 422 bez naszego kodu). Górny limit `top_k` to
+# RERANK_CANDIDATES, bo tyle kandydatów wchodzi do rerankera — więcej nie ma skąd wziąć.
+
+class AskRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=500)
+    top_k: int = Field(default=config.TOP_K, ge=1, le=config.RERANK_CANDIDATES)
+    gate: bool = True
+    verify: bool = config.VERIFY_GROUNDING
+
+    @field_validator("question")
+    @classmethod
+    def _niepuste_po_obcieciu(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("pytanie nie może być puste")
+        return v
+
+
 # --- Sondy stanu usług -------------------------------------------------------------------
 # Health NIGDY nie zwraca 5xx: gdy Qdrant leży, UI ma pokazać czerwoną kropkę, a nie samo
 # nie wystartować. Czerwona kropka PRZED zadaniem pytania jest dużo lepsza niż błąd po 20 s.
@@ -71,6 +90,38 @@ def _probe_ollama() -> dict:
         return {"models": names, "missing": [m for m in required if m not in names]}
 
     return _safe_probe(probe, "ollama")
+
+
+# --- Tłumaczenie awarii na komunikaty dla człowieka --------------------------------------
+# Użytkownik ma dostać zdanie, które MÓWI CO ZROBIĆ, a nie traceback. Trzy awarie są realne
+# i przewidywalne, więc obsługujemy je z nazwy; reszta leci jako ogólny błąd serwera.
+
+def _classify_error(exc: BaseException) -> dict:
+    if isinstance(exc, (urllib.error.URLError, TimeoutError)):
+        return {"where": "ollama",
+                "message": f"Nie mogę połączyć się z modelem w Ollamie ({config.OLLAMA_URL}) "
+                           f"lub przekroczono limit czasu. Sprawdź: ollama serve"}
+    if type(exc).__module__.split(".")[0] in {"qdrant_client", "httpx", "grpc", "h11"}:
+        return {"where": "qdrant",
+                "message": "Baza wektorowa Qdrant nie odpowiada. Uruchom: docker start qdrant-osw"}
+    if isinstance(exc, FileNotFoundError):
+        return {"where": "dane",
+                "message": f"Brak pliku z chunkami ({config.CHUNKS_PATH}). "
+                           f"Uruchom src/ingest/chunk.py albo sprawdź symlink data/."}
+    return {"where": "server", "message": f"{type(exc).__name__}: {exc}"[:300]}
+
+
+def _hits_payload(hits: list[dict]) -> list[dict]:
+    """Kształt źródeł NA DRUCIE. Numeracja `n` musi być zgodna z `build_context()` w answer.py,
+    bo to na nią wskazują cytaty [n] w odpowiedzi modelu. `score` = score RERANKERA, czyli ta
+    sama liczba, którą porównuje bramka — żeby UI pokazywało dokładnie to, na czym decyzja stoi.
+    """
+    return [{"n": i,
+             "source": h["source"],
+             "chunk_index": h["chunk_index"],
+             "score": round(h.get("rerank_score", h.get("score", 0.0)), 4),
+             "text": h["text"]}
+            for i, h in enumerate(hits, 1)]
 
 
 # --- Cykl życia aplikacji ----------------------------------------------------------------
@@ -116,6 +167,47 @@ def health() -> dict:
         },
         "warm": _state["warm"],
     }
+
+
+@app.post("/api/ask")
+def ask(req: AskRequest) -> StreamingResponse:
+    """Strumień NDJSON: etapy pipeline'u, a na końcu `final` albo `error`.
+
+    DLACZEGO POST, a nie SSE/GET: `EventSource` nie obsługuje POST, więc wymusiłby pytanie
+    w query stringu — czyli treść zapytania w logach dostępowych i w historii przeglądarki.
+    Dla systemu, który ma być architekturą pod korpus niejawny, to dyskwalifikuje.
+
+    DLACZEGO nie strumieniujemy tokenów odpowiedzi: guard #3 ocenia odpowiedź PO generacji
+    i może ją odrzucić. Streaming pokazałby użytkownikowi halucynację przed werdyktem sędziego.
+    """
+    def work(emit) -> dict:
+        def emit_na_drut(**event) -> None:
+            # Pipeline emituje SWOJE obiekty domenowe; format „na drucie" należy do tej warstwy.
+            if event.get("stage") == "retrieval" and "hits" in event:
+                event["hits"] = _hits_payload(event["hits"])
+            emit(**event)
+
+        t0 = time.perf_counter()
+        result = answer(req.question, top_k=req.top_k, gate=req.gate,
+                        verify=req.verify, on_event=emit_na_drut)
+        blocked_by = result.get("blocked_by")
+        return {
+            "answer": result["answer"],
+            "blocked_by": blocked_by,
+            # Guard #1 NIE ustawia `blocked_by` (model odmawia sam, z instrukcji w promptcie).
+            # Bez tego pola UI zlałby trzy różne odmowy w jedną i zgubił informację, KTÓRA
+            # warstwa zadecydowała — a to jest cały sens panelu diagnostycznego.
+            "self_refused": blocked_by is None and refused(result["answer"]),
+            "rejected_answer": result.get("rejected_answer"),
+            "grounding": result.get("grounding"),
+            "total_ms": round((time.perf_counter() - t0) * 1000),
+        }
+
+    def linie():
+        for event in stream_events(work, _classify_error):
+            yield json.dumps(event, ensure_ascii=False) + "\n"
+
+    return StreamingResponse(linie(), media_type="application/x-ndjson")
 
 
 def main() -> None:
