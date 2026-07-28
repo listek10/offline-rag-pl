@@ -166,6 +166,11 @@ Jeden ekran: po lewej odpowiedź z **klikalnymi cytatami** `[n]`, po prawej **pa
 z pełnym tekstem chunka. Przełączniki `bramka` / `weryfikacja` / `top_k` pozwalają pokazać
 **„przed/po" na żywo**: to samo pytanie z rozbrojonym guardem przecieka halucynacją.
 
+`/api/health` sprawdza **generator i sędziego OSOBNO**, bo to dwie różne usługi: generator idzie
+za `LLM_BACKEND` (Ollama albo vLLM), a sędzia guarda #3 stoi zawsze w Ollamie. Zlanie ich w jedną
+kropkę „Ollama" znaczyłoby, że przy `LLM_BACKEND=vllm` panel świeci zielono, choć generator leży.
+Brak sędziego **nie blokuje** przycisku — bez guarda #3 da się pytać; brak generatora blokuje.
+
 ### Zmierzone czasy etapów (RTX 5070 Ti, Qwen2.5-7B Q4 + Gemma 2 9B jako sędzia)
 
 | scenariusz | retrieval | generacja | weryfikacja | **total** | źródła na ekranie |

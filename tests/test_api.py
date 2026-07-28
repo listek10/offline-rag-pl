@@ -9,6 +9,7 @@ więc rozgrzewka nie próbuje ładować BGE-M3. Test ma trwać milisekundy i dzi
 
 from __future__ import annotations
 
+import io
 import json
 import socket
 import sys
@@ -32,13 +33,16 @@ client = TestClient(api_mod.app)
 def test_health_zwraca_progi_i_modele_z_configu(monkeypatch):
     monkeypatch.setattr(api_mod, "_probe_qdrant",
                         lambda: {"ok": True, "collection": "kolekcja", "points": 1509})
-    monkeypatch.setattr(api_mod, "_probe_ollama",
+    monkeypatch.setattr(api_mod, "_probe_llm",
                         lambda: {"ok": True, "models": ["qwen2.5:7b"], "missing": []})
+    monkeypatch.setattr(api_mod, "_probe_judge",
+                        lambda: {"ok": True, "models": ["gemma2:9b"], "missing": []})
 
     body = client.get("/api/health").json()
 
     assert body["qdrant"]["points"] == 1509
-    assert body["ollama"]["ok"] is True
+    assert body["llm"]["ok"] is True
+    assert body["judge"]["ok"] is True
     # Progi MUSZĄ pochodzić z configu — inaczej UI kłamałoby po zmianie progu.
     assert body["config"]["gate_min"] == config.RELEVANCE_GATE_MIN
     assert body["config"]["top_k"] == config.TOP_K
@@ -51,12 +55,109 @@ def test_health_nie_wywala_sie_gdy_uslugi_leza(monkeypatch):
         raise ConnectionError("brak polaczenia")
 
     monkeypatch.setattr(api_mod, "_probe_qdrant", lambda: api_mod._safe_probe(boom, "qdrant"))
-    monkeypatch.setattr(api_mod, "_probe_ollama", lambda: {"ok": False, "models": [], "missing": []})
+    monkeypatch.setattr(api_mod, "_probe_llm", lambda: {"ok": False, "models": [], "missing": []})
+    monkeypatch.setattr(api_mod, "_probe_judge", lambda: {"ok": False, "models": [], "missing": []})
 
     resp = client.get("/api/health")
 
     assert resp.status_code == 200          # health NIGDY nie zwraca 5xx — inaczej UI nie wie nic
     assert resp.json()["qdrant"]["ok"] is False
+
+
+# --- Świadomość backendu LLM (etap 7) ----------------------------------------------------
+# Diagnostyka MUSI wiedzieć, który silnik jest generatorem: inaczej `/api/health` sprawdza
+# nie ten serwer, a komunikat błędu odsyła użytkownika w złe miejsce.
+
+def _fake_urlopen(routes: dict):
+    """Atrapa `urlopen`: mapuje fragment URL-a na gotowy JSON. Bez sieci i bez serwerów."""
+    class _Resp(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            self.close()
+            return False
+
+    def _open(url, timeout=None):
+        target = url if isinstance(url, str) else url.full_url
+        for fragment, body in routes.items():
+            if fragment in target:
+                return _Resp(json.dumps(body).encode("utf-8"))
+        raise urllib.error.URLError(f"brak atrapy dla {target}")
+
+    return _open
+
+
+def test_sonda_generatora_pyta_vllm_gdy_backend_to_vllm(monkeypatch):
+    monkeypatch.setattr(config, "LLM_BACKEND", "vllm")
+    monkeypatch.setattr(api_mod.urllib.request, "urlopen", _fake_urlopen({
+        "/v1/models": {"data": [{"id": config.VLLM_MODEL}]},
+    }))
+
+    probe = api_mod._probe_llm()
+
+    assert probe["ok"] is True
+    assert probe["missing"] == []
+    assert config.VLLM_MODEL in probe["models"]
+
+
+def test_sonda_generatora_widzi_brak_modelu_na_vllm(monkeypatch):
+    monkeypatch.setattr(config, "LLM_BACKEND", "vllm")
+    monkeypatch.setattr(api_mod.urllib.request, "urlopen", _fake_urlopen({
+        "/v1/models": {"data": [{"id": "inny/model"}]},
+    }))
+
+    assert api_mod._probe_llm()["missing"] == [config.VLLM_MODEL]
+
+
+def test_sonda_generatora_pyta_ollame_gdy_backend_to_ollama(monkeypatch):
+    monkeypatch.setattr(config, "LLM_BACKEND", "ollama")
+    monkeypatch.setattr(api_mod.urllib.request, "urlopen", _fake_urlopen({
+        "/api/tags": {"models": [{"name": config.LLM_MODEL}]},
+    }))
+
+    probe = api_mod._probe_llm()
+
+    assert probe["ok"] is True and probe["missing"] == []
+
+
+def test_sedzia_jest_sprawdzany_w_ollamie_takze_przy_backendzie_vllm(monkeypatch):
+    """Guard #3 działa na Gemmie w Ollamie NIEZALEŻNIE od backendu generatora — health musi to
+    sprawdzać, inaczej weryfikacja padnie w trakcie pytania, a nie przed nim."""
+    monkeypatch.setattr(config, "LLM_BACKEND", "vllm")
+    monkeypatch.setattr(api_mod.urllib.request, "urlopen", _fake_urlopen({
+        "/api/tags": {"models": [{"name": "cos-innego"}]},
+    }))
+
+    probe = api_mod._probe_judge()
+
+    assert probe["ok"] is True                       # Ollama odpowiada...
+    assert probe["missing"] == [config.JUDGE_MODEL]  # ...ale sędziego w niej nie ma
+
+
+def test_health_niesie_backend_i_model_generatora(monkeypatch):
+    monkeypatch.setattr(config, "LLM_BACKEND", "vllm")
+    monkeypatch.setattr(api_mod, "_probe_qdrant", lambda: {"ok": True, "points": 1})
+    monkeypatch.setattr(api_mod, "_probe_llm", lambda: {"ok": True, "models": [], "missing": []})
+    monkeypatch.setattr(api_mod, "_probe_judge", lambda: {"ok": True, "models": [], "missing": []})
+
+    cfg = client.get("/api/health").json()["config"]
+
+    assert cfg["backend"] == "vllm"
+    # Nazwa modelu w UI musi być nazwą modelu, który REALNIE liczy odpowiedź.
+    assert cfg["llm"] == config.VLLM_MODEL
+    assert cfg["judge"] == config.JUDGE_MODEL
+
+
+def test_blad_polaczenia_przy_vllm_wskazuje_vllm_nie_ollame(monkeypatch):
+    monkeypatch.setattr(config, "LLM_BACKEND", "vllm")
+
+    out = api_mod._classify_error(urllib.error.URLError("connection refused"))
+
+    assert out["where"] == "vllm"
+    assert "vllm_serve.py" in out["message"]
+    # Sędzia stoi w Ollamie, więc przy włączonym guardzie #3 to też kandydat na winowajcę.
+    assert config.OLLAMA_URL in out["message"]
 
 
 def _ask(payload: dict) -> list[dict]:

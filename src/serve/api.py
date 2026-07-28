@@ -82,14 +82,54 @@ def _probe_qdrant() -> dict:
     return _safe_probe(probe, "qdrant")
 
 
-def _probe_ollama() -> dict:
+def _ollama_models() -> list[str]:
+    with urllib.request.urlopen(f"{config.OLLAMA_URL}/api/tags", timeout=3) as resp:
+        return [m["name"] for m in json.loads(resp.read()).get("models", [])]
+
+
+def _generator_model() -> str:
+    """Nazwa modelu, który REALNIE liczy odpowiedź (zależna od backendu, etap 7)."""
+    return config.VLLM_MODEL if config.LLM_BACKEND == "vllm" else config.LLM_MODEL
+
+
+def _probe_llm() -> dict:
+    """Sonda GENERATORA — pyta ten serwer, który naprawdę generuje (patrz `config.LLM_BACKEND`).
+
+    DLACZEGO zależna od backendu: sonda wbita na sztywno w Ollamę przy `LLM_BACKEND=vllm`
+    świeciłaby zielono, choć generator (vLLM) mógłby leżeć — a to jest dokładnie ten rodzaj
+    diagnostyki, która szkodzi bardziej niż jej brak, bo usypia.
+    """
+    if config.LLM_BACKEND == "vllm":
+        def probe() -> dict:
+            # vLLM wystawia listę wag pod /v1/models (API zgodne z OpenAI), nie /api/tags.
+            with urllib.request.urlopen(f"{config.VLLM_URL}/models", timeout=3) as resp:
+                names = [m["id"] for m in json.loads(resp.read()).get("data", [])]
+            return {"backend": "vllm", "url": config.VLLM_URL, "models": names,
+                    "missing": [m for m in [config.VLLM_MODEL] if m not in names]}
+
+        return _safe_probe(probe, "vllm")
+
     def probe() -> dict:
-        with urllib.request.urlopen(f"{config.OLLAMA_URL}/api/tags", timeout=3) as resp:
-            names = [m["name"] for m in json.loads(resp.read()).get("models", [])]
-        required = [config.LLM_MODEL, config.JUDGE_MODEL]
-        return {"models": names, "missing": [m for m in required if m not in names]}
+        names = _ollama_models()
+        return {"backend": "ollama", "url": config.OLLAMA_URL, "models": names,
+                "missing": [m for m in [config.LLM_MODEL] if m not in names]}
 
     return _safe_probe(probe, "ollama")
+
+
+def _probe_judge() -> dict:
+    """Sonda SĘDZIEGO guarda #3 — ZAWSZE Ollama, także gdy generator liczy na vLLM.
+
+    Dwa modele 7B i 9B nie zmieszczą się naraz w 12 GB VRAM, więc sędzia zostaje na Ollamie
+    (patrz `call_ollama` w llm.py). Sprawdzamy go OSOBNO, bo brak sędziego wywala dopiero
+    guard #3 — czyli w połowie odpowiedzi, po kilkunastu sekundach czekania.
+    """
+    def probe() -> dict:
+        names = _ollama_models()
+        return {"url": config.OLLAMA_URL, "models": names,
+                "missing": [m for m in [config.JUDGE_MODEL] if m not in names]}
+
+    return _safe_probe(probe, "ollama-judge")
 
 
 # --- Tłumaczenie awarii na komunikaty dla człowieka --------------------------------------
@@ -98,6 +138,14 @@ def _probe_ollama() -> dict:
 
 def _classify_error(exc: BaseException) -> dict:
     if isinstance(exc, (urllib.error.URLError, TimeoutError)):
+        # Komunikat MUSI wskazać właściwy serwer. Przy backendzie vLLM podajemy oba adresy,
+        # bo w grze są dwa procesy: generator na vLLM i sędzia guarda #3 na Ollamie —
+        # a z samego URLError nie wynika, który z nich nie odpowiedział.
+        if config.LLM_BACKEND == "vllm":
+            return {"where": "vllm",
+                    "message": f"Nie mogę połączyć się z modelem: generator na vLLM "
+                               f"({config.VLLM_URL}) albo sędzia w Ollamie ({config.OLLAMA_URL}). "
+                               f"Sprawdź: python src/serve/vllm_serve.py oraz ollama serve"}
         return {"where": "ollama",
                 "message": f"Nie mogę połączyć się z modelem w Ollamie ({config.OLLAMA_URL}) "
                            f"lub przekroczono limit czasu. Sprawdź: ollama serve"}
@@ -151,7 +199,12 @@ app = FastAPI(title="offline-rag-pl", lifespan=lifespan)
 def health() -> dict:
     return {
         "qdrant": _probe_qdrant(),
-        "ollama": _probe_ollama(),
+        # Dwie OSOBNE sondy zamiast jednej „ollama": generator zależy od backendu, a sędzia
+        # guarda #3 stoi zawsze w Ollamie. Zlanie ich w jedną kropkę gubiło informację, KTÓRA
+        # usługa leży — a to różne komendy naprawcze i różny wpływ (bez sędziego pipeline
+        # nadal odpowiada, tylko bez guarda #3; bez generatora nie odpowiada wcale).
+        "llm": _probe_llm(),
+        "judge": _probe_judge(),
         # Progi i modele czytane z configu, NIGDY wpisane w HTML — inaczej UI kłamałoby
         # po zmianie progu, a to jest projekt, w którym progi się zmienia i mierzy.
         "config": {
@@ -159,7 +212,8 @@ def health() -> dict:
             "gate_min": config.RELEVANCE_GATE_MIN,
             "verify_min_supported": config.VERIFY_MIN_SUPPORTED,
             "verify_default": config.VERIFY_GROUNDING,
-            "llm": config.LLM_MODEL,
+            "backend": config.LLM_BACKEND,
+            "llm": _generator_model(),
             "judge": config.JUDGE_MODEL,
             "embed": config.EMBED_MODEL,
             "reranker": config.RERANK_MODEL,

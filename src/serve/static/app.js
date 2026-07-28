@@ -20,10 +20,17 @@ async function loadHealth() {
   try {
     const h = await (await fetch("/api/health")).json();
     CFG = h.config;
-    const q = h.qdrant, o = h.ollama;
+    const q = h.qdrant, llm = h.llm, judge = h.judge;
     $("health").textContent = "";
     addDot("Qdrant", q.ok, q.ok ? `${q.points} chunków` : q.error || "brak");
-    addDot("Ollama", o.ok, o.ok ? (o.missing.length ? `brak modeli: ${o.missing.join(", ")}` : "modele gotowe") : o.error || "brak");
+    // Etykieta kropki mówi, KTÓRY silnik generuje (Ollama czy vLLM) — inaczej po przełączeniu
+    // backendu panel diagnostyczny pokazywałby nazwę nie tego serwera, co liczy odpowiedź.
+    const nazwaLLM = CFG.backend === "vllm" ? "vLLM" : "Ollama";
+    addDot(nazwaLLM, llm.ok, llm.ok ? (llm.missing.length ? `brak modeli: ${llm.missing.join(", ")}` : "model gotowy") : llm.error || "brak");
+    // Sędzia guarda #3 osobno: stoi ZAWSZE w Ollamie, a jego brak nie blokuje odpowiadania —
+    // tylko weryfikację. Dlatego jest kropką ostrzegawczą, nie warunkiem gotowości.
+    addDot("sędzia", judge.ok && !judge.missing?.length,
+           judge.ok ? (judge.missing.length ? `brak modelu: ${judge.missing.join(", ")}` : `${CFG.judge} gotowy`) : judge.error || "brak");
     if (!h.warm) addDot("modele", false, "nierozgrzane");
     $("top_k").value = CFG.top_k;
     $("top_k").max = CFG.max_top_k;
@@ -31,7 +38,9 @@ async function loadHealth() {
     $("config-note").textContent =
       `próg bramki ${CFG.gate_min} · min. poparte tezy ${CFG.verify_min_supported} · ` +
       `${CFG.llm} + sędzia ${CFG.judge}`;
-    const gotowe = q.ok && o.ok;
+    // Gotowość = retrieval + generator. Sędziego świadomie NIE liczymy: gdy go brak, można
+    // pytać z wyłączonym guardem #3, a zablokowanie przycisku odebrałoby tę możliwość.
+    const gotowe = q.ok && llm.ok;
     $("submit").disabled = !gotowe;
     if (!gotowe) $("submit").textContent = "usługi niegotowe";
   } catch (e) {

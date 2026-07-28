@@ -52,8 +52,8 @@ global.fetch = () => Promise.reject(new Error("bez sieci w tej weryfikacji"));
 
 // app.js na koncu wola loadHealth() i rejestruje submit — atrapa to zniesie.
 const src = fs.readFileSync(path, "utf8");
-const mod = new Function(src + "\n;return { renderAnswer, renderStage, renderFinal, resetStages, readNdjson };");
-const { renderAnswer, renderStage, resetStages } = mod();
+const mod = new Function(src + "\n;return { renderAnswer, renderStage, renderFinal, resetStages, readNdjson, loadHealth };");
+const { renderAnswer, renderStage, resetStages, loadHealth } = mod();
 resetStages();  // jak w realnej petli zapytania
 
 let bledy = 0;
@@ -92,5 +92,47 @@ renderStage({ event: "stage", stage: "generation", status: "done", ms: 8100 });
 ok(document.getElementById("stage-generation").querySelector(".detail").textContent === "8.1 s",
    "8100 ms -> '8.1 s'");
 
-console.log(bledy === 0 ? "\nWSZYSTKO OK" : `\n${bledy} BLEDOW`);
-process.exit(bledy === 0 ? 0 : 1);
+/* --- 4. health: etykieta kropki musi nazywac WLASCIWY silnik (etap 7) --- */
+/* Po dodaniu przelacznika backendu panel czytal `h.ollama`. Gdyby ktos przywrocil ten klucz
+   albo zapomnial o `config.backend`, kropka klamalaby o tym, co liczy odpowiedz — a tego
+   nie widac ani w testach Pythona (nie znaja JS), ani na oko (dot jest zielony tak samo). */
+function zdrowieAtrapa(payload) {
+  global.fetch = () => Promise.resolve({ json: () => Promise.resolve(payload) });
+}
+const HEALTH_VLLM = {
+  qdrant: { ok: true, points: 1509 },
+  llm: { ok: true, models: ["Qwen/Qwen2.5-7B-Instruct-AWQ"], missing: [] },
+  judge: { ok: true, models: ["gemma2:9b"], missing: [] },
+  config: { top_k: 5, max_top_k: 20, gate_min: 0.35, verify_min_supported: 1.0,
+            verify_default: true, backend: "vllm", llm: "Qwen/Qwen2.5-7B-Instruct-AWQ",
+            judge: "gemma2:9b", embed: "BAAI/bge-m3", reranker: "BAAI/bge-reranker-v2-m3" },
+  warm: true,
+};
+
+(async () => {
+  zdrowieAtrapa(HEALTH_VLLM);
+  await loadHealth();
+  // addDot sklada <span><span class=dot></span>"etykieta: detal"</span> — tekst jest w
+  // DRUGIM dziecku (wezel tekstowy), wiec sklejamy wszystkie dzieci, nie bierzemy pierwszego.
+  const etykiety = document.getElementById("health").children
+    .map((c) => c.children.map((x) => x.textContent).join("")).join(" | ");
+  ok(/vLLM/.test(etykiety), `backend vllm -> kropka nazywa sie vLLM (jest: "${etykiety}")`);
+  ok(!/Ollama/.test(etykiety), "przy backendzie vllm nie klamiemy slowem 'Ollama'");
+  ok(document.getElementById("submit").disabled === false,
+     "Qdrant + generator OK -> przycisk aktywny");
+
+  // Brak SEDZIEGO nie moze blokowac pytania: mozna pytac z wylaczonym guardem #3.
+  zdrowieAtrapa({ ...HEALTH_VLLM, judge: { ok: true, models: [], missing: ["gemma2:9b"] } });
+  await loadHealth();
+  ok(document.getElementById("submit").disabled === false,
+     "brak sedziego -> przycisk NADAL aktywny (guard #3 mozna wylaczyc)");
+
+  // Brak GENERATORA blokuje — bez niego nie ma odpowiedzi wcale.
+  zdrowieAtrapa({ ...HEALTH_VLLM, llm: { ok: false, error: "URLError" } });
+  await loadHealth();
+  ok(document.getElementById("submit").disabled === true,
+     "generator lezy -> przycisk zablokowany");
+
+  console.log(bledy === 0 ? "\nWSZYSTKO OK" : `\n${bledy} BLEDOW`);
+  process.exit(bledy === 0 ? 0 : 1);
+})();
