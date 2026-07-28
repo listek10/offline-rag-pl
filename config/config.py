@@ -7,6 +7,7 @@ a nie polować po plikach. Zmiana parametru w eksperymencie (etap 5: optymalizac
 ma być jednolinijkowa.
 """
 
+import os
 from pathlib import Path
 
 # --- Ścieżki ---
@@ -87,7 +88,11 @@ JUDGE_MODEL = "gemma2:9b"
 # --- Warstwa serwująca / UI (etap 6) ---
 # 127.0.0.1, nie 0.0.0.0: aplikacja jest lokalna i nie ma się wystawiać w sieci.
 SERVE_HOST = "127.0.0.1"
-SERVE_PORT = 8000
+# Port z możliwością nadpisania środowiskiem: 8000 to popularny domyślny, więc realnie
+# bywa zajęty przez inny projekt (u mnie już był). Domyślna wartość zostaje TUTAJ, więc
+# zasada „konfiguracja w jednym miejscu" jest zachowana — env tylko nadpisuje na czas uruchomienia:
+#     SERVE_PORT=8100 python src/serve/api.py
+SERVE_PORT = int(os.environ.get("SERVE_PORT", 8000))
 # Rozgrzewka przy starcie: jedno zapytanie na śmieci wciąga BGE-M3 i cross-encoder do VRAM,
 # żeby PIERWSZE pytanie użytkownika było szybkie (w CLI ten koszt płaci się przy każdym
 # uruchomieniu). Wyłączamy w testach — nie chcemy tam GPU.
