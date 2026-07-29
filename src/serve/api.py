@@ -23,14 +23,18 @@ import urllib.request
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
+from starlette.concurrency import run_in_threadpool
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
 from src.generate.answer import answer, refused
+from src.index import ad_hoc
+from src.ingest.upload import UploadRejected
+from src.retrieve import corpus as corpus_mod
 from src.retrieve.hit import get_rerank_score
 from src.serve.stream import stream_events
 
@@ -50,6 +54,10 @@ class AskRequest(BaseModel):
     top_k: int = Field(default=config.TOP_K, ge=1, le=config.RERANK_CANDIDATES)
     gate: bool = True
     verify: bool = config.VERIFY_GROUNDING
+    # Korpus podajemy NAZWĄ, nie listą dopuszczalnych wartości w Pydanticu: zbiór korpusów jest
+    # DYNAMICZNY (ulotny pojawia się i ginie razem z dokumentem demo), więc walidacja należy do
+    # rejestru — i musi umieć powiedzieć „ten korpus już nie istnieje", a nie tylko „zła wartość".
+    corpus: str = Field(default=corpus_mod.DEFAULT, max_length=40)
 
     @field_validator("question")
     @classmethod
@@ -177,6 +185,11 @@ def _hits_payload(hits: list[dict]) -> list[dict]:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Zamiatacz ulotnej kolekcji przy STARCIE. Dlaczego nie wystarczy sprzątanie przy zamknięciu:
+    # `kill -9`, OOM albo padnięcie procesu nie wykonują kodu zamykania, więc kolekcja demo
+    # przeżyłaby restart — a wtedy „ulotność" byłaby obietnicą, nie właściwością.
+    ad_hoc.drop()
+
     if config.SERVE_WARMUP:
         # Rozgrzewka: pierwszy `hybrid_search` ładuje BGE-M3 i cross-encoder (kilkanaście
         # sekund). Płacimy ten koszt PRZY STARCIE, nie przy pierwszym pytaniu użytkownika —
@@ -191,6 +204,8 @@ async def lifespan(app: FastAPI):
             # Brak rozgrzewki nie może zabić serwera — UI pokaże `warm:false` i czerwoną kropkę.
             log.exception("rozgrzewka nieudana — serwer wstaje mimo to")
     yield
+    # Dokument demo nie ma prawa przeżyć procesu (patrz `src/index/ad_hoc.py`).
+    ad_hoc.drop()
 
 
 app = FastAPI(title="offline-rag-pl", lifespan=lifespan)
@@ -219,9 +234,76 @@ def health() -> dict:
             "embed": config.EMBED_MODEL,
             "reranker": config.RERANK_MODEL,
             "max_top_k": config.RERANK_CANDIDATES,
+            # Limity uploadu też z configu: wpisane w HTML rozjechałyby się po zmianie limitu,
+            # a użytkownik dowiedziałby się o odrzuceniu dopiero po wysłaniu 40 MB.
+            "upload_max_mb": round(config.UPLOAD_MAX_BYTES / (1024 * 1024)),
+            "upload_max_pages": config.UPLOAD_MAX_PAGES,
+            # Nazwy korpusów i etykieta bazowego — UI nie ma prawa ich znać z HTML-a, bo wtedy
+            # zmiana `corpus.DEFAULT` po stronie Pythona dawałaby 400 przy pierwszym pytaniu.
+            "base_corpus": corpus_mod.DEFAULT,
+            "upload_corpus": corpus_mod.AD_HOC,
+            "base_corpus_label": corpus_mod.resolve(None).label,
         },
+        # Stan ulotnego korpusu: po odświeżeniu strony UI musi wiedzieć, czy dokument demo
+        # jeszcze żyje (przetrwał F5, ale nie przetrwa restartu serwera — i to jest zamierzone).
+        "upload": _upload_state(),
         "warm": _state["warm"],
     }
+
+
+def _upload_state() -> dict:
+    c = corpus_mod.ad_hoc()
+    if c is None:
+        return {"active": False}
+    return {"active": True, "corpus": c.name, "collection": c.collection, **c.meta}
+
+
+# --- Wgrywanie PDF-u ad hoc (etap 2) -----------------------------------------------------
+
+@app.post("/api/upload")
+async def upload(request: Request, name: str = "") -> dict:
+    """Bajty PDF-a -> ulotny korpus. Zwraca statystyki dokumentu (strony, chunki, czas).
+
+    DLACZEGO SUROWE BAJTY W CIELE, A NIE `multipart/form-data` (czyli `UploadFile`): Starlette
+    trzyma `UploadFile` w `SpooledTemporaryFile(max_size=1 MB)`, więc każdy PDF większy niż
+    megabajt ZOSTAŁBY ZAPISANY NA DYSKU w katalogu tymczasowym. To łamie wymóg „plik demo nie
+    dotyka dysku" — dokument miałby przeżyć proces w /tmp. Efekt uboczny wyboru: nie ma
+    zależności `python-multipart`. Nazwa pliku jedzie w query stringu (`?name=`), bo jest
+    potrzebna jako etykieta źródła w cytatach.
+
+    `async def` + `run_in_threadpool`: ciało requestu czytamy asynchronicznie, ale samo
+    indeksowanie (PyMuPDF + BGE-M3 na GPU, kilka sekund) jest BLOKUJĄCE. Zostawione w pętli
+    zdarzeń zamroziłoby cały serwer, w tym `/api/health`, którym UI sprawdza stan.
+    """
+    # Limit sprawdzamy NA NAGŁÓWKU, przed `await request.body()` — inaczej 200-megabajtowy plik
+    # wylądowałby najpierw w pamięci procesu, a dopiero potem dowiedzielibyśmy się, że jest za duży.
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > config.UPLOAD_MAX_BYTES:
+        raise HTTPException(status_code=413, detail=(
+            f"Plik ma {int(declared) / (1024 * 1024):.1f} MB, a limit dla dokumentu demo to "
+            f"{config.UPLOAD_MAX_BYTES / (1024 * 1024):.0f} MB."))
+
+    data = await request.body()
+    try:
+        return await run_in_threadpool(ad_hoc.build, data, name)
+    except UploadRejected as exc:
+        # Wina WEJŚCIA (skan, uszkodzony plik, limit) — 400 i zdanie po polsku.
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        # Awaria usługi (Qdrant, GPU) — traceback TYLKO do logu, do przeglądarki komunikat.
+        log.exception("upload nieudany")
+        raise HTTPException(status_code=500, detail=_classify_error(exc)["message"]) from exc
+
+
+@app.delete("/api/upload")
+def upload_delete() -> dict:
+    """Kasuje dokument demo (kolekcja + rejestr) i wraca do korpusu zmierzonego.
+
+    Endpoint istnieje, bo ulotność „przy zamknięciu procesu" to za mało dla demo: po pokazaniu
+    obcego PDF-u chcę móc wrócić do korpusu, na którym mam zmierzone liczby, bez restartu serwera.
+    """
+    ad_hoc.drop()
+    return {"ok": True}
 
 
 @app.post("/api/ask")
@@ -235,6 +317,16 @@ def ask(req: AskRequest) -> StreamingResponse:
     DLACZEGO nie strumieniujemy tokenów odpowiedzi: guard #3 ocenia odpowiedź PO generacji
     i może ją odrzucić. Streaming pokazałby użytkownikowi halucynację przed werdyktem sędziego.
     """
+    # Korpus rozstrzygamy PRZED uruchomieniem strumienia: „nie ma takiego korpusu" to błąd
+    # wejścia (400 z podpowiedzią), a nie zdarzenie w środku odpowiedzi. Ulotny korpus ginie
+    # razem z procesem, więc przeglądarka z zapamiętanym przełącznikiem trafi tu po restarcie.
+    try:
+        korpus = corpus_mod.resolve(req.corpus)
+    except corpus_mod.UnknownCorpus as exc:
+        raise HTTPException(status_code=400, detail=(
+            f"Korpus „{req.corpus}” nie istnieje w tym procesie. Dokument demo jest ulotny — "
+            f"wgraj PDF ponownie albo przełącz się na korpus zmierzony.")) from exc
+
     def work(emit) -> dict:
         def emit_na_drut(**event) -> None:
             # Pipeline emituje SWOJE obiekty domenowe; format „na drucie" należy do tej warstwy.
@@ -244,7 +336,7 @@ def ask(req: AskRequest) -> StreamingResponse:
 
         t0 = time.perf_counter()
         result = answer(req.question, top_k=req.top_k, gate=req.gate,
-                        verify=req.verify, on_event=emit_na_drut)
+                        verify=req.verify, on_event=emit_na_drut, corpus=korpus)
         blocked_by = result.get("blocked_by")
         return {
             "answer": result["answer"],

@@ -26,6 +26,24 @@
     </div>
   </form>
 
+  <!-- Etap 2: przełącznik korpusu + wgrywanie PDF-u ad hoc.
+       Opcje selecta NIE mają wpisanych wartości: nazwy korpusów ustawia app.js z /api/health,
+       żeby nie istniały dwa opisy jednej prawdy (zmiana `corpus.DEFAULT` w Pythonie musiałaby
+       być pamiętana też tutaj — a nie byłaby). -->
+  <section id="corpus-panel">
+    <label>korpus
+      <select id="corpus">
+        <option id="corpus-base">korpus zmierzony</option>
+        <option id="corpus-upload" disabled>dokument ad hoc (brak — wgraj PDF)</option>
+      </select>
+    </label>
+    <input id="pdf" type="file" accept="application/pdf">
+    <button id="upload-btn" type="button">wgraj PDF</button>
+    <button id="upload-clear" type="button" hidden>usuń dokument demo</button>
+    <span id="upload-msg" class="muted"></span>
+    <p id="corpus-warning" class="warning" hidden></p>
+  </section>
+
   <main>
     <section id="answer-panel">
       <h2>Odpowiedź</h2>
