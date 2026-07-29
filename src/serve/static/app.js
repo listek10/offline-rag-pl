@@ -14,6 +14,8 @@ const STAGES = [
   ["verify", "weryfikacja ugruntowania"],
 ];
 let CFG = null;
+// Nazwy korpusów przychodzą z /api/health — patrz komentarz przy <select id="corpus"> w HTML.
+const CORPUS = { base: null, upload: null };
 
 /* --- health --------------------------------------------------------------------------- */
 async function loadHealth() {
@@ -38,6 +40,13 @@ async function loadHealth() {
     $("config-note").textContent =
       `próg bramki ${CFG.gate_min} · min. poparte tezy ${CFG.verify_min_supported} · ` +
       `${CFG.llm} + sędzia ${CFG.judge}`;
+    // Nazwy korpusów i limity uploadu z serwera, nie z HTML-a (patrz komentarz w index.html).
+    CORPUS.base = CFG.base_corpus;
+    CORPUS.upload = CFG.upload_corpus;
+    $("corpus-base").value = CFG.base_corpus;
+    $("corpus-base").textContent = CFG.base_corpus_label;
+    $("corpus-upload").value = CFG.upload_corpus;
+    renderUpload(h.upload);
     // Gotowość = retrieval + generator. Sędziego świadomie NIE liczymy: gdy go brak, można
     // pytać z wyłączonym guardem #3, a zablokowanie przycisku odebrałoby tę możliwość.
     const gotowe = q.ok && llm.ok;
@@ -56,6 +65,70 @@ function addDot(label, ok, detail) {
   span.appendChild(document.createTextNode(`${label}: ${detail}`));
   span.title = detail;
   $("health").appendChild(span);
+}
+
+/* --- korpus: przełącznik i wgrywanie PDF-u (etap 2) ----------------------------------- */
+/* Po co to w ogóle jest: rekruter przynosi własny PDF i widzi, że CAŁY pipeline (parsowanie ->
+ * chunking -> embedding -> indeks -> hybryda -> trzy guardy -> cytowanie) działa na dokumencie
+ * nigdy niewidzianym, BEZ dotykania modelu. Dokument leci do OSOBNEJ, ulotnej kolekcji —
+ * kolekcja, na której zmierzone są liczby z README, musi zostać zamrożona. */
+
+function renderUpload(up) {
+  const aktywny = !!(up && up.active);
+  const opt = $("corpus-upload");
+  opt.disabled = !aktywny;
+  opt.textContent = aktywny
+    ? `dokument ad hoc: ${up.source} (${up.chunks} chunków, ${up.pages} s.)`
+    : "dokument ad hoc (brak — wgraj PDF)";
+  $("upload-clear").hidden = !aktywny;
+  // Ulotny korpus ginie razem z procesem serwera. Przeglądarka z zapamiętanym wyborem musi
+  // wrócić na korpus zmierzony, inaczej pierwsze pytanie po restarcie dostaje 400.
+  if (!aktywny && $("corpus").value === CORPUS.upload) $("corpus").value = CORPUS.base;
+  renderCorpusWarning();
+}
+
+function renderCorpusWarning() {
+  const demo = $("corpus").value === CORPUS.upload;
+  const w = $("corpus-warning");
+  w.hidden = !demo;
+  if (!demo) return;
+  // Uczciwość zamiast wrażenia: progi guardów są kalibrowane na held-oucie Z KORPUSU OSW.
+  // Liczby czytamy z configu (nie wpisujemy w HTML), bo próg się zmienia i jest mierzony.
+  w.textContent =
+    `Uwaga: próg bramki ${CFG.gate_min} i próg weryfikacji ${CFG.verify_min_supported} są ` +
+    `skalibrowane na held-oucie z korpusu OSW, nie na tym dokumencie. Guardy działają, ale ` +
+    `ich ZMIERZONE gwarancje (przecieki, false-refusal) nie przenoszą się na obcy PDF.`;
+}
+
+async function wgrajPdf(plik) {
+  const msg = $("upload-msg");
+  msg.textContent = `indeksuję ${plik.name}…`;
+  try {
+    // Plik jedzie jako SUROWE BAJTY w ciele POST-a, nie jako multipart: `UploadFile` w Starlette
+    // zapisałby PDF >1 MB do pliku tymczasowego na dysku, a dokument demo nie ma prawa dotknąć
+    // dysku. Nazwa pliku (etykieta źródła w cytatach) idzie w query stringu.
+    const resp = await fetch(`/api/upload?name=${encodeURIComponent(plik.name)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/pdf" },
+      body: plik,
+    });
+    const body = await resp.json();
+    if (!resp.ok) {
+      // Powód odmowy (skan, uszkodzony plik, limit) opisuje SERWER — UI go nie zgaduje,
+      // bo rozjechałby się z polityką w src/ingest/upload.py.
+      msg.textContent = "Nie wgrano: " + (body.detail || `błąd ${resp.status}`);
+      return null;
+    }
+    renderUpload({ active: true, ...body });
+    $("corpus").value = CORPUS.upload;      // demo od razu pyta o WGRANY dokument
+    renderCorpusWarning();
+    msg.textContent = `${body.source}: ${body.pages} s., ${body.chunks} chunków, `
+                    + `${body.points} wektorów w ${(body.ms / 1000).toFixed(1)} s`;
+    return body;
+  } catch (e) {
+    msg.textContent = "Nie wgrano: " + e;
+    return null;
+  }
 }
 
 /* --- parser strumienia NDJSON --------------------------------------------------------- */
@@ -202,6 +275,16 @@ function renderFinal(ev) {
 }
 
 /* --- pętla zapytania ------------------------------------------------------------------ */
+function cialoZapytania() {
+  return {
+    question: $("question").value,
+    top_k: Number($("top_k").value),
+    gate: $("gate").checked,
+    verify: $("verify").checked,
+    corpus: $("corpus").value,          // bez tego przełącznik korpusu byłby dekoracją
+  };
+}
+
 $("ask-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = $("submit");
@@ -219,14 +302,18 @@ $("ask-form").addEventListener("submit", async (e) => {
     const resp = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        question: $("question").value,
-        top_k: Number($("top_k").value),
-        gate: $("gate").checked,
-        verify: $("verify").checked,
-      }),
+      body: JSON.stringify(cialoZapytania()),
     });
-    if (resp.status === 422) { $("answer").textContent = "Nieprawidłowe wejście (puste pytanie lub top_k poza zakresem)."; return; }
+    if (!resp.ok) {
+      // 400 = korpus, którego już nie ma (ulotny padł z procesem) — serwer podaje, co zrobić.
+      // 422 = walidacja Pydantica; jej `detail` to lista obiektów, więc nie nadaje się do
+      // pokazania człowiekowi i zastępujemy ją własnym zdaniem.
+      const detail = await resp.json().then((b) => b.detail).catch(() => null);
+      $("blocked").textContent = typeof detail === "string" ? detail
+        : "Nieprawidłowe wejście (puste pytanie lub top_k poza zakresem).";
+      $("blocked").hidden = false;
+      return;
+    }
     for await (const ev of readNdjson(resp)) {
       if (ev.event === "stage") {
         renderStage(ev);
@@ -245,6 +332,33 @@ $("ask-form").addEventListener("submit", async (e) => {
     btn.disabled = false;
     btn.textContent = label;
   }
+});
+
+/* --- przyciski korpusu ---------------------------------------------------------------- */
+$("corpus").addEventListener("change", renderCorpusWarning);
+
+$("upload-btn").addEventListener("click", async () => {
+  const plik = $("pdf").files && $("pdf").files[0];
+  if (!plik) { $("upload-msg").textContent = "Wybierz plik PDF."; return; }
+  const btn = $("upload-btn");
+  btn.disabled = true;                    // indeksowanie to sekundy — blokujemy podwójne wysłanie
+  try {
+    await wgrajPdf(plik);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$("upload-clear").addEventListener("click", async () => {
+  // Wracamy do korpusu zmierzonego bez restartu serwera — po pokazaniu obcego PDF-u chcę móc
+  // od razu pytać o korpus, na którym mam liczby.
+  try {
+    await fetch("/api/upload", { method: "DELETE" });
+    $("upload-msg").textContent = "Dokument demo usunięty (kolekcja skasowana).";
+  } catch (e) {
+    $("upload-msg").textContent = "Nie udało się usunąć: " + e;
+  }
+  renderUpload({ active: false });
 });
 
 loadHealth();

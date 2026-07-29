@@ -37,6 +37,20 @@ button { cursor: pointer; background: var(--accent); color: #fff; border-color: 
          padding: .5rem 1.1rem; }
 button:disabled { opacity: .55; cursor: progress; }
 
+/* Panel korpusu (etap 2). Wizualnie osobny pasek nad wynikami: wybór korpusu to decyzja
+   o tym, CZEGO dotyczy odpowiedź, więc nie może ginąć wśród przełączników guardów. */
+#corpus-panel { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem;
+                border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+                padding: .6rem .7rem; margin-bottom: 1rem; font-size: .86rem; }
+#corpus-panel select, #corpus-panel input[type=file] { font: inherit; max-width: 22rem; }
+#corpus-panel button { padding: .35rem .8rem; font-size: .86rem; }
+#corpus-panel #upload-clear { background: transparent; color: var(--muted);
+                              border-color: var(--line); }
+/* Ostrzeżenie o niekalibrowanym progu zajmuje CAŁĄ szerokość panelu — ma być przeczytane,
+   nie schowane obok przycisku. */
+.warning { flex-basis: 100%; margin: .2rem 0 0; padding: .5rem .7rem; font-size: .84rem;
+           border-left: 3px solid var(--bad); background: var(--bg); }
+
 main { display: grid; grid-template-columns: minmax(0, 1fr) 22rem; gap: 1.25rem; }
 @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
 

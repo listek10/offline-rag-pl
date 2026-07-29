@@ -25,6 +25,8 @@ from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from config import config
+from src.ingest.upload import UploadRejected
+from src.retrieve import corpus as corpus_mod
 from src.serve import api as api_mod
 
 client = TestClient(api_mod.app)
@@ -334,3 +336,193 @@ def test_strona_glowna_serwuje_html_z_formularzem():
     assert "text/html" in resp.headers["content-type"]
     assert 'id="ask-form"' in resp.text        # kotwica dla app.js
     assert 'id="stages"' in resp.text          # panel przebiegu
+
+
+# --- Etap 2 UI: wgrywanie PDF-u do ulotnej kolekcji --------------------------------------
+# Ingest, embeddingi i Qdrant są PODMIENIONE — tu testujemy KONTRAKT HTTP (kody, kształt,
+# komunikaty), a nie jakość parsowania (tę sprawdza tests/test_upload.py na prawdziwym PDF-ie).
+
+@pytest.fixture(autouse=True)
+def czysty_rejestr_korpusow():
+    """Ulotny korpus to stan globalny procesu serwera — nie może przeciekać między testami."""
+    corpus_mod.reset()
+    yield
+    corpus_mod.reset()
+
+
+def _stat_uploadu(source: str = "Obcy raport") -> dict:
+    return {"source": source, "pages": 12, "chars": 41234, "chunks": 34,
+            "chars_per_page": 3436, "corpus": corpus_mod.AD_HOC,
+            "collection": config.UPLOAD_COLLECTION, "points": 34, "ms": 4200}
+
+
+def _upload(dane: bytes = b"%PDF-1.7 udawany", nazwa: str = "Obcy raport.pdf"):
+    return client.post(f"/api/upload?name={nazwa}", content=dane,
+                       headers={"content-type": "application/pdf"})
+
+
+def test_upload_zwraca_statystyki_wgranego_dokumentu(monkeypatch):
+    monkeypatch.setattr(api_mod.ad_hoc, "build", lambda data, filename: _stat_uploadu())
+
+    body = _upload().json()
+
+    assert body["source"] == "Obcy raport"
+    assert body["pages"] == 12 and body["chunks"] == 34 and body["points"] == 34
+    assert body["corpus"] == corpus_mod.AD_HOC
+    assert body["collection"] == config.UPLOAD_COLLECTION
+
+
+def test_upload_niesie_nazwe_pliku_do_warstwy_ingestu(monkeypatch):
+    """Etykieta źródła w cytatach bierze się z nazwy pliku, a ta jedzie w query stringu
+    (ciało POST-a to same bajty PDF-a). Bez tego cytaty pokazywałyby „dokument-wgrany"."""
+    widziane = {}
+    monkeypatch.setattr(api_mod.ad_hoc, "build",
+                        lambda data, filename: widziane.update(nazwa=filename, bajty=data)
+                        or _stat_uploadu())
+
+    _upload(b"%PDF-tresc", "Raport OSW 2026.pdf")
+
+    assert widziane["nazwa"] == "Raport OSW 2026.pdf"
+    assert widziane["bajty"] == b"%PDF-tresc"
+
+
+def test_odrzucony_plik_daje_400_z_komunikatem_dla_czlowieka(monkeypatch):
+    """Skan/uszkodzony plik to wina WEJŚCIA, nie awaria serwera. 400 + zdanie po polsku,
+    nigdy 500 z tracebackiem — inaczej użytkownik nie wie, czy to jego plik, czy nasz błąd."""
+    def boom(data, filename):
+        raise UploadRejected("PDF bez warstwy tekstowej (prawdopodobnie skan) — wymagałby OCR.")
+
+    monkeypatch.setattr(api_mod.ad_hoc, "build", boom)
+
+    resp = _upload()
+
+    assert resp.status_code == 400
+    assert "skan" in resp.json()["detail"]
+
+
+def test_zbyt_duzy_plik_jest_odrzucony_przed_wczytaniem_ciala(monkeypatch):
+    """Limit sprawdzamy na nagłówku `Content-Length`, więc 200-megabajtowy plik nie zdąży
+    wylądować w pamięci procesu. Test przykręca limit, zamiast wysyłać 25 MB."""
+    monkeypatch.setattr(config, "UPLOAD_MAX_BYTES", 8)
+    monkeypatch.setattr(api_mod.ad_hoc, "build",
+                        lambda data, filename: pytest.fail("ciało nie powinno zostać wczytane"))
+
+    resp = _upload(b"o wiele za duzo bajtow")
+
+    assert resp.status_code == 413
+    assert "MB" in resp.json()["detail"]
+
+
+def test_awaria_serwera_przy_uploadzie_daje_500_bez_tracebacku(monkeypatch):
+    def boom(data, filename):
+        raise urllib.error.URLError("connection refused")
+
+    monkeypatch.setattr(api_mod.ad_hoc, "build", boom)
+
+    resp = _upload()
+
+    assert resp.status_code == 500
+    assert "Traceback" not in resp.text                  # traceback zostaje w logu serwera
+    assert "ollama" in resp.json()["detail"].lower() or "model" in resp.json()["detail"].lower()
+
+
+def test_usuniecie_dokumentu_demo_wola_zamiatacz(monkeypatch):
+    wywolania = []
+    monkeypatch.setattr(api_mod.ad_hoc, "drop", lambda: wywolania.append(1))
+
+    resp = client.delete("/api/upload")
+
+    assert resp.status_code == 200 and resp.json()["ok"] is True
+    assert wywolania == [1]
+
+
+def test_ask_przekazuje_wybrany_korpus_do_petli_rag(monkeypatch):
+    """Bez tego przełącznik korpusu w UI byłby dekoracją: pytanie o wgrany PDF szłoby
+    do kolekcji OSW."""
+    widziane = {}
+
+    def fake(question, top_k=None, gate=True, verify=None, on_event=None, corpus=None, **kw):
+        widziane["corpus"] = corpus
+        return {"answer": "ok", "sources": []}
+
+    monkeypatch.setattr(api_mod, "answer", fake)
+    corpus_mod.register(corpus_mod.Corpus(name=corpus_mod.AD_HOC,
+                                          collection=config.UPLOAD_COLLECTION, records=[]))
+
+    _ask({"question": "q", "corpus": corpus_mod.AD_HOC})
+
+    assert widziane["corpus"].name == corpus_mod.AD_HOC
+    assert widziane["corpus"].collection == config.UPLOAD_COLLECTION
+
+
+def test_ask_bez_korpusu_leci_na_korpus_bazowy(monkeypatch):
+    """Zgodność w tył: stare wywołania (i CLI) nie znają pola `corpus`."""
+    widziane = {}
+
+    def fake(question, top_k=None, gate=True, verify=None, on_event=None, corpus=None, **kw):
+        widziane["corpus"] = corpus
+        return {"answer": "ok", "sources": []}
+
+    monkeypatch.setattr(api_mod, "answer", fake)
+
+    _ask({"question": "q"})
+
+    assert widziane["corpus"].name == corpus_mod.DEFAULT
+    assert widziane["corpus"].collection == config.QDRANT_COLLECTION
+
+
+def test_ask_z_nieznanym_korpusem_daje_400_z_podpowiedzia():
+    """Ulotny korpus ginie razem z procesem, a przeglądarka może mieć zapamiętany przełącznik.
+    Po restarcie serwera użytkownik ma dostać instrukcję („wgraj ponownie"), nie 500."""
+    resp = client.post("/api/ask", json={"question": "q", "corpus": corpus_mod.AD_HOC})
+
+    assert resp.status_code == 400
+    assert "wgraj" in resp.json()["detail"].lower()
+
+
+def test_health_pokazuje_wgrany_dokument_i_limity(monkeypatch):
+    """UI po odświeżeniu strony musi wiedzieć, że korpus demo istnieje (i co to za dokument),
+    a limity uploadu czytać z serwera — wpisane w HTML rozjechałyby się z configiem."""
+    monkeypatch.setattr(api_mod, "_probe_qdrant", lambda: {"ok": True, "points": 1})
+    monkeypatch.setattr(api_mod, "_probe_llm", lambda: {"ok": True, "models": [], "missing": []})
+    monkeypatch.setattr(api_mod, "_probe_judge", lambda: {"ok": True, "models": [], "missing": []})
+    corpus_mod.register(corpus_mod.Corpus(
+        name=corpus_mod.AD_HOC, collection=config.UPLOAD_COLLECTION, records=[],
+        label="Obcy raport", meta={"source": "Obcy raport", "pages": 12, "chunks": 34}))
+
+    body = client.get("/api/health").json()
+
+    assert body["upload"]["active"] is True
+    assert body["upload"]["source"] == "Obcy raport"
+    assert body["upload"]["chunks"] == 34
+    assert body["config"]["upload_max_mb"] == round(config.UPLOAD_MAX_BYTES / (1024 * 1024))
+    assert body["config"]["upload_max_pages"] == config.UPLOAD_MAX_PAGES
+    # Etykieta korpusu zmierzonego musi nieść PRAWDZIWĄ nazwę kolekcji (A/B chunkingu zmienia ją).
+    assert config.QDRANT_COLLECTION in body["config"]["base_corpus_label"]
+    # NAZWY korpusów też z serwera: gdyby siedziały w HTML-u, zmiana `corpus.DEFAULT` w Pythonie
+    # dawałaby 400 „nie ma takiego korpusu" — dwa opisy jednej prawdy, ta sama klasa dryfu,
+    # którą zamknął `hit.py` po stronie trafień.
+    assert body["config"]["base_corpus"] == corpus_mod.DEFAULT
+    assert body["config"]["upload_corpus"] == corpus_mod.AD_HOC
+
+
+def test_health_bez_uploadu_mowi_wprost_ze_go_nie_ma(monkeypatch):
+    monkeypatch.setattr(api_mod, "_probe_qdrant", lambda: {"ok": True, "points": 1})
+    monkeypatch.setattr(api_mod, "_probe_llm", lambda: {"ok": True, "models": [], "missing": []})
+    monkeypatch.setattr(api_mod, "_probe_judge", lambda: {"ok": True, "models": [], "missing": []})
+
+    assert client.get("/api/health").json()["upload"]["active"] is False
+
+
+def test_ulotna_kolekcja_jest_zamiatana_przy_starcie_i_przy_zamknieciu(monkeypatch):
+    """Kasowanie przy STARCIE to nie nadmiar ostrożności: `kill -9` (albo padnięcie procesu)
+    nie wykonuje kodu zamykania, więc bez tego zamiatacza kolekcja demo przeżyłaby restart
+    i „ulotność" byłaby obietnicą zamiast właściwości."""
+    wywolania = []
+    monkeypatch.setattr(api_mod.ad_hoc, "drop", lambda: wywolania.append(1))
+    monkeypatch.setattr(config, "SERVE_WARMUP", False)     # bez ładowania BGE-M3 w teście
+
+    with TestClient(api_mod.app):                          # kontekst = lifespan start + stop
+        assert wywolania == [1]                            # start posprzątał sierotę
+
+    assert wywolania == [1, 1]                             # zamknięcie posprzątało po sobie
