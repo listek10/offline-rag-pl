@@ -1,5 +1,25 @@
 # UI (etap 1) — plan implementacji
 
+> ## ✅ ZREALIZOWANY — 2026-07-28 (PR #8, gałąź `ui-panel` zmergowana do `main`)
+>
+> Wszystkie zadania (Task 0-6) wykonane; checkboxy odhaczone **po weryfikacji artefaktów**
+> 2026-07-29, nie na słowo. Dowód: `src/serve/{stream,api}.py` + `static/{index.html,style.css,
+> app.js}` + `tests/check_app_js.js` istnieją, `api.py` wystawia `GET /api/health`,
+> `POST /api/ask` i `GET /`, `answer.py` emituje 11 zdarzeń przez `on_event`, README ma sekcję
+> „UI — lokalny panel analityka" ze zmierzonymi czasami etapów, `NOTATKI_REKRUTER.md` ma wpis
+> „Etap 6 — UI".
+>
+> **Dwa miejsca, w których rzeczywistość rozeszła się z planem** (zostawiam jawnie, bo plan jest
+> dokumentem historycznym, a nie ściągą do naciągania):
+> 1. **Testów jest więcej, niż zakładał DoD:** `stream 4` (plan: 3), `answer-events 6` (zgodnie),
+>    `api 20` (plan: 12) — doszły m.in. dwa testy broniące strumieniowania i test logiki `app.js`.
+> 2. **Commitów na `ui-panel` było 10, nie 6.** Gałąź jest już zmergowana, więc `git log` na niej
+>    nie istnieje lokalnie — weryfikowalne tylko w historii `main` / PR #8.
+>
+> Stan całego zestawu testów po późniejszych etapach (9-10): **82 passed** bez GPU, Qdranta
+> i Ollamy; CI na GitHub Actions zielone. Etap 2 (wgrywanie PDF do ulotnej kolekcji) jest
+> **niezrealizowany** — zaprojektowany w sekcji 8 specu, bez własnego pliku planu.
+
 > **Dla wykonawcy:** kroki mają składnię checkboxów (`- [ ]`) do odhaczania. Wykonywać zadanie
 > po zadaniu, w kolejności, z commitem na końcu każdego. Nie przeskakiwać kroków testowych —
 > test pisany PRZED implementacją jest tu regułą, nie sugestią.
@@ -73,7 +93,7 @@ a `api.py` zostaje czytelny.
 - Produces: działający `pytest` w env `offline-rag-pl`; potwierdzenie, że istniejące testy przechodzą
   PRZED naszymi zmianami (żeby późniejsza czerwień była na pewno nasza).
 
-- [ ] **Step 1: Zainstaluj brakujące zależności**
+- [x] **Step 1: Zainstaluj brakujące zależności**
 
 Wymaga internetu (jednorazowo, jak pobranie modeli — runtime pozostaje offline).
 
@@ -82,7 +102,7 @@ PY=/home/maciek/miniconda3/envs/offline-rag-pl/bin/python
 $PY -m pip install "fastapi>=0.115" "uvicorn>=0.30" "pytest>=8.0"
 ```
 
-- [ ] **Step 2: Potwierdź, że są w POPRAWNYM środowisku**
+- [x] **Step 2: Potwierdź, że są w POPRAWNYM środowisku**
 
 ```bash
 PY=/home/maciek/miniconda3/envs/offline-rag-pl/bin/python
@@ -90,7 +110,7 @@ $PY -c "import sys,torch,fastapi,uvicorn,pytest,httpx; print(sys.prefix); print(
 ```
 Oczekiwane: prefix `…/envs/offline-rag-pl`, torch `2.11.0+cu128`, brak `ModuleNotFoundError`.
 
-- [ ] **Step 3: Zielony baseline istniejących testów**
+- [x] **Step 3: Zielony baseline istniejących testów**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -100,7 +120,7 @@ $PY -m pytest tests/ -q
 Oczekiwane: wszystkie testy PASS. Jeśli coś jest czerwone JUŻ TERAZ — zanotuj co i nie naprawiaj
 w tym planie; to nie nasza regresja.
 
-- [ ] **Step 4: Dopisz zależności do `requirements.txt`**
+- [x] **Step 4: Dopisz zależności do `requirements.txt`**
 
 Dokleić na końcu pliku:
 
@@ -114,7 +134,7 @@ uvicorn>=0.30        # serwer ASGI
 # pytest>=8.0        # testy (dev); httpx (wymagany przez TestClient) jest już w środowisku
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -141,7 +161,7 @@ git commit -m "etap 6/UI: zaleznosci warstwy serwujacej (fastapi, uvicorn)"
   - Iterator daje kolejno: wszystkie zdarzenia wyemitowane przez `work`, a na końcu **dokładnie
     jedno** `{"event": "final", ...}` albo `{"event": "error", ...}`.
 
-- [ ] **Step 1: Napisz test, który MUSI się wywalić**
+- [x] **Step 1: Napisz test, który MUSI się wywalić**
 
 Utwórz `tests/test_serve_stream.py`:
 
@@ -194,7 +214,7 @@ def test_iterator_sie_konczy_gdy_work_nic_nie_emituje():
     assert events == [{"event": "final", "answer": ""}]
 ```
 
-- [ ] **Step 2: Uruchom test — musi być czerwony**
+- [x] **Step 2: Uruchom test — musi być czerwony**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -203,7 +223,7 @@ $PY -m pytest tests/test_serve_stream.py -q
 ```
 Oczekiwane: `ModuleNotFoundError: No module named 'src.serve'` (albo `ImportError`).
 
-- [ ] **Step 3: Implementacja**
+- [x] **Step 3: Implementacja**
 
 Utwórz pusty `src/serve/__init__.py`, a następnie `src/serve/stream.py`:
 
@@ -272,7 +292,7 @@ def stream_events(
         yield item
 ```
 
-- [ ] **Step 4: Uruchom testy — muszą przejść**
+- [x] **Step 4: Uruchom testy — muszą przejść**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -281,7 +301,7 @@ $PY -m pytest tests/test_serve_stream.py -q
 ```
 Oczekiwane: `3 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -312,7 +332,7 @@ git commit -m "etap 6/UI: mostek callback->iterator (watek + kolejka) + testy ko
     pipeline albo model odmówił sam)
   - Zwracany słownik **bez zmian**: `{answer, sources, blocked_by?, rejected_answer?, grounding?}`.
 
-- [ ] **Step 1: Napisz test, który MUSI się wywalić**
+- [x] **Step 1: Napisz test, który MUSI się wywalić**
 
 Utwórz `tests/test_answer_events.py`:
 
@@ -424,7 +444,7 @@ def test_bez_on_event_nic_sie_nie_psuje(collected):
     assert collected == []
 ```
 
-- [ ] **Step 2: Uruchom test — musi być czerwony**
+- [x] **Step 2: Uruchom test — musi być czerwony**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -433,7 +453,7 @@ $PY -m pytest tests/test_answer_events.py -q
 ```
 Oczekiwane: FAIL — `answer()` nie przyjmuje `on_event` (`TypeError: unexpected keyword argument`).
 
-- [ ] **Step 3: Dodaj import `time` w `src/generate/answer.py`**
+- [x] **Step 3: Dodaj import `time` w `src/generate/answer.py`**
 
 Znajdź blok importów (linie 24-27) i dopisz `time`:
 
@@ -445,7 +465,7 @@ import urllib.request
 from pathlib import Path
 ```
 
-- [ ] **Step 4: Dodaj helper `_ms` nad definicją `answer()`**
+- [x] **Step 4: Dodaj helper `_ms` nad definicją `answer()`**
 
 Wstawić bezpośrednio po `REFUSAL_TEXT = "Nie znajduję odpowiedzi w źródłach."`:
 
@@ -456,7 +476,7 @@ def _ms(t0: float) -> int:
     return round((time.perf_counter() - t0) * 1000)
 ```
 
-- [ ] **Step 5: Zastąp ciało `answer()`**
+- [x] **Step 5: Zastąp ciało `answer()`**
 
 Zamień całą funkcję `answer()` (linie 85-124 przed zmianą) na poniższą. Docstring i komentarze
 guardów zachowane — dochodzą tylko `emit(...)` i pomiary czasu.
@@ -537,7 +557,7 @@ def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
     return {"answer": text, "sources": hits}
 ```
 
-- [ ] **Step 6: Uruchom testy — muszą przejść**
+- [x] **Step 6: Uruchom testy — muszą przejść**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -546,7 +566,7 @@ $PY -m pytest tests/test_answer_events.py tests/ -q
 ```
 Oczekiwane: `6 passed` z nowego pliku i **zero regresji** w pozostałych testach.
 
-- [ ] **Step 7: Sprawdź, że CLI nadal działa bez zmian (bez GPU niepotrzebne — tylko składnia)**
+- [x] **Step 7: Sprawdź, że CLI nadal działa bez zmian (bez GPU niepotrzebne — tylko składnia)**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -555,7 +575,7 @@ $PY -c "import src.generate.answer as a; import inspect; print(inspect.signature
 ```
 Oczekiwane: `(question: str, top_k: int | None = None, system: str = ..., gate: bool = True, verify: bool | None = None, on_event=None) -> dict`
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -579,7 +599,7 @@ git commit -m "etap 6/UI: addytywny on_event w answer() (etapy + czasy) bez zmia
   - `GET /api/health` → `{"qdrant": {...}, "ollama": {...}, "config": {...}, "warm": bool}`
   - `config.SERVE_HOST`, `config.SERVE_PORT`
 
-- [ ] **Step 1: Dodaj blok `SERVE_*` na końcu `config/config.py`**
+- [x] **Step 1: Dodaj blok `SERVE_*` na końcu `config/config.py`**
 
 ```python
 
@@ -593,7 +613,7 @@ SERVE_PORT = 8000
 SERVE_WARMUP = True
 ```
 
-- [ ] **Step 2: Napisz test health, który MUSI się wywalić**
+- [x] **Step 2: Napisz test health, który MUSI się wywalić**
 
 Utwórz `tests/test_api.py`:
 
@@ -652,7 +672,7 @@ def test_health_nie_wywala_sie_gdy_uslugi_leza(monkeypatch):
     assert resp.json()["qdrant"]["ok"] is False
 ```
 
-- [ ] **Step 3: Uruchom test — musi być czerwony**
+- [x] **Step 3: Uruchom test — musi być czerwony**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -661,7 +681,7 @@ $PY -m pytest tests/test_api.py -q
 ```
 Oczekiwane: `ModuleNotFoundError: No module named 'src.serve.api'`.
 
-- [ ] **Step 4: Implementacja `src/serve/api.py`**
+- [x] **Step 4: Implementacja `src/serve/api.py`**
 
 ```python
 """
@@ -793,7 +813,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 5: Uruchom testy — muszą przejść**
+- [x] **Step 5: Uruchom testy — muszą przejść**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -802,7 +822,7 @@ $PY -m pytest tests/test_api.py -q
 ```
 Oczekiwane: `2 passed`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -823,7 +843,7 @@ git commit -m "etap 6/UI: endpoint /api/health (progi i modele z configu) + SERV
 - Produces: `POST /api/ask` → `application/x-ndjson`; zdarzenie `final` niesie
   `{answer, blocked_by, self_refused, rejected_answer, total_ms}`.
 
-- [ ] **Step 1: Dopisz testy strumienia do `tests/test_api.py`**
+- [x] **Step 1: Dopisz testy strumienia do `tests/test_api.py`**
 
 Dokleić na końcu pliku:
 
@@ -931,7 +951,7 @@ import json
 import urllib.error
 ```
 
-- [ ] **Step 2: Uruchom testy — muszą być czerwone**
+- [x] **Step 2: Uruchom testy — muszą być czerwone**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -940,7 +960,7 @@ $PY -m pytest tests/test_api.py -q
 ```
 Oczekiwane: nowe testy FAIL z 404 (endpoint `/api/ask` nie istnieje); dwa testy health PASS.
 
-- [ ] **Step 3: Dodaj model wejścia w `src/serve/api.py`**
+- [x] **Step 3: Dodaj model wejścia w `src/serve/api.py`**
 
 Wstawić po definicji `_state`:
 
@@ -964,7 +984,7 @@ class AskRequest(BaseModel):
         return v
 ```
 
-- [ ] **Step 4: Dodaj klasyfikator błędów i kształtowanie hitów**
+- [x] **Step 4: Dodaj klasyfikator błędów i kształtowanie hitów**
 
 Wstawić po sondach (`_probe_ollama`):
 
@@ -1001,7 +1021,7 @@ def _hits_payload(hits: list[dict]) -> list[dict]:
             for i, h in enumerate(hits, 1)]
 ```
 
-- [ ] **Step 5: Dodaj endpoint `POST /api/ask`**
+- [x] **Step 5: Dodaj endpoint `POST /api/ask`**
 
 Wstawić po `health()`:
 
@@ -1047,7 +1067,7 @@ def ask(req: AskRequest) -> StreamingResponse:
     return StreamingResponse(linie(), media_type="application/x-ndjson")
 ```
 
-- [ ] **Step 6: Uruchom cały zestaw testów**
+- [x] **Step 6: Uruchom cały zestaw testów**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -1056,7 +1076,7 @@ $PY -m pytest tests/ -q
 ```
 Oczekiwane: wszystko PASS (2 health + 9 nowych z `/api/ask` + 3 stream + 7 answer-events + istniejące).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -1079,7 +1099,7 @@ git commit -m "etap 6/UI: POST /api/ask jako strumien NDJSON (etapy, trzy zrodla
 - Consumes: `GET /api/health`, `POST /api/ask` z Task 3 i 4.
 - Produces: `GET /` → `index.html`; `GET /static/*` → pliki statyczne.
 
-- [ ] **Step 1: Napisz test serwowania strony (dopisz do `tests/test_api.py`)**
+- [x] **Step 1: Napisz test serwowania strony (dopisz do `tests/test_api.py`)**
 
 ```python
 def test_strona_glowna_serwuje_html_z_formularzem():
@@ -1090,7 +1110,7 @@ def test_strona_glowna_serwuje_html_z_formularzem():
     assert 'id="stages"' in resp.text          # panel przebiegu
 ```
 
-- [ ] **Step 2: Uruchom — musi być czerwony**
+- [x] **Step 2: Uruchom — musi być czerwony**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -1099,7 +1119,7 @@ $PY -m pytest tests/test_api.py::test_strona_glowna_serwuje_html_z_formularzem -
 ```
 Oczekiwane: FAIL z 404.
 
-- [ ] **Step 3: Utwórz `src/serve/static/index.html`**
+- [x] **Step 3: Utwórz `src/serve/static/index.html`**
 
 ```html
 <!doctype html>
@@ -1155,7 +1175,7 @@ Oczekiwane: FAIL z 404.
 </html>
 ```
 
-- [ ] **Step 4: Utwórz `src/serve/static/style.css`**
+- [x] **Step 4: Utwórz `src/serve/static/style.css`**
 
 ```css
 /* Motyw idzie za ustawieniem systemu — bez przełącznika, bo to stan trzymany bez powodu. */
@@ -1228,7 +1248,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 22rem; gap: 1.25rem;
 .muted { color: var(--muted); font-size: .8rem; }
 ```
 
-- [ ] **Step 5: Utwórz `src/serve/static/app.js`**
+- [x] **Step 5: Utwórz `src/serve/static/app.js`**
 
 ```javascript
 /* app.js — bez frameworka, bez build-stepu.
@@ -1474,7 +1494,7 @@ $("ask-form").addEventListener("submit", async (e) => {
 loadHealth();
 ```
 
-- [ ] **Step 6: Zmontuj statyki w `src/serve/api.py`**
+- [x] **Step 6: Zmontuj statyki w `src/serve/api.py`**
 
 Dopisać **po** definicji endpointu `ask()` (kolejność ma znaczenie: `app.mount` na `/static`
 nie koliduje z `/api/*`, ale trzymamy to razem na końcu dla czytelności):
@@ -1490,7 +1510,7 @@ def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 ```
 
-- [ ] **Step 7: Uruchom cały zestaw testów**
+- [x] **Step 7: Uruchom cały zestaw testów**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -1499,7 +1519,7 @@ $PY -m pytest tests/ -q
 ```
 Oczekiwane: wszystko PASS, w tym nowy `test_strona_glowna_serwuje_html_z_formularzem`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -1519,7 +1539,7 @@ git commit -m "etap 6/UI: frontend (jeden ekran, klikalne cytaty, panel przebieg
 - Consumes: wszystko z Task 1-5.
 - Produces: potwierdzone działanie na prawdziwych modelach + udokumentowany dowód.
 
-- [ ] **Step 1: Podnieś usługi**
+- [x] **Step 1: Podnieś usługi**
 
 ```bash
 docker start qdrant-osw
@@ -1528,7 +1548,7 @@ curl -s localhost:11434/api/tags | head -c 200
 ```
 Oczekiwane: Qdrant odpowiada, Ollama wypisuje listę modeli z `qwen2.5:7b` i `gemma2:9b`.
 
-- [ ] **Step 2: Uruchom serwer**
+- [x] **Step 2: Uruchom serwer**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -1538,7 +1558,7 @@ $PY src/serve/api.py
 Oczekiwane w logu: `modele rozgrzane w NN.N s`, potem `Uvicorn running on http://127.0.0.1:8000`.
 Rozgrzewka może zająć 15-30 s — to zamierzone.
 
-- [ ] **Step 3: Sprawdź health z drugiego terminala**
+- [x] **Step 3: Sprawdź health z drugiego terminala**
 
 ```bash
 curl -s localhost:8000/api/health | python -m json.tool | head -30
@@ -1546,7 +1566,7 @@ curl -s localhost:8000/api/health | python -m json.tool | head -30
 Oczekiwane: `"ok": true` dla Qdranta (z `points: 1509`) i Ollamy, `"warm": true`,
 `gate_min: 0.35`.
 
-- [ ] **Step 4: Ręczne demo w przeglądarce — trzy scenariusze do ZOBACZENIA**
+- [x] **Step 4: Ręczne demo w przeglądarce — trzy scenariusze do ZOBACZENIA**
 
 Otwórz `http://127.0.0.1:8000` i sprawdź kolejno:
 
@@ -1563,13 +1583,13 @@ Otwórz `http://127.0.0.1:8000` i sprawdź kolejno:
    z uzasadnieniem sędziego; bez weryfikacji → przecieka halucynacja z cytowaniem.
    To jest najmocniejszy moment demo — zanotuj dokładnie, co zobaczyłeś.
 
-- [ ] **Step 5: Zapisz zmierzone czasy**
+- [x] **Step 5: Zapisz zmierzone czasy**
 
 Z panelu przebiegu przepisz czasy etapów dla scenariusza 1 i 3 (retrieval / generacja /
 weryfikacja / suma). Będą potrzebne w README i notatniku jako DOWÓD — do tej pory koszt
 guardu #3 był znany tylko jako „~2× latencja", teraz będzie liczbą.
 
-- [ ] **Step 6: Dopisz sekcję do `README.md`**
+- [x] **Step 6: Dopisz sekcję do `README.md`**
 
 Wstawić po sekcji „Uruchomienie", przed „Struktura repo":
 
@@ -1599,13 +1619,13 @@ Decyzje warte odnotowania:
   znaczą różne rzeczy; zlanie ich w jedno „nie znajduję odpowiedzi" gubi informację, czy szukać dalej.
 ```
 
-- [ ] **Step 7: Uzupełnij sekcję DOWÓD w notatniku**
+- [x] **Step 7: Uzupełnij sekcję DOWÓD w notatniku**
 
 W `/home/maciek/Pulpit/offline-rag-pl/NOTATKI_REKRUTER.md`, w sekcji „Etap 6 — UI", zamień
 treść pod nagłówkiem `### DOWÓD` na zmierzone liczby ze Step 5 i opis tego, co pokazały trzy
 scenariusze ze Step 4 (szczególnie scenariusz 3 — przeciek po rozbrojeniu guardu #3).
 
-- [ ] **Step 8: Cały zestaw testów raz jeszcze + commit**
+- [x] **Step 8: Cały zestaw testów raz jeszcze + commit**
 
 ```bash
 cd /home/maciek/Pulpit/offline-rag-pl-ui
@@ -1619,9 +1639,11 @@ git commit -m "etap 6/UI: README z sekcja o panelu + zmierzone czasy etapow"
 
 ## Definition of Done (etap 1)
 
-- [ ] `pytest tests/ -q` zielony w env `offline-rag-pl` (nowe testy: stream 3, answer-events 6, api 12)
-- [ ] `python src/serve/api.py` wstaje, health pokazuje `warm:true` i 1509 chunków
-- [ ] Trzy scenariusze ze Task 5 Step 4 zobaczone w przeglądarce i opisane
-- [ ] `git log --oneline` na `ui-panel` pokazuje 6 commitów etapu 1, drzewo czyste
-- [ ] README i `NOTATKI_REKRUTER.md` zaktualizowane zmierzonymi liczbami
-- [ ] CLI nadal działa bez zmian: `python src/generate/answer.py "pytanie"` daje ten sam wynik
+- [x] `pytest tests/ -q` zielony w env `offline-rag-pl` (nowe testy: stream 3, answer-events 6, api 12)
+      → **faktycznie stream 4 / answer-events 6 / api 20** (więcej, niż plan zakładał)
+- [x] `python src/serve/api.py` wstaje, health pokazuje `warm:true` i 1509 chunków
+- [x] Trzy scenariusze ze Task 5 Step 4 zobaczone w przeglądarce i opisane
+- [x] `git log --oneline` na `ui-panel` pokazuje 6 commitów etapu 1, drzewo czyste
+      → **faktycznie 10 commitów**; gałąź zmergowana do `main` przez PR #8
+- [x] README i `NOTATKI_REKRUTER.md` zaktualizowane zmierzonymi liczbami
+- [x] CLI nadal działa bez zmian: `python src/generate/answer.py "pytanie"` daje ten sam wynik

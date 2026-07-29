@@ -378,9 +378,19 @@ dokument** — dodanie pliku nie przesuwa id istniejących chunków i gold set s
 
 ## 10. Kolejność realizacji
 
-1. **Etap 1** — UI na obecnym korpusie: `stream.py` → `api.py` → statyki → testy → ręczne demo.
-2. **Etap 2** — wgrywanie PDF-u: parametryzacja retrievalu korpusem → ingest z bajtów →
-   ulotna kolekcja → przełącznik korpusu w UI.
+1. ✅ **Etap 1 — ZREALIZOWANY 2026-07-28** (PR #8, `ui-panel` zmergowany do `main`):
+   `stream.py` → `api.py` → statyki → testy → ręczne demo. Plan z odhaczonymi krokami
+   i odnotowanymi odstępstwami: `docs/plans/2026-07-28-ui-panel-etap1.md`.
+2. ⬜ **Etap 2 — NIEZREALIZOWANY**: wgrywanie PDF-u — parametryzacja retrievalu korpusem →
+   ingest z bajtów → ulotna kolekcja → przełącznik korpusu w UI. Projekt jest w sekcji 8
+   tego specu i pozostaje aktualny; nie ma osobnego pliku planu.
 
-Oba etapy na branchu `ui-panel`, osobne commity. Po każdym etapie: wpis do `NOTATKI_REKRUTER.md`
+> **Uwaga do wznowienia:** gałąź `ui-panel` już nie istnieje (zmergowana), więc etap 2 zaczyna
+> się od nowej gałęzi odbitej od `main`. Od czasu napisania specu doszły etapy 7-10, w tym
+> `src/retrieve/hit.py` (kanoniczny kształt trafienia) — parametryzacja retrievalu korpusem
+> powinna iść przez niego, a nie obok. Uwaga na `_get_chunks()`/`get_bm25()`: to leniwe
+> singletony, na których stoi testowalność bez GPU (patrz `requirements-dev.txt`), więc
+> kluczowanie ich korpusem nie może ich zamienić na eager.
+
+Po każdym etapie: wpis do `NOTATKI_REKRUTER.md`
 (PROBLEM → CO ZROBIŁEM/alternatywy → DOWÓD → JAK UJĄĆ NA ROZMOWIE) i aktualizacja README.
