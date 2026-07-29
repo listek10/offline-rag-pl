@@ -27,6 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.retrieve import corpus as corpus_mod
 from src.retrieve.hit import make_hit
 
 # Leniwe singletony — ładowane przy pierwszym użyciu, potem reużywane.
@@ -55,6 +56,7 @@ def search(
     top_k: int | None = None,
     rerank: bool = False,
     candidates: int | None = None,
+    corpus: "corpus_mod.Corpus | str | None" = None,
 ) -> list[dict]:
     """
     Zwraca listę najtrafniejszych chunków z metadanymi do cytowania.
@@ -63,6 +65,11 @@ def search(
     rerank=False -> czysty dense (baseline): Qdrant zwraca od razu top_k.
     rerank=True  -> dwustopniowo: pobierz `candidates` (etap 1, dense) i przesortuj cross-encoderem
                     (etap 2), zwróć top_k. `candidates` = sufit jakości rerankingu (recall@N etapu 1).
+
+    `corpus` wskazuje KOLEKCJĘ Qdranta (`None` => bazowa z configu). Model embeddingowy zostaje
+    ten sam — i to jest sedno etapu 2 UI: nowy dokument kosztuje sekundy indeksowania, a nie
+    dotknięcie modelu. Wektory obcego dokumentu muszą leżeć w OSOBNEJ kolekcji, bo kolekcja,
+    na której mierzę (recall@1, MRR), musi być zamrożona.
     """
     top_k = top_k or config.TOP_K
     n = (candidates or config.RERANK_CANDIDATES) if rerank else top_k
@@ -74,7 +81,7 @@ def search(
     qv = model.encode([query], normalize_embeddings=config.EMBED_NORMALIZE)[0]
 
     points = client.query_points(
-        collection_name=config.QDRANT_COLLECTION,
+        collection_name=corpus_mod.resolve(corpus).collection,
         query=qv.tolist(),
         limit=n,
     ).points

@@ -126,3 +126,25 @@ def test_bez_on_event_nic_sie_nie_psuje(collected):
     result = answer_mod.answer("pytanie", verify=False)
     assert result["answer"]
     assert collected == []
+
+
+def test_korpus_jedzie_do_retrievalu(collected, monkeypatch):
+    """Etap 2 UI: pytanie o wgrany PDF musi trafić do JEGO kolekcji. `answer()` nie interpretuje
+    korpusu — tylko go przekazuje, bo decyzja „gdzie szukać" należy do warstwy retrievalu."""
+    retrieval = _fake_retrieval([_hit(0.9)])
+    monkeypatch.setattr(answer_mod, "hybrid_search", retrieval)
+
+    answer_mod.answer("pytanie", verify=False, corpus="upload")
+
+    assert retrieval.call_args.kwargs["corpus"] == "upload"
+
+
+def test_bez_korpusu_retrieval_dostaje_none(collected, monkeypatch):
+    """Zgodność w tył: `run_eval.py`, `eval_answers.py` i CLI wołają `answer()` bez korpusu,
+    a `None` znaczy „korpus bazowy z configu" — czyli zachowanie identyczne jak przed zmianą."""
+    retrieval = _fake_retrieval([_hit(0.9)])
+    monkeypatch.setattr(answer_mod, "hybrid_search", retrieval)
+
+    answer_mod.answer("pytanie", verify=False)
+
+    assert retrieval.call_args.kwargs["corpus"] is None

@@ -74,7 +74,7 @@ def _ms(t0: float) -> int:
 
 def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
            gate: bool = True, verify: bool | None = None,
-           on_event=None) -> dict:
+           on_event=None, corpus=None) -> dict:
     """Pełna pętla: retrieval -> (guard #2 bramka) -> prompt -> LLM -> (guard #3 weryfikacja).
 
     Zwraca {answer, sources, blocked_by?, rejected_answer?, grounding?}.
@@ -88,13 +88,20 @@ def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
     żeby pokazać postęp w UI. Domyślnie None => no-op, więc CLI i harness działają bez zmian.
     Emitujemy ETAPY, a nie tokeny odpowiedzi: guard #3 może odpowiedź odrzucić, więc pokazanie
     jej w trakcie generowania zniweczyłoby sens tego guardu.
+
+    `corpus` (etap 2 UI) wskazuje, NA CZYM szukać — `None` = korpus bazowy z configu, czyli
+    zachowanie identyczne jak dotąd. Ta pętla korpusu NIE interpretuje: decyzja „gdzie szukać"
+    należy do warstwy retrievalu (`src/retrieve/corpus.py`), a tu jest tylko przekazywana.
+    UWAGA na sens liczb: progi guardów (bramka 0.35, `VERIFY_MIN_SUPPORTED`) są skalibrowane na
+    held-oucie Z KORPUSU OSW. Na obcym dokumencie guardy nadal działają, ale bez zmierzonej
+    gwarancji — i UI musi to napisać wprost, zamiast udawać, że gwarancja się przenosi.
     """
     verify = config.VERIFY_GROUNDING if verify is None else verify
     emit = on_event or (lambda **_: None)
 
     emit(event="stage", stage="retrieval", status="start")
     t = time.perf_counter()
-    hits = hybrid_search(question, top_k=top_k, rerank=True)
+    hits = hybrid_search(question, top_k=top_k, rerank=True, corpus=corpus)
     # top_score liczymy ZAWSZE (nie tylko przy włączonej bramce), bo UI pokazuje tę liczbę
     # także w trybie demo z rozbrojoną bramką — inaczej nie dałoby się porównać „przed/po".
     top_score = top_rerank_score(hits)
