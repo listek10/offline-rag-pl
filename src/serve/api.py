@@ -31,6 +31,7 @@ from pydantic import BaseModel, Field, field_validator
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
 from src.generate.answer import answer, refused
+from src.retrieve.hit import get_rerank_score
 from src.serve.stream import stream_events
 
 logging.basicConfig(level=logging.INFO)
@@ -167,7 +168,7 @@ def _hits_payload(hits: list[dict]) -> list[dict]:
     return [{"n": i,
              "source": h["source"],
              "chunk_index": h["chunk_index"],
-             "score": round(h.get("rerank_score", h.get("score", 0.0)), 4),
+             "score": round(get_rerank_score(h, h.get("score", 0.0)), 4),
              "text": h["text"]}
             for i, h in enumerate(hits, 1)]
 

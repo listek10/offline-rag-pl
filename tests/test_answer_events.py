@@ -11,24 +11,46 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from unittest.mock import create_autospec
 
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from config import config
 from src.generate import answer as answer_mod
+from src.retrieve.hit import make_hit, set_rerank_score
+from src.retrieve.hybrid import hybrid_search
 
 
 def _hit(score: float) -> dict:
-    return {"score": 0.01, "rerank_score": score, "source": "raport", "chunk_index": 7,
-            "chunk_id": "raport__7", "text": "Norwegia przeznacza 1,75% PKB na obronę."}
+    """
+    Atrapa trafienia zbudowana PRAWDZIWĄ fabryką (`make_hit`), nie ręcznie napisanym słownikiem.
+    DLACZEGO TAK: gdyby kontrakt trafienia się zmienił, ręczna kopia dalej dokładałaby stary
+    klucz i test zostałby ZIELONY — a produkcja by padła (`answer.py` czyta `rerank_score`
+    z domyślną zerówką, więc utrata tego pola nie krzyczy, tylko zamyka bramkę na wszystkim).
+    Argumenty `make_hit` są tylko po nazwie, więc zmiana kontraktu daje tu `TypeError`.
+    """
+    hit = make_hit(score=0.01, source="raport", chunk_index=7, chunk_id="raport__7",
+                   text="Norwegia przeznacza 1,75% PKB na obronę.")
+    set_rerank_score(hit, score)
+    return hit
+
+
+def _fake_retrieval(hits: list[dict]):
+    """
+    Atrapa `hybrid_search` zbudowana Z PRAWDZIWEJ FUNKCJI (`create_autospec`), nie z lambdy.
+    DLACZEGO: lambda ma sygnaturę PRZEPISANĄ Z PAMIĘCI — to druga (po kształcie zwrotki)
+    powierzchnia dryfu. Autospec sprawdza wywołanie względem prawdziwej sygnatury, więc
+    przemianowanie `top_k` czy `rerank` w `hybrid.py` wywala test, a nie produkcję.
+    """
+    return create_autospec(hybrid_search, return_value=hits)
 
 
 @pytest.fixture
 def collected(monkeypatch):
     """Zbiera zdarzenia i pozwala testowi ustawić zachowanie retrievalu/LLM-a/sędziego."""
     events: list[dict] = []
-    monkeypatch.setattr(answer_mod, "hybrid_search", lambda q, top_k=None, rerank=False: [_hit(0.9)])
+    monkeypatch.setattr(answer_mod, "hybrid_search", _fake_retrieval([_hit(0.9)]))
     # Podmieniamy DYSPOZYTOR (`call_llm`), nie konkretny backend: od etapu 7 pętla RAG woła
     # generator przez niego, więc to jest jedyny szew, który izoluje test od Ollamy i vLLM naraz.
     monkeypatch.setattr(answer_mod, "call_llm", lambda *a, **k: "Norwegia daje 1,75% PKB [1].")
@@ -65,8 +87,7 @@ def test_retrieval_done_niesie_ms_topscore_i_surowe_hity(collected):
 
 
 def test_bramka_blokuje_a_dalsze_etapy_sa_not_run(collected, monkeypatch):
-    monkeypatch.setattr(answer_mod, "hybrid_search",
-                        lambda q, top_k=None, rerank=False: [_hit(0.01)])
+    monkeypatch.setattr(answer_mod, "hybrid_search", _fake_retrieval([_hit(0.01)]))
 
     result = answer_mod.answer("pytanie", gate=True, on_event=lambda **e: collected.append(e))
 

@@ -16,6 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.retrieve.hit import get_rerank_score, set_rerank_score
 
 _reranker = None  # leniwy singleton — model ładujemy raz
 
@@ -39,6 +40,6 @@ def rerank_hits(query: str, hits: list[dict], top_k: int) -> list[dict]:
     pairs = [(query, h["text"]) for h in hits]
     scores = ce.predict(pairs)  # wyższy = bardziej trafny
     for h, s in zip(hits, scores):
-        h["rerank_score"] = float(s)
-    ranked = sorted(hits, key=lambda h: h["rerank_score"], reverse=True)
+        set_rerank_score(h, s)
+    ranked = sorted(hits, key=get_rerank_score, reverse=True)
     return ranked[:top_k]

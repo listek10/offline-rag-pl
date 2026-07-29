@@ -27,6 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.retrieve.hit import make_hit
 
 # Leniwe singletony — ładowane przy pierwszym użyciu, potem reużywane.
 _model = None
@@ -78,14 +79,16 @@ def search(
         limit=n,
     ).points
 
+    # Kształt trafienia pochodzi z `make_hit` (src/retrieve/hit.py) — jedno źródło nazw pól
+    # dla dense, hybrydy i atrap w testach. Dlaczego to ważne: patrz docstring tamtego modułu.
     hits = [
-        {
-            "score": p.score,
-            "source": p.payload["source"],
-            "chunk_index": p.payload["chunk_index"],
-            "chunk_id": p.payload["chunk_id"],
-            "text": p.payload["text"],
-        }
+        make_hit(
+            score=p.score,
+            source=p.payload["source"],
+            chunk_index=p.payload["chunk_index"],
+            chunk_id=p.payload["chunk_id"],
+            text=p.payload["text"],
+        )
         for p in points
     ]
 

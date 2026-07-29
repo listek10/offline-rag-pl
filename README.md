@@ -336,6 +336,13 @@ Trzy rzeczy, które te liczby pokazują:
   znaczą różne rzeczy; zlanie ich w jedno „nie znajduję odpowiedzi" gubi informację, czy szukać dalej.
 - **Wyjście LLM-a traktowane jak tekst niezaufany** — wstawiane przez `textContent`/węzły DOM,
   nigdy `innerHTML` (w kontekście bywają znaczniki z PDF-a).
+- **Kształt trafienia w jednym miejscu (`src/retrieve/hit.py`), a atrapy testowe budowane tą samą
+  fabryką** — bo testy podmieniają retrieval, więc ręcznie przepisany słownik pozwoliłby na dryf
+  kontraktu przy zielonym suicie. Dryf byłby CICHY i kosztowny: bramka czyta `rerank_score`
+  z domyślną zerówką, czyli utrata tego pola nie daje `KeyError`, tylko `top_score = 0.0` →
+  odmowa na **każde** pytanie. Argumenty fabryki są tylko po nazwie, a atrapa `hybrid_search`
+  powstaje przez `create_autospec` z prawdziwej funkcji — zmiana kontraktu daje `TypeError`
+  w teście, nie ciszę. Sprawdzone eksperymentalnie: oba dryfy wprowadzone celowo → suite czerwony.
 
 ---
 
@@ -427,7 +434,8 @@ zależność od toolchainu, którego tam zwykle nie ma.
 config/config.py        # WSZYSTKIE parametry (chunk size, top_k, modele, progi) w jednym miejscu
 src/ingest/             # parse_pdf.py (czyszczenie PDF) + chunk.py (chunking)
 src/index/build_index.py# embeddingi -> Qdrant
-src/retrieve/           # search.py (dense), bm25.py, hybrid.py (RRF), rerank.py
+src/retrieve/           # search.py (dense), bm25.py, hybrid.py (RRF), rerank.py,
+                        # hit.py (kanoniczny kształt trafienia — jedno źródło nazw pól)
 src/generate/answer.py  # pętla RAG: retrieval -> bramka -> prompt -> LLM -> cytat (+ on_event dla UI)
 src/generate/llm.py     # dyspozytor backendów LLM (Ollama /api/generate vs vLLM /v1/chat/completions)
 src/generate/verify.py  # guard #3: weryfikacja ugruntowania tez po generacji (sędzia Gemma)

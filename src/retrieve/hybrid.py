@@ -23,6 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
 from src.retrieve.bm25 import get_bm25
+from src.retrieve.hit import make_hit
 from src.retrieve.search import search as dense_search
 
 _chunks: dict | None = None
@@ -69,13 +70,13 @@ def hybrid_search(
 
     chunks = _get_chunks()
     hits = [
-        {
-            "score": fused[cid],
-            "source": chunks[cid]["source"],
-            "chunk_index": chunks[cid]["chunk_index"],
-            "chunk_id": cid,
-            "text": chunks[cid]["text"],
-        }
+        make_hit(
+            score=fused[cid],
+            source=chunks[cid]["source"],
+            chunk_index=chunks[cid]["chunk_index"],
+            chunk_id=cid,
+            text=chunks[cid]["text"],
+        )
         for cid in ranked_ids
     ]
 

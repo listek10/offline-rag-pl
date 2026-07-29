@@ -46,6 +46,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
 from src.generate import llm as llm_mod
+from src.retrieve.hit import top_rerank_score
 
 RESULTS = config.ROOT / "results"
 PROMPTS = RESULTS / "backend_prompts.json"
@@ -74,7 +75,7 @@ def prepare() -> None:
             "context": build_context(hits),
             # Zapisujemy score, żeby raport mógł powiedzieć, ile z tych pytań bramka
             # zatrzymałaby PRZED modelem — inaczej mieszalibyśmy zasługi guardów.
-            "top_score": max((h.get("rerank_score", 0.0) for h in hits), default=0.0),
+            "top_score": top_rerank_score(hits),
         })
         print(f"  [{i}/{len(rows)}] {r['id']} top_score={out[-1]['top_score']:.4f}")
 

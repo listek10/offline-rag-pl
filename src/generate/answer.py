@@ -27,6 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.retrieve.hit import top_rerank_score
 from src.retrieve.hybrid import hybrid_search
 
 # Transport do modelu mieszka w `llm.py` (etap 7): tam siedzi przełącznik Ollama <-> vLLM.
@@ -96,7 +97,7 @@ def answer(question: str, top_k: int | None = None, system: str = SYSTEM_PROMPT,
     hits = hybrid_search(question, top_k=top_k, rerank=True)
     # top_score liczymy ZAWSZE (nie tylko przy włączonej bramce), bo UI pokazuje tę liczbę
     # także w trybie demo z rozbrojoną bramką — inaczej nie dałoby się porównać „przed/po".
-    top_score = max((h.get("rerank_score", 0.0) for h in hits), default=0.0)
+    top_score = top_rerank_score(hits)
     emit(event="stage", stage="retrieval", status="done", ms=_ms(t),
          top_score=top_score, hits=hits)
 

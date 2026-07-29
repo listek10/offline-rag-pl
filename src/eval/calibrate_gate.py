@@ -37,6 +37,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.retrieve.hit import top_rerank_score
 from src.retrieve.hybrid import hybrid_search
 
 HELDOUT_PATH = config.ROOT / "gold_set" / "heldout_gate.jsonl"
@@ -61,10 +62,12 @@ def top_gate_score(question: str) -> float:
 
     Ta zgodność jest krytyczna: gdybyśmy kalibrowali na innym torze retrievalu (np. samo dense
     albo bez rerankera), próg nie przenosiłby się na produkcję. Dlatego wołamy tę samą funkcję
-    z tymi samymi parametrami z configu.
+    z tymi samymi parametrami z configu — ORAZ tę samą funkcję odczytu score'u
+    (`top_rerank_score`), której używa bramka. Wcześniej ta linijka była przepisana ręcznie,
+    czyli deklarowała identyczność, której nie wymuszała.
     """
     hits = hybrid_search(question, rerank=True)
-    return max((h.get("rerank_score", 0.0) for h in hits), default=0.0)
+    return top_rerank_score(hits)
 
 
 def compute_scores(rows: list[dict]) -> list[dict]:

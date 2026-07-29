@@ -193,6 +193,10 @@ def test_strumien_konczy_sie_zdarzeniem_final(monkeypatch):
     assert sum(1 for e in events if e["event"] == "final") == 1
 
 
+# DLACZEGO te słowniki NIE idą przez `make_hit` (inaczej niż w test_answer_events.py): tutaj
+# testujemy TRANSFORMACJĘ, którą robi `_hits_payload` — celowo podajemy hit BEZ `chunk_id`,
+# żeby sprawdzić, że warstwa HTTP wysyła tylko pola przewidziane dla UI. Użycie fabryki
+# zabetonowałoby tu wejście, którego kształt jest właśnie przedmiotem testu.
 def test_hity_dostaja_numeracje_n_zgodna_z_cytatami(monkeypatch):
     monkeypatch.setattr(api_mod, "answer", _fake_answer(
         [{"event": "stage", "stage": "retrieval", "status": "done", "ms": 5, "top_score": 0.9,
