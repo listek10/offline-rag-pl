@@ -21,7 +21,6 @@ nie skleja "bezpieczeństwo"/"bezpieczeństwa") — świadoma, odnotowana wada.
 
 from __future__ import annotations
 
-import json
 import math
 import re
 import sys
@@ -30,6 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.retrieve import corpus as corpus_mod
 
 _TOKEN = re.compile(r"\w+", re.UNICODE)  # \w łapie polskie znaki (ą, ć, ż...)
 
@@ -74,13 +74,18 @@ class BM25:
         return [(self.ids[i], s[i]) for i in order]
 
 
-# Leniwy singleton — budujemy indeks raz z chunks.jsonl.
-_bm25: BM25 | None = None
+# Leniwy cache KLUCZOWANY KORPUSEM (etap 2 UI). Wcześniej był to jeden singleton nad
+# chunks.jsonl — wystarczał, dopóki istniał jeden korpus. Po dodaniu wgrywania PDF-u
+# istnieją dwa, więc singleton bez klucza odpowiadałby o dokument demo indeksem OSW.
+# DLACZEGO NADAL LENIWY: budowa indeksu BM25 czyta CAŁY korpus i liczy statystyki termów;
+# zrobienie tego przy imporcie wymagałoby `chunks.jsonl` do samego uruchomienia testów
+# kontraktowych (patrz `requirements-dev.txt`). Dokładamy KLUCZ, nie rezygnujemy z cache'a.
+# Cache pochodzi z `corpus.new_cache()`, żeby skasowanie korpusu zamiotło też jego indeks.
+_bm25 = corpus_mod.new_cache()
 
 
-def get_bm25() -> BM25:
-    global _bm25
-    if _bm25 is None:
-        docs = [json.loads(line) for line in config.CHUNKS_PATH.open(encoding="utf-8")]
-        _bm25 = BM25(docs, k1=config.BM25_K1, b=config.BM25_B)
-    return _bm25
+def get_bm25(corpus: "corpus_mod.Corpus | str | None" = None) -> BM25:
+    c = corpus_mod.resolve(corpus)
+    if c.name not in _bm25:
+        _bm25[c.name] = BM25(c.load_records(), k1=config.BM25_K1, b=config.BM25_B)
+    return _bm25[c.name]
