@@ -1,6 +1,24 @@
-# offline-rag-pl — zależności
-# Zasada: dopisujemy paczki dopiero na etapie, który ich realnie używa
-# (prostota przed sprytem, łatwiej wytłumaczyć po co każda z nich).
+# offline-rag-pl — zależności RUNTIME (to, co musi mieć działający system)
+#
+# PODZIAŁ NA DWA PLIKI — kryterium jest "kto tego potrzebuje", nie "który to etap":
+#   requirements.txt      -> uruchomienie systemu (parsowanie, embeddingi, Qdrant, serwer)
+#   requirements-dev.txt  -> weryfikacja kontraktów (61 MB venva, BEZ GPU i bez usług)
+# Powód: ten plik ciągnie torcha (~2,5 GB) tranzytywnie, przez sentence-transformers.
+# Gdyby testy od niego zależały, "sprawdź, czy repo działa" kosztowałoby 2,5 GB pobierania.
+#
+# ┌─ TORCHA TU CELOWO NIE MA ─────────────────────────────────────────────────────────┐
+# │ `sentence-transformers` WYMAGA torcha, więc pip i tak go pobierze — ale z PyPI,    │
+# │ a build z PyPI nie ma kerneli pod tę kartę (RTX 5070 Ti = Blackwell / sm_120).     │
+# │ Objaw jest podstępny: instalacja przechodzi, a "no kernel image is available"      │
+# │ wybucha dopiero przy pierwszym .encode(), daleko od przyczyny.                     │
+# │ Dlatego torcha instalujemy PRZED tym plikiem, z indeksu CUDA (patrz README):       │
+# │     pip install torch --index-url https://download.pytorch.org/whl/cu128          │
+# │     pip install -r requirements.txt        # <- widzi torcha jako spełnionego      │
+# │ Kolejność ma znaczenie. Odwrotna daje zły build i "działa, ale nie na GPU".        │
+# │ Świadomie NIE wpisujemy tu `--extra-index-url`: ta flaga nie jest przypisana do    │
+# │ paczki, obowiązuje CAŁY resolving — pip mógłby wziąć z indeksu PyTorcha dowolną    │
+# │ inną zależność. Plus przybiłaby plik do jednej architektury GPU.                   │
+# └───────────────────────────────────────────────────────────────────────────────────┘
 
 # --- Etap 1: parsowanie PDF ---
 pymupdf>=1.24        # import jako "fitz"; główny parser (szybki, dobra jakość, bloki z współrzędnymi)
@@ -9,17 +27,18 @@ pymupdf>=1.24        # import jako "fitz"; główny parser (szybki, dobra jakoś
 # --- Etap 2: chunking ---   (czysty stdlib — chunk.py nie wymaga nic dodatkowego)
 
 # --- Etap 2: indeks (embeddingi + baza wektorowa) ---
-# UWAGA offline≠instalacja: torch pod RTX 5070 Ti (Blackwell/sm_120) wymaga CUDA 12.8.
-# Instalujemy go osobno z indeksu PyTorch (patrz README/komenda), a nie z PyPI:
-#   pip install torch --index-url https://download.pytorch.org/whl/cu128
-torch>=2.7                     # backend obliczeń (GPU); instalacja z indeksu cu128
-sentence-transformers>=3.0     # wygodne API do modelu embeddingów (BGE-M3)
+sentence-transformers>=3.0     # API do modelu embeddingów (BGE-M3); ciągnie torch/transformers/numpy
 qdrant-client>=1.10            # klient do self-hosted Qdrant (Docker)
 
-# --- Etap 3: generacja (lokalny LLM przez Ollama) ---   (dodamy później)
-# (Ollama to osobny serwer, nie paczka pip)
+# --- Etap 3: generacja (lokalny LLM) ---   ZERO nowych paczek, i to jest wynik, nie luka:
+# Ollamę i vLLM wołamy czystym `urllib` ze stdliba (src/generate/llm.py) — bez biblioteki
+# `openai`, bez klienta Ollamy. Sama Ollama to osobny serwer systemowy, nie paczka pip.
 
-# --- Etap 4-5: ewaluacja / reranking ---   (dodamy później)
+# --- Etapy 4-5: ewaluacja + reranking ---   ZERO nowych paczek (świadomie, nie przez zaniedbanie):
+# - metryki (recall@k, MRR) i BM25/RRF to własne implementacje na stdlibie — celowo, bo RAGAS
+#   domyślnie ciągnie klienta LLM-a chmurowego, co kłóci się z zasadą "offline w runtime";
+# - cross-encoder (bge-reranker-v2-m3) jedzie na już obecnym `sentence-transformers`;
+# - model-sędzia (Gemma 2 9B) stoi w Ollamie, czyli znów: serwer, nie paczka.
 
 # --- Etap 6: warstwa serwująca (UI) ---
 # Cienki serwer HTTP nad istniejącą pętlą RAG. Świadomie BEZ Streamlita/Gradio:
@@ -27,4 +46,10 @@ qdrant-client>=1.10            # klient do self-hosted Qdrant (Docker)
 # interakcji (ryzyko ładowania BGE-M3 za każdym kliknięciem). Tu: 2 paczki, proces długo żyjący.
 fastapi>=0.115       # routing + walidacja wejścia (Pydantic) + OpenAPI /docs
 uvicorn>=0.30        # serwer ASGI
-# pytest>=8.0        # testy (dev); httpx (wymagany przez TestClient) jest już w środowisku
+
+# --- Etap 7: vLLM jako alternatywny backend ---   NIE INSTALUJ GO W TYM ŚRODOWISKU.
+# vLLM przyciąga własnego torcha (2.11+cu130), a stack retrievalowy stoi na cu128 zbudowanym
+# pod sm_120 — wspólna instalacja zdegradowałaby BGE-M3. Dlatego vLLM mieszka w OSOBNYM env
+# conda i nie ma tu (ani w żadnym pliku requirements-*) swojej linijki: plik o nazwie
+# `requirements-vllm.txt` zapraszałby do `pip install -r` w złym env, czyli dokładnie do awarii,
+# przed którą się chronimy. Pełna komenda: README, sekcja "Serwowanie LLM: Ollama vs vLLM".

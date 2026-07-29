@@ -213,13 +213,40 @@ odpowiedzi **inny model-sędzia (Gemma)** sprawdza KAŻDĄ tezę przeciw konteks
 ---
 
 ## Uruchomienie
+
+Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
+**„czy repo jest spójne?"** (sekundy, bez GPU) i **„czy system działa?"** (GPU + usługi).
+
+### A. Weryfikacja kontraktów — bez GPU, bez Qdranta, bez Ollamy
+
+```bash
+python3.11 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
+pytest                                   # -> 61 passed in 0,57 s
+```
+
+Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`) są
+**leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
+w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
+`ModuleNotFoundError`, a mimo to **61 passed**. Bez `node` (opcjonalna zależność dev dla
+`tests/check_app_js.js`): **60 passed, 1 skipped**.
+
+**Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,
+kolejności zdarzeń, chunkingu, metryk, BM25/RRF, routingu backendów. Nie dowodzi, że RAG
+odpowiada dobrze — ani nawet że w ogóle wstaje. Testy podstawiają `hybrid_search` atrapą
+zwracającą ręcznie napisany słownik, więc **dryf kluczy między atrapą a prawdziwą funkcją
+przeszedłby niezauważony**. Tym, co pilnuje całej ścieżki, jest ewaluacja na gold secie
+(punkt B.6): prawdziwy retrieval, prawdziwy model, liczby.
+
+### B. Pełny system
+
 ```bash
 # 1. Środowisko
 conda create -n offline-rag-pl python=3.11 && conda activate offline-rag-pl
 
-# 2. Zależności (torch OSOBNO, z indeksu CUDA pod GPU — tu 12.8 dla Blackwella)
-pip install torch --index-url https://download.pytorch.org/whl/cu128
-pip install -r requirements.txt
+# 2. Zależności — KOLEJNOŚĆ MA ZNACZENIE (patrz ramka niżej)
+pip install torch --index-url https://download.pytorch.org/whl/cu128   # najpierw torch z indeksu CUDA
+pip install -r requirements.txt                                        # potem reszta
 
 # 3. Baza wektorowa (Qdrant w Dockerze, dane w named volume)
 docker run -d --name qdrant-osw -p 6333:6333 -v qdrant_osw_storage:/qdrant/storage qdrant/qdrant
@@ -239,6 +266,26 @@ python src/eval/run_eval.py       # retrieval: recall@k, MRR (dense vs hybryda v
 python src/eval/eval_answers.py   # odpowiedzi: refusal, faithfulness, relevance
 ```
 > **Offline w runtime:** po pobraniu modeli ustaw `HF_HUB_OFFLINE=1` — całość działa bez sieci.
+
+> **Dlaczego torch nie jest w `requirements.txt`, a instalacja i tak wymaga kolejności.**
+> `sentence-transformers` **wymaga** torcha, więc pip ściągnie go tranzytywnie — tylko że z PyPI,
+> a ten build nie ma kerneli pod RTX 5070 Ti (Blackwell, `sm_120`). Awaria jest podstępna:
+> instalacja przechodzi, a `no kernel image is available for execution` wybucha dopiero przy
+> pierwszym `.encode()`. Instalując torcha **pierwszy** z indeksu `cu128`, sprawiamy, że pip
+> widzi wymaganie jako spełnione i go nie rusza — sprawdzone `pip install --dry-run` w gotowym
+> środowisku: *„by doinstalował: NIC"*. Odrzucona alternatywa: `--extra-index-url` w pliku —
+> ta flaga nie jest przypisana do paczki, obowiązuje cały resolving (pip mógłby wziąć z indeksu
+> PyTorcha dowolną inną zależność), a do tego przybiłaby plik do jednej architektury GPU.
+> **vLLM (etap 7) nie należy do żadnego z tych plików** — ciągnie własnego torcha `cu130`,
+> który zdegradowałby BGE-M3, więc żyje w osobnym env conda (sekcja „Serwowanie LLM").
+
+**Zweryfikowane wersje** (2026-07-29, Python 3.11): `torch 2.11.0+cu128`,
+`sentence-transformers 5.6.1`, `transformers 5.14.1`, `qdrant-client 1.18.0`, `pymupdf 1.28.0`,
+`fastapi 0.140.13`, `uvicorn 0.51.0`, `numpy 2.4.6` — dev: `pytest 9.1.1`, `httpx 0.28.1`.
+W plikach są **dolne granice** (`>=`), nie sztywne piny: chcemy dostawać łatki bezpieczeństwa,
+a nie odmrażać ręcznie 20 wersji po pół roku. Cena tej decyzji jest realna i już widoczna —
+`starlette >= 1.3` ostrzega, że `httpx` w `TestClient` jest **deprecated** (docelowo `httpx2`),
+czyli kiedyś sam upgrade tranzytywny wywali `tests/test_api.py`. Wtedy: podmiana na `httpx2`.
 
 ---
 
