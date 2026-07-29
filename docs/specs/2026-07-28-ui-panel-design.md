@@ -381,16 +381,26 @@ dokument** — dodanie pliku nie przesuwa id istniejących chunków i gold set s
 1. ✅ **Etap 1 — ZREALIZOWANY 2026-07-28** (PR #8, `ui-panel` zmergowany do `main`):
    `stream.py` → `api.py` → statyki → testy → ręczne demo. Plan z odhaczonymi krokami
    i odnotowanymi odstępstwami: `docs/plans/2026-07-28-ui-panel-etap1.md`.
-2. ⬜ **Etap 2 — NIEZREALIZOWANY**: wgrywanie PDF-u — parametryzacja retrievalu korpusem →
-   ingest z bajtów → ulotna kolekcja → przełącznik korpusu w UI. Projekt jest w sekcji 8
-   tego specu i pozostaje aktualny; nie ma osobnego pliku planu.
+2. ✅ **Etap 2 — ZREALIZOWANY 2026-07-29** (gałąź `ui-etap2-upload-pdf`): parametryzacja
+   retrievalu korpusem (`src/retrieve/corpus.py`) → ingest z bajtów (`extract_pages_bytes`,
+   `chunk_text`, `src/ingest/upload.py`) → ulotna kolekcja (`src/index/ad_hoc.py`) →
+   przełącznik korpusu i upload w UI. Projekt z sekcji 8 zrealizowany bez odstępstw
+   projektowych; szczegóły i liczby: `NOTATKI_REKRUTER.md` (etap 12) oraz README.
 
-> **Uwaga do wznowienia:** gałąź `ui-panel` już nie istnieje (zmergowana), więc etap 2 zaczyna
-> się od nowej gałęzi odbitej od `main`. Od czasu napisania specu doszły etapy 7-10, w tym
-> `src/retrieve/hit.py` (kanoniczny kształt trafienia) — parametryzacja retrievalu korpusem
-> powinna iść przez niego, a nie obok. Uwaga na `_get_chunks()`/`get_bm25()`: to leniwe
-> singletony, na których stoi testowalność bez GPU (patrz `requirements-dev.txt`), więc
-> kluczowanie ich korpusem nie może ich zamienić na eager.
+**Odstępstwa i uzupełnienia względem sekcji 8 (do wiedzy przy czytaniu specu):**
+- **Transport pliku:** spec nie rozstrzygał formy uploadu. Wybrane: **surowe bajty w ciele POST-a**
+  (`?name=` na etykietę źródła), NIE `multipart/form-data` — Starlette trzyma `UploadFile`
+  w `SpooledTemporaryFile(max_size=1 MB)`, więc multipart **zapisałby PDF >1 MB na dysk**, łamiąc
+  wymóg „plik nie dotyka dysku". Efekt uboczny: zero nowych zależności (`python-multipart`).
+- **Dodany bezpiecznik:** kod **odmawia pracy**, gdy `UPLOAD_COLLECTION == QDRANT_COLLECTION`
+  (nazwa kolekcji zmierzonej jest nadpisywalna środowiskiem od etapu 8, więc zbieżność nazw jest
+  osiągalna, a jej skutkiem byłby cicho przebudowany indeks zmierzony).
+- **Rozdzielone powody odmowy:** limit stron ma własny typ (`PdfTooLong`) i własny komunikat —
+  pierwszy przebieg na żywo sklejał go z „nie udało się odczytać PDF-a", co prowadzi użytkownika
+  w złą stronę. Znalezione dopiero na prawdziwym dokumencie, przy zielonych testach.
+- **Wynik uboczny do backlogu:** chunking zakłada prozę analityczną i na dokumencie pisanym
+  wypunktowaniami daje chunki do 5614 znaków (3% >2000 zn.), co podnosi koszt guardu #3 do 264 s.
+  Zapisane jako pozycja 1 w `TODO.md`.
 
 Po każdym etapie: wpis do `NOTATKI_REKRUTER.md`
 (PROBLEM → CO ZROBIŁEM/alternatywy → DOWÓD → JAK UJĄĆ NA ROZMOWIE) i aktualizacja README.
