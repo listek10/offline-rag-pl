@@ -1,0 +1,239 @@
+{
+  "n_traps": 7,
+  "repeats": 3,
+  "rozkład": {
+    "poprawna": 9,
+    "niejednoznaczna": 3,
+    "podmiana": 3,
+    "inna-bledna": 0,
+    "odmowa": 6
+  },
+  "udziały": {
+    "poprawna": 0.429,
+    "niejednoznaczna": 0.143,
+    "podmiana": 0.143,
+    "inna-bledna": 0.0,
+    "odmowa": 0.286
+  },
+  "per_pytanie": {
+    "t01": {
+      "podmiana": 3
+    },
+    "t02": {
+      "poprawna": 3
+    },
+    "t03": {
+      "poprawna": 3
+    },
+    "t04": {
+      "niejednoznaczna": 3
+    },
+    "t05": {
+      "odmowa": 3
+    },
+    "t06": {
+      "odmowa": 3
+    },
+    "t07": {
+      "poprawna": 3
+    }
+  },
+  "przebiegi": [
+    {
+      "rep": 1,
+      "id": "t01",
+      "entity": "Dania",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "podmiana",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Danii w 2021 r. wyniosły 8,4 mld dolarów, co stanowiło 1,75% PKB [2]."
+    },
+    {
+      "rep": 1,
+      "id": "t02",
+      "entity": "Norwegia",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Norwegii w 2021 roku wyniosły 8,4 mld dolarów, co stanowiło 1,75% PKB [1]."
+    },
+    {
+      "rep": 1,
+      "id": "t03",
+      "entity": "Kanada",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Kanady w 2021 r. wyniosły ok. 26 mld dolarów, tj. 1,3% PKB [1]."
+    },
+    {
+      "rep": 1,
+      "id": "t04",
+      "entity": "Estonia",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "niejednoznaczna",
+      "blocked_by": null,
+      "answer": "Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów. [1]"
+    },
+    {
+      "rep": 1,
+      "id": "t05",
+      "entity": "Łotwa",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "odmowa",
+      "blocked_by": null,
+      "answer": "Nie znajduję odpowiedzi w źródłach."
+    },
+    {
+      "rep": 1,
+      "id": "t06",
+      "entity": "Litwa",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "odmowa",
+      "blocked_by": null,
+      "answer": "Nie znajduję odpowiedzi w źródłach."
+    },
+    {
+      "rep": 1,
+      "id": "t07",
+      "entity": "Finlandia",
+      "subtype": "rola-wartosci",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Roczne wydatki obronne Finlandii wyniosły ok. 3 mld euro [1]."
+    },
+    {
+      "rep": 2,
+      "id": "t01",
+      "entity": "Dania",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "podmiana",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Danii w 2021 r. wyniosły 8,4 mld dolarów, co stanowiło 1,75% PKB [2]."
+    },
+    {
+      "rep": 2,
+      "id": "t02",
+      "entity": "Norwegia",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Norwegii w 2021 roku wyniosły 8,4 mld dolarów, co stanowiło 1,75% PKB [1]."
+    },
+    {
+      "rep": 2,
+      "id": "t03",
+      "entity": "Kanada",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Kanady w 2021 r. wyniosły ok. 26 mld dolarów, tj. 1,3% PKB [1]."
+    },
+    {
+      "rep": 2,
+      "id": "t04",
+      "entity": "Estonia",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "niejednoznaczna",
+      "blocked_by": null,
+      "answer": "Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów. [1]"
+    },
+    {
+      "rep": 2,
+      "id": "t05",
+      "entity": "Łotwa",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "odmowa",
+      "blocked_by": null,
+      "answer": "Nie znajduję odpowiedzi w źródłach."
+    },
+    {
+      "rep": 2,
+      "id": "t06",
+      "entity": "Litwa",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "odmowa",
+      "blocked_by": null,
+      "answer": "Nie znajduję odpowiedzi w źródłach."
+    },
+    {
+      "rep": 2,
+      "id": "t07",
+      "entity": "Finlandia",
+      "subtype": "rola-wartosci",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Roczne wydatki obronne Finlandii wyniosły ok. 3 mld euro [1]."
+    },
+    {
+      "rep": 3,
+      "id": "t01",
+      "entity": "Dania",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "podmiana",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Danii w 2021 r. wyniosły 8,4 mld dolarów, co stanowiło 1,75% PKB [2]."
+    },
+    {
+      "rep": 3,
+      "id": "t02",
+      "entity": "Norwegia",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Norwegii w 2021 roku wyniosły 8,4 mld dolarów, co stanowiło 1,75% PKB [1]."
+    },
+    {
+      "rep": 3,
+      "id": "t03",
+      "entity": "Kanada",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Wydatki obronne Kanady w 2021 r. wyniosły ok. 26 mld dolarów, tj. 1,3% PKB [1]."
+    },
+    {
+      "rep": 3,
+      "id": "t04",
+      "entity": "Estonia",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "niejednoznaczna",
+      "blocked_by": null,
+      "answer": "Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów. [1]"
+    },
+    {
+      "rep": 3,
+      "id": "t05",
+      "entity": "Łotwa",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "odmowa",
+      "blocked_by": null,
+      "answer": "Nie znajduję odpowiedzi w źródłach."
+    },
+    {
+      "rep": 3,
+      "id": "t06",
+      "entity": "Litwa",
+      "subtype": "podmiana-podmiotu",
+      "klasa": "odmowa",
+      "blocked_by": null,
+      "answer": "Nie znajduję odpowiedzi w źródłach."
+    },
+    {
+      "rep": 3,
+      "id": "t07",
+      "entity": "Finlandia",
+      "subtype": "rola-wartosci",
+      "klasa": "poprawna",
+      "blocked_by": null,
+      "answer": "Roczne wydatki obronne Finlandii wyniosły ok. 3 mld euro [1]."
+    }
+  ],
+  "config": {
+    "gate": true,
+    "verify": false,
+    "model": "qwen2.5:7b",
+    "judge": "gemma2:9b",
+    "backend": "ollama"
+  }
+}
