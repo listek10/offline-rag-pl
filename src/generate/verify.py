@@ -65,9 +65,27 @@ def to_claims(answer_text: str) -> list[str]:
 
     DLACZEGO per-teza: odpowiedź „Dania ma 1,75% PKB [2], a celu 2% nie osiągnie przed 2033 [4]"
     ma jedną tezę zmyśloną i jedną poprawną. Ocena całości jednym TAK/NIE zgubiłaby tę różnicę.
+
+    KRYTERIUM TEZY: fragment ma choć jeden znak alfanumeryczny. Wcześniej był tu próg 15 znaków
+    i to on był drugą połową dziury fail-open (pozycja 3 z `TODO.md`): odsiewał nagłe wielkości,
+    więc „120 [1]" (przeciek arytmetyczny, `o05`) i „65% [1]" (POPRAWNA odpowiedź na `g13`) miały
+    ZERO tez i przechodziły bez weryfikacji. Kształt mają identyczny — różni je wyłącznie to, czy
+    kontekst tę wielkość twierdzi, a to widzi tylko sędzia. Kod, który odsiewa taki fragment,
+    nie „upraszcza": odbiera decyzję jedynej warstwie, która ma na nią dowód.
+    ZMIERZONY ZASIĘG ZMIANY (`src/eval/ab_claims.py --struktura`, 779 zapisanych odpowiedzi):
+    zbiór tez zmienia się w 16 wystąpieniach / 4 unikalnych fragmentach — wszystkie to nagłe
+    liczby. Pozostałe 763 mają zbiór tez IDENTYCZNY, z czego 19 to `"[1]"`, gdzie decyzję zmienia
+    druga część poprawki (`grounded_fraction`, fail-closed przy pustce) — czyli w pełni
+    tożsamościowych jest 744. Dzięki temu zmierzone liczby (faithfulness, A/B promptu, A/B
+    chunkingu) zachowują ważność BEZ ponownej generacji: te same tezy = te same wywołania sędziego.
+    Fragment bez znaku alfanumerycznego („—", „...") tezą nie jest: nie ma czego weryfikować,
+    a wysłanie go do sędziego to spalone wywołanie LLM-a.
     """
     txt = re.sub(r"\[\d+\]", "", answer_text)          # usuń markery cytowań [n]
-    return [s for s in split_sentences(txt) if len(s) > 15]
+    # Uwaga: NIE normalizujemy dalej białych znaków (po markerze zostaje spacja przed kropką).
+    # Tekst tezy jest wejściem promptu sędziego, więc każda kosmetyka zmienia WSZYSTKIE tezy
+    # i unieważnia porównywalność z zapisanymi pomiarami. Osobna zmiana, osobny pomiar.
+    return [s for s in split_sentences(txt) if re.search(r"\w", s)]
 
 
 def judge_grounded(context: str, claim: str, system: str | None = None) -> tuple[bool, str]:
@@ -88,24 +106,32 @@ def judge_grounded(context: str, claim: str, system: str | None = None) -> tuple
     return verdict, reason
 
 
+NO_CLAIM_REASON = ("odpowiedź nie zawiera żadnej treści do weryfikacji "
+                   "(po usunięciu cytowań [n] zostaje sam marker albo pustka)")
+
+
 def grounded_fraction(context: str, answer_text: str,
                       system: str | None = None) -> tuple[float, list[dict]]:
     """Zwraca (udział tez popartych kontekstem, lista {claim, grounded, reason}).
 
-    Brak tez (np. bardzo krótka odpowiedź) traktujemy jako 1.0 — guard nie ma czego zakwestionować
-    i nie powinien wtedy blokować; to świadoma decyzja „fail-open" w tym jednym przypadku.
+    BRAK TEZ = 0.0, czyli BLOKADA (fail-closed). Wcześniej było tu 1.0 („guard nie ma czego
+    zakwestionować") i to była DZIURA, nie ustępstwo: wyjścia `"[1]"` (sam marker cytowania)
+    przechodziły przez wszystkie trzy guardy do użytkownika. Zmierzone nie tylko w odrzuconym
+    wariancie promptu (9 wyjść na pułapkach), ale i w PRODUKCYJNYM przebiegu — `g25` w
+    `results/backend_answers_ollama.json` ma `answer="[1]"` i `grounded_fraction=1.0`.
+    Po zmianie kryterium tezy w `to_claims()` „zero tez" znaczy już tylko jedno: po usunięciu
+    cytowań w odpowiedzi NIE MA TREŚCI. Takiego wyjścia nie ma sensu publikować nigdy — nie jest
+    ani odpowiedzią, ani odmową, a użytkownikowi wygląda jak uszkodzony cytat.
+    Krótkie POPRAWNE odpowiedzi („65% [1]" na `g13`) ta reguła NIE tyka, bo mają teraz jedną tezę
+    i idą do sędziego — to jest właśnie różnica między tą poprawką a jednolinijkowym
+    „brak tez -> blokuj", które ubijało `g13` (pomiar: `src/eval/ab_claims.py`).
 
-    ZMIERZONA KONSEKWENCJA (etap 11, `src/eval/ab_prompt.py`): ta furtka jest DZIURĄ, nie tylko
-    ustępstwem. `to_claims()` usuwa markery `[n]` i odsiewa fragmenty ≤15 znaków, więc wyjścia
-    `"[1]"` (sam cytat) i `"444 [5]"` (arytmetyka z cytatem, zabroniona zasadą 1 promptu) mają
-    ZERO tez i przechodzą przez wszystkie trzy guardy do użytkownika. Zmierzone na 9 wyjściach po
-    stronie pułapek i 3 przeciekach spoza korpusu. NIE zamykam tego tutaj na wyczucie: „brak tez
-    -> blokuj" tyka też krótkich POPRAWNYCH odpowiedzi („ok. 3 mld euro [2]"), więc zmiana wymaga
-    własnego pomiaru obu stron błędu (pozycja 3 w `TODO.md`).
+    Zwracamy przy tym SYNTETYCZNY werdykt z powodem, a nie pustą listę: blokada bez uzasadnienia
+    zamieniłaby guard w czarną skrzynkę (UI pokazuje `verdicts` w panelu przebiegu).
     """
     claims = to_claims(answer_text)
     if not claims:
-        return 1.0, []
+        return 0.0, [{"claim": answer_text.strip(), "grounded": False, "reason": NO_CLAIM_REASON}]
     verdicts = []
     for c in claims:
         ok, reason = judge_grounded(context, c, system=system)

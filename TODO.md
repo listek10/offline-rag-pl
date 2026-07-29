@@ -4,9 +4,9 @@ Jedno źródło prawdy o tym, co zostało. Wcześniej ta lista żyła w rozmowie
 który jest w `.gitignore` — czyli nie istniała dla nikogo, kto otwiera repo. Trzymam ją tutaj,
 w repo, a brief tylko na nią wskazuje: dwie kopie jednej prawdy zawsze się rozjeżdżają.
 
-**Stan bazowy:** wszystkie 5 etapów z briefu + 7 ponad plan zamknięte, 12/12 checkpointów
-z `CLAUDE.md` pokrytych, 140 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
-/ `qdrant-client`; w env projektu 149), CI na GitHub Actions zielone.
+**Stan bazowy:** wszystkie 5 etapów z briefu + 8 ponad plan zamknięte, 12/12 checkpointów
+z `CLAUDE.md` pokrytych, 157 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
+/ `qdrant-client`; w env projektu 166), CI na GitHub Actions zielone.
 Liczby: `README.md`. Historia decyzji: `NOTATKI_REKRUTER.md`.
 
 Kolejność = rekomendacja, nie zależności. Każda pozycja ma **jak zmierzyć**, bo w tym projekcie
@@ -65,28 +65,7 @@ z mocniejszym n.
 
 ---
 
-## 3. Dziura fail-open w guardzie #3 — odpowiedzi bez ani jednej tezy  ⬜ (nowe, z etapu 11)
-
-**Problem (zmierzony 29.07, etap 11):** `grounded_fraction()` zwraca 1.0, gdy odpowiedź nie ma
-ani jednej tezy — świadomy fail-open („nie ma czego podważać"). Ale `to_claims()` usuwa markery
-`[n]` i odsiewa fragmenty ≤15 znaków, więc wyjścia `"[1]"` i `"444 [5]"` mają **zero tez** i
-przechodzą przez **wszystkie trzy guardy** do użytkownika. Zmierzone na 9 wyjściach po stronie
-pułapek i 3 przeciekach spoza korpusu. Dotyczy produkcji, nie tylko odrzuconego wariantu promptu.
-
-**Dlaczego to nie jest jednolinijkowa poprawka:** „brak tez → blokuj" tyka też krótkich,
-POPRAWNYCH odpowiedzi. Granica jest w `to_claims()` (próg 15 znaków po usunięciu cytowań), więc
-zmiana wymaga sprawdzenia, co dziś przechodzi jako teza, a co nie.
-
-**Jak zmierzyć:** `ab_prompt.py` ma już zapisane odpowiedzi z obu stron błędu — nowa reguła daje
-się ocenić na nich bez generacji (pomiar parowany, zero GPU po stronie generatora). Do tego
-`eval_answers.py` na false-refusal krótkich odpowiedzi z korpusu (np. „ok. 3 mld euro [2]").
-
-**Definicja zrobienia:** liczba „przed/po" dla obu stron + brak nowych false-refusali na gold
-secie, albo wynik negatywny z nazwaną ceną.
-
----
-
-## 4. Kontrakt payloadu w Qdrancie  ⬜ najmniej pilne
+## 3. Kontrakt payloadu w Qdrancie  ⬜ najmniej pilne
 
 **Problem:** `build_index.py` zapisuje payload (`chunk_id`, `source`, `chunk_index`, `text`),
 a `search.py` go czyta — dwa niezależne opisy jednego kształtu. Dokładnie ta klasa dryfu, którą
@@ -101,6 +80,20 @@ z liczbami identycznymi jak przed zmianą.
 ---
 
 ## Zamknięte (dla kontekstu, żeby nie wracać)
+
+- **Dziura fail-open w guardzie #3 (odpowiedzi bez ani jednej tezy) — ZAMKNIĘTA z pomiarem**,
+  etap 13 (29.07). Poprawka dwuczęściowa, bo dziura miała dwie warstwy: tezą jest fragment z choć
+  jednym znakiem alfanumerycznym (zamiast >15 znaków — nagła wielkość IDZIE do sędziego), a zero
+  tez znaczy teraz „po usunięciu cytowań brak treści" i blokuje (fail-closed, z uzasadnieniem
+  w `verdicts`). Kluczowa obserwacja z danych: przeciek `"120 [1]"` i POPRAWNA odpowiedź
+  `"65% [1]"` (`g13`) mają identyczny kształt, więc „brak tez → blokuj" kupowało przecieki za
+  pewny false-refusal. **DOWÓD:** przecieki 0/12 → 12/12 blokad; false-refusale 0/3 (`g13`,
+  prawdziwa odpowiedź modelu) i 0/18 (6 wzorcowych odpowiedzi gold setu ≤15 znaków); zasięg
+  zmiany udowodniony BEZ LLM-a — 744 z 779 zapisanych odpowiedzi ma identyczny zbiór tez, więc
+  zmierzone liczby zachowały ważność bez ponownej generacji. Harness: `src/eval/ab_claims.py`
+  (`--struktura` / `--sedzia` / `--wzorce`), wynik: `results/ab_claims.json`. Testy 140 → 157
+  bez GPU (166 w env projektu). Granica dowodu (zapisana w README): obowiązuje na zmierzonym
+  zbiorze odpowiedzi, nie „na zawsze".
 
 - Reprodukowalność: podział `requirements.txt` / `requirements-dev.txt` — `697280a`
 - Kontrakt trafienia w jednym miejscu (`hit.py`), dryf atrapy → `TypeError` — `177c36e`

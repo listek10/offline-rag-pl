@@ -2,7 +2,7 @@
 
 [![testy](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml/badge.svg)](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml)
 
-*Badge pokazuje testy kontraktowe (obecnie 91) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
+*Badge pokazuje testy kontraktowe (obecnie 157) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
 gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
 
 System **Retrieval-Augmented Generation** działający **w pełni offline**: odpowiada na pytania
@@ -294,11 +294,12 @@ ocen przepuszcza podmianę. Przy asymetrii kosztów tego zastosowania (pewne kł
 jest droższe od odmowy) to zła wymiana. Fałszywa odmowa i podmiana podmiotu **nie są dwoma
 błędami, a dwoma końcami jednej osi** — i moje guardy mają jeden suwak na obie.
 
-**Efekt uboczny, ważniejszy od samego A/B: guard #3 ma dziurę fail-open.** `grounded_fraction()`
-zwraca 1.0, gdy odpowiedź nie ma ani jednej tezy — świadoma decyzja („nie ma czego podważać").
-Ale `"[1]"` i `"444 [5]"` też nie mają tez, więc **przechodzą przez wszystkie trzy guardy** i
+**Efekt uboczny, ważniejszy od samego A/B: guard #3 miał dziurę fail-open.** `grounded_fraction()`
+zwracało 1.0, gdy odpowiedź nie ma ani jednej tezy — świadoma decyzja („nie ma czego podważać").
+Ale `"[1]"` i `"444 [5]"` też nie mają tez, więc **przechodziły przez wszystkie trzy guardy** i
 trafiłyby do użytkownika jako odpowiedź. Zmierzone: 9 takich wyjść po stronie zysku i 3 po
-stronie kosztu. Dziura jest niezależna od promptu — dotyczy też produkcji.
+stronie kosztu. Dziura była niezależna od promptu — dotyczyła też produkcji.
+**Domknięta pomiarem — sekcja „Dziura fail-open" niżej.**
 
 **Metodologia, która o mało nie zepsuła tego pomiaru.** Pierwszy przebieg puszczał warianty
 blokami (całe v2, potem v3, potem v4) i „pokazał" regresję Norwegii pod v3 (poprawna 3/3 →
@@ -308,6 +309,67 @@ warianty wewnątrz) i dołożeniu kontroli `v2bis` okazało się, że `t02` odma
 wariantem, produkcyjnym włącznie. Wadliwy przebieg został w repo
 (`results/ab_prompt_blokowy.json`) jako materiał dowodowy, a kolejność pilnuje teraz test
 kontraktowy, nie moja pamięć.
+
+### Dziura fail-open w guardzie #3 — odpowiedzi bez ani jednej tezy (ZAMKNIĘTA, z pomiarem)
+
+**Problem.** Guard #3 pytał sędziego o każdą **tezę**, a tezą nie był fragment ≤15 znaków. Przy
+zerze tez `grounded_fraction()` zwracało 1.0 („nie ma czego podważać"), więc trzy kształty wyjścia
+przechodziły przez **wszystkie trzy guardy**: `"[1]"` (sam marker cytowania), `"120 [1]"`
+(arytmetyka z fałszywym cytatem) i `"444 [5]"`. Nie jest to defekt harnessu z A/B promptu —
+w produkcyjnym przebiegu backendów `g25` ma zapisane `answer="[1]"` i `grounded_fraction=1.0`.
+
+**Dlaczego to nie była jednolinijkowa poprawka.** `"120 [1]"` (przeciek na pytaniu spoza korpusu)
+i `"65% [1]"` (**poprawna** odpowiedź na `g13`; gold: „Około 65%.") mają **identyczny kształt**.
+Reguła „brak tez → blokuj" kupuje przecieki za pewny false-refusal. Różni je wyłącznie to, czy
+kontekst tę wielkość twierdzi — a to widzi tylko sędzia. Poprawka jest więc dwuczęściowa:
+tezą jest fragment z choć jednym znakiem alfanumerycznym (nagła wielkość **idzie** do sędziego),
+a zero tez znaczy teraz „po usunięciu cytowań nie ma treści" i blokuje (fail-**closed**).
+
+**DOWÓD 1 — zasięg zmiany, bez ani jednego wywołania LLM-a** (`ab_claims.py --struktura`).
+`grounded_fraction()` ma dwa wejścia: kontekst i listę tez. Gdy lista jest identyczna, ciąg
+wywołań sędziego jest bit w bit ten sam — więc „brak regresji" dowodzi się enumeracją różnicy,
+a nie przepuszczaniem gold setu (to mierzyłoby wariancję sędziego). Na **779** zapisanych
+odpowiedziach z `results/`:
+
+| | wierszy | mechanizm |
+|---|--:|---|
+| zbiór tez identyczny → **operacja tożsamościowa** | **744** | te same wywołania sędziego, ta sama decyzja |
+| `"[1]"` — pusto w obu regułach | 19 | zmiana decyzji przy pustce: 1.0 → 0.0, **deterministyczna** |
+| nagła wielkość staje się tezą (`444`, `65%`, `12`, `120`) | 16 | decyduje sędzia |
+
+**DOWÓD 2 — przed/po, pomiar parowany** (`--sedzia`, 3 oceny na wiersz, bo sędzia jest
+stochastyczny; ten sam tekst i ten sam kontekst, różni się tylko reguła):
+
+| oczekiwanie | wiersz | n wystąpień | PRZED blokuje | PO blokuje |
+|---|---|--:|--:|--:|
+| blokada | `t05`+`t06` `"[1]"` | 18 | 0/3 | **3/3** |
+| blokada | `g25` `"[1]"` (pytanie Z korpusu) | 1 | 0/3 | **3/3** |
+| blokada | `o02` `"12 [3]"` (√144) | 1 | 0/3 | **3/3** |
+| blokada | `o05` `"120 [1]"` (15×8) | 1 | 0/3 | **3/3** |
+| **przejście** | `g13` `"65% [1]"` — poprawna | 2 | 0/3 | **0/3** |
+| | **przecieki** | | **0/12** | **12/12** |
+| | **poprawne (blokada = false-refusal)** | | 0/3 | **0/3** |
+
+**DOWÓD 3 — strona kosztu na większym `n`** (`--wzorce`). Krótkich poprawnych odpowiedzi w
+zapisanych danych jest mało, bo generator jest rozwlekły — a to właśnie one są zagrożone: prompt
+sędziego wymaga zdania *jawnie* łączącego podmiot z wartością, a „Około 65%." podmiotu nie nazywa
+(nosi go pytanie). Wzięte więc wszystkie **wzorcowe** odpowiedzi gold setu ≤15 znaków (6 z 29)
+w produkcyjnych kontekstach: `g05`, `g09`, `g12`, `g13`, `g25`, `g28` — **false-refusale 0/18**.
+Sędzia potwierdza krótką ugruntowaną tezę bez podmiotu („Raport mówi o deklaracji z Ilulissat
+podpisanej w 2008 roku…"). Pomiar semi-syntetyczny i tak nazwany: tekst odpowiedzi jest wzorcowy,
+kontekst i sędzia produkcyjni — mierzy **sędziego**, nie generatora.
+
+**DOWÓD 4 — na żywo, pełna pętla.** `g13` → `"65% [1]"`, teza `65%` potwierdzona, odpowiedź
+opublikowana (30,9 s); `g00` bez zmian (14,1 s); „Ile to jest 15 razy 8?" nadal ścina bramka
+(0,8 s, `blocked_by=gate`). Ta ostatnia liczba jest ważna dla uczciwej oceny wagi dziury:
+w produkcji z włączoną bramką przeciek arytmetyczny ginie już w guardzie #2. Dziura miała
+znaczenie w dwóch realnych torach: `"[1]"` na pytaniu **z korpusu** (bramka przepuszcza — `g25`)
+oraz **tryb demo / wgrany PDF**, gdzie próg bramki nie jest skalibrowany i prompt z guardem #3
+zostaje jedyną linią obrony.
+
+**Czego to NIE naprawia (świadomie).** Po usunięciu markera `[n]` w tezie zostaje spacja przed
+kropką (`„…Norwegii ."`). Kosmetyka zmieniłaby tekst **każdej** tezy, czyli każdy prompt sędziego,
+i unieważniłaby dowód 1 — osobna zmiana, osobny pomiar.
 
 ---
 
@@ -334,15 +396,15 @@ Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
-pytest                                   # -> 140 passed, 9 skipped in 0,6 s
+pytest                                   # -> 157 passed, 9 skipped in 0,7 s
 ```
 
 Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`, `fitz`) są
 **leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
 w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
-`ModuleNotFoundError`, a mimo to **140 passed**. Pominięte 9 to testy wymagające `pymupdf`
+`ModuleNotFoundError`, a mimo to **157 passed**. Pominięte 9 to testy wymagające `pymupdf`
 (prawdziwy PDF budowany w pamięci) i `qdrant-client` (kształt punktów) — w env projektu przechodzą:
-**149 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
+**166 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
 logiki UI**) pomija się jeszcze jeden test. Pierwszy przebieg CI: **82 passed w 2,13 s**.
 
 **Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,
@@ -382,6 +444,8 @@ python src/eval/eval_traps.py --prepare && python src/eval/eval_traps.py --compa
 python src/eval/ab_prompt.py                      # A/B instrukcji: obie strony błędu naraz
 python src/eval/ab_prompt.py --sedzia --warianty v2 v3 --sedzia-powtorzenia 3   # A/B promptu sędziego
 python src/eval/ab_prompt.py --raport             # tabele z zapisanego wyniku, bez GPU
+python src/eval/ab_claims.py --struktura          # zasięg zmiany definicji tezy, bez LLM-a
+python src/eval/ab_claims.py --sedzia --wzorce --powtorzenia 3   # dziura fail-open: obie strony
 ```
 > **Offline w runtime:** po pobraniu modeli ustaw `HF_HUB_OFFLINE=1` — całość działa bez sieci.
 
@@ -609,7 +673,9 @@ src/serve/vllm_serve.py # start serwera vLLM z parametrami z configu (osobne env
 src/eval/               # metrics.py, run_eval.py (retrieval), eval_answers.py (odpowiedzi),
                         # calibrate_gate.py (kalibracja progu bramki na held-oucie),
                         # bench_llm.py (przepustowość backendów), compare_backends.py (jakość),
-                        # ab_chunking.py (A/B rozmiaru chunka: chunking -> indeks -> ewaluacja)
+                        # ab_chunking.py (A/B rozmiaru chunka: chunking -> indeks -> ewaluacja),
+                        # ab_prompt.py (A/B promptu generatora i sędziego),
+                        # ab_claims.py (A/B definicji tezy: dziura fail-open guardu #3)
 gold_set/gold.jsonl     # zbiór ewaluacyjny (pytanie -> odpowiedź -> chunk źródłowy -> `evidence`:
                         # dosłowny cytat z odpowiedzią, prawda niezależna od podziału na chunki)
 gold_set/heldout_gate.jsonl # held-out do kalibracji progu — NIGDY nieraportowany jako metryka
@@ -660,11 +726,15 @@ tests/                  # chunking, metryki, BM25/RRF, mostek strumienia, kontra
   liczbami** (sekcja wyżej) — reguła o formie przymiotnikowej zeruje fałszywą odmowę u sędziego
   (9/9 → 0/9 blokad), ale wykrywanie **prawdziwej** podmiany spada 18/18 → 10/18. Jeden suwak
   na oba końce jednej osi; zostawiam surowy wariant, bo kłamstwo z cytatem jest droższe od odmowy.
-- **Guard #3 przepuszcza odpowiedzi bez ani jednej tezy** (`grounded_fraction` = 1.0 przy zerze
-  tez — świadomy fail-open, „nie ma czego podważać"). Zmierzona konsekwencja: wyjścia w rodzaju
-  `"[1]"` albo `"444 [5]"` (arytmetyka z fałszywym cytatem) przechodzą przez **wszystkie trzy
-  guardy**. Nie domknięte — zamknięcie dziury wymaga własnego pomiaru obu stron błędu, bo próg
-  „ile tez wystarczy" dotyka też krótkich, poprawnych odpowiedzi.
+- **Guard #3 przepuszczał odpowiedzi bez ani jednej tezy** — `grounded_fraction` = 1.0 przy zerze
+  tez (fail-open, „nie ma czego podważać"), a tezą nie był fragment ≤15 znaków. Wyjścia `"[1]"`
+  i `"444 [5]"` (arytmetyka z fałszywym cytatem) przechodziły przez **wszystkie trzy guardy**.
+  **ZAMKNIĘTE z pomiarem** (sekcja „Dziura fail-open"): przecieki 0/12 → 12/12 blokad,
+  false-refusale 0/18 na krótkich poprawnych odpowiedziach, 744 z 779 zapisanych odpowiedzi
+  nietknięte (operacja tożsamościowa, więc zmierzone liczby zachowały ważność).
+  **Co zostało otwarte:** granica dowodu obowiązuje na zbiorze zmierzonych odpowiedzi — nowa
+  generacja może wyprodukować krótki fragment, którego w tych 779 nie było. Twierdzę „brak
+  regresji na tym, co zmierzone", nie „nigdy".
 - **Jakość etykiet zbioru ewaluacyjnego jest częścią systemu:** jedno pytanie held-outu (`h18`) było
   błędnie oznaczone jako „spoza korpusu", co zawyżało raportowaną przerwę rozkładów (−0.243 zamiast
   −0.145). Znalazłem to dopiero na demo z prawdziwymi modelami — stąd zasada trzymania surowych

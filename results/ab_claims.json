@@ -1,0 +1,704 @@
+{
+  "struktura": {
+    "n_odpowiedzi": 779,
+    "n_zmienionych": 35,
+    "kształty": [
+      {
+        "odpowiedź": "[1]",
+        "mechanizm": "zero tez",
+        "oczekiwanie": "blokada",
+        "n": 19
+      },
+      {
+        "odpowiedź": "444 [5]",
+        "mechanizm": "nowe tezy",
+        "oczekiwanie": "blokada",
+        "n": 6
+      },
+      {
+        "odpowiedź": "444 [3]",
+        "mechanizm": "nowe tezy",
+        "oczekiwanie": "blokada",
+        "n": 6
+      },
+      {
+        "odpowiedź": "65% [1]",
+        "mechanizm": "nowe tezy",
+        "oczekiwanie": "przejście",
+        "n": 2
+      },
+      {
+        "odpowiedź": "12 [3]",
+        "mechanizm": "nowe tezy",
+        "oczekiwanie": "blokada",
+        "n": 1
+      },
+      {
+        "odpowiedź": "120 [1]",
+        "mechanizm": "nowe tezy",
+        "oczekiwanie": "blokada",
+        "n": 1
+      }
+    ],
+    "bez_kontekstu": [
+      "ab_prompt.json:h27",
+      "ab_prompt_blokowy.json:h27"
+    ]
+  },
+  "sedzia": [
+    {
+      "id": "t05",
+      "answer": "[1]",
+      "context": "[1] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #114)\nZapowiedziano w nim również powstanie dowództwa cybernetycznego w siłach zbrojnych, którego działalność zainaugurowano w 2018 r.108 Powodzenie estońskich działań obronnych zależy od zdolności do szybkiej mobilizacji rezerw. Dlatego od 2016 r. rząd zaczął przeprowadzać niezapowiedziane ćwiczenia dla żołnierzy rezerwy o kryptonimie Okas (kolec), polegające na mobilizacji całych skadrowanych pododdziałów w ciągu 48 godzin. Podczas pierwszej edycji ćwiczeń zmobilizowano dwie kompanie (ok. 300 żołnierzy), jednak już w 2018 r. wezwanie na niezapowiedziane ćwiczenia otrzymało ponad 1,2 tys. rezerwistów (zmobilizowano cały batalion). Po stawieniu się w jednostce żołnierze odbywają kilkudniowe ćwiczenia poligonowe, aby odświeżyć swoje umiejętności109. 106 Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów. Defence Expenditures of NATO Countries, NATO, 4.07.2016, www.nato.int. 107 W tym Ligi Obrony, która powiększona zostanie o dziesięć nowych kompanii, tj. tysiąc członków. Estonia chce też zwiększać obecność kobiet w siłach zbrojnych.\n\n[2] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #112)\nA. Obrona militarna. Polityka obronna jest przedmiotem konsensusu politycznego w Estonii. Siły zbrojne mają zapewnione stabilne finansowanie na poziomie nieco powyżej 2% PKB. W latach kryzysu finansowego (2009–2014) Estonia, mimo mniejszego potencjału gospodarczego, utrzymywała większe 103 M.in.: anomalie pogodowe, masowy napływ uchodźców, powodzie, pożary, wypadki komunikacyjne, masowe zamieszki, epidemie, incydenty cybernetyczne, wypadki radiologiczne lub chemiczne, skażenie środowiska naturalnego, masowe zatrucia, wypadek nuklearny. Risk Management Capabilities: Estonia, European Union Civil Protection, 2016, www.ec.europa.eu. 104 National Security Concept, op. cit. 105 W przypadku NATO chodzi m.in. o wdrażanie wytycznych Komitetu Planowania Cywilnego (wymagania w zakresie gotowości cywilnej). Ćwiczenia dla rezerwistów wydatki obronne niż Litwa lub Łotwa106. Estoński model obronny opiera się na armii poborowej z małym komponentem zawodowym (jeden w pełni sprofesjonalizowany batalion bojowy) i na zaangażowaniu ochotniczym (obrona terytorialna realizowana przez Ligę Obrony). Siły zbrojne po mobilizacji mogą wystawić ok. 21 tys. żołnierzy.\n\n[3] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #99)\nPlan rozwoju armii na lata 2020–2028 zakłada podwyższenie wydatków obronnych o 2 mld dolarów. W 2021 r. wyniosły one 8,4 mld dolarów, tj. 1,75% PKB96. W marcu 2022 r., po wybuchu wojny na Ukrainie, rząd zadecydował o doraźnym zwiększeniu budżetu resortu obrony o dodatkowe 3 mld koron (ok. 0,3 mld dolarów). Środki te mają przyczynić się głównie do podniesienia gotowości sił zbrojnych w północnej Norwegii, w tym wzrostu aktywności marynarki wojennej na Dalekiej Północy, intensyfikacji ćwiczeń wojsk lądowych (m.in. w graniczącym z Rosją T. Bramsen, Dansk indsats i Arktis har stor værdi for NATO, Ministerstwo Obrony Danii, 22.10.2020, fmn.dk. M. Jacobsen, Arctic Aspects in Denmark’s New Foreign and Security Policy Strategy, The Arctic Institute, 8.02.2022, thearcticinstitute.org. P. Szymański, Norweska Daleka Północ – klucz do obrony północnej flanki NATO, „Komentarze OSW”, nr 393, 12.05.2021, osw.waw.pl. Finnmarku), uzupełnienia wojennych zapasów amunicji i innych materiałów oraz do wzmocnienia zdolności do przyjmowania sojuszniczego wsparcia97. Ponadto 512 mln koron (ok. 52 mln dolarów) zostanie przekazane na działania kontrwywiadowcze w północnych regionach kraju98.\n\n[4] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #24)\nObrona totalna obejmuje bezwarunkową obronę państwa przez litewskie siły zbrojne i siły sojuszników z NATO, mobilizację wszystkich zasobów narodowych na rzecz działań obronnych oraz opór wszystkich obywateli i całego narodu wobec agresora. Z kolei całościowe podejście do bezpieczeństwa jest definiowane jako łączenie zdolności wojskowych i cywilnych, tj. współdziałanie sił zbrojnych i innych instytucji publicznych12. (2) Koncepcja bezpieczeństwa narodowego Łotwy z 2016 r. nie posługuje się pojęciem obrony totalnej. Mówi natomiast o konieczności całościowego podejścia do zapobiegania zagrożeniom militarnym i niemilitarnym. Od 2019 r. priorytetem polityki obronnej Łotwy jest wprowadzenie systemu całościowej obrony narodowej. Dzięki niemu sektor rządowy i pozarządowy mają być lepiej (MINI)SŁOWNIK BBN…, op. cit. W.-F. Roepke, H. Thankey, Resilience: the first line of defence, NATO Review, 27.02.2019, www.nato.int. The Military Strategy of the Republic of Lithuania 2016, Ministry of National Defence of the Republic of Lithuania, 17.03.2016, kam.lt.\n\n[5] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #23)\nJest ona wypadkową gotowości cywilnej i potencjału wojskowego. Według NATO na odporność składają się: zachowanie ciągłości administracji i kluczowych usług publicznych, bezpieczeństwo dostaw energii, żywności i wody, zdolność do zarządzania niekontrolowanym przemieszczaniem się ludności (nieblokowanie ruchów wojsk), zdolność do radzenia sobie z masowymi ofiarami (służba zdrowia), cyberbezpieczeństwo i wytrzymałość cywilnych systemów telekomunikacyjnych oraz funkcjonowanie transportu (ważne dla mobilności wojskowej i utrzymania kluczowych usług publicznych)11. W podobny sposób odporność definiowana jest przez UE. Natowskiej definicji odporności blisko jest do koncepcji Koncepcje obrony totalnej i bezpieczeństwa całościowego są charakterystyczne dla państw regionu nordycko‑bałtyckiego. W dokumentach strategicznych często funkcjonują one równolegle. (1) Strategia wojskowa Litwy z 2016 r. wprowadza obie koncepcje. Obrona totalna obejmuje bezwarunkową obronę państwa przez litewskie siły zbrojne i siły sojuszników z NATO, mobilizację wszystkich zasobów narodowych na rzecz działań obronnych oraz opór wszystkich obywateli i całego narodu wobec agresora.",
+      "pliki": [
+        "ab_prompt.json",
+        "ab_prompt_blokowy.json"
+      ],
+      "n_wystapien": 18,
+      "oczekiwanie": "blokada",
+      "tezy_stare": [],
+      "tezy_nowe": [],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        }
+      ],
+      "po": [
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": []
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": []
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": []
+        }
+      ]
+    },
+    {
+      "id": "g13",
+      "answer": "65% [1]",
+      "context": "[1] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #69)\nSkładają się na nią system ostrzegania, procedury ewakuacyjne i rozbudowana sieć schronów dla ludności57. Obecnie w Finlandii znajduje się ok. 45 tys. schronów (85% stanowią schrony prywatne), które mogą przyjąć ok. 3,6 mln osób (65% populacji)58. Są one skoncentrowane w większych ośrodkach miejskich (głównie aglomeracja helsińska). W Finlandii każdy budynek o powierzchni powyżej 1,2 tys. metrów kwadratowych musi dysponować schronem, a obowiązek jego budowy spoczywa na firmie deweloperskiej, co podnosi ceny lokali (w Helsinkach schrony drąży się też w skalistym podłożu, na którym wzniesione jest miasto). Swoje schrony mają również najważniejsze inNa co dzień schrony wykorzystywane są jako miejsca użyteczności publicznej: parkingi, hale sportowe czy stacje metra60. Dysponują niezbędnym wyposażeniem (łóżka, węzły sanitarne, woda, żywność, leki). Każdy ze schronów musi mieć możliwość przyjęcia cywilów w ciągu 72 godzin. Ich wykorzystanie przewiduje się w razie nie tylko konfliktu zbrojnego, lecz także groźby zawalenia budynku, promieniowania czy wykrycia obecności niebezpiecznych substancji. W kraju nadal buduje się nowe schrony i modernizuje już istniejące.\n\n[2] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #5)\ncywilna i mechanizm zapewniania bezpieczeństwa dostaw, newralgiczny dla państwa położonego na peryferiach Unii Europejskiej i zależnego od handlu drogą morską. Finlandia dysponuje rozbudowaną siecią schronów dla ludności, która może przyjąć ok. 65% mieszkańców. Za utrzymanie państwowych zapasów kryzysowych – niezbędnych do produkcji energii i żywności, zapewnienia opieki medycznej oraz prowadzenia działań zbrojnych – odpowiada natomiast Narodowa Agencja Dostaw Awaryjnych. obronności znane są wielu decydentom. Ponadto pogłębianiu kontaktów wojskowo‑cywilnych służą Kursy Obrony Narodowej, czyli spotkania kierownictwa wojskowego z liderami społeczeństwa obywatelskiego, biznesu, administracji i samorządów, a także działalność Narodowego Stowarzyszenia Szkolenia Obronnego, kanalizującego ochotnicze zaangażowanie proobronne. Duże znaczenie ma również wysoki poziom edukacji, zwiększający społeczną odporność na dezinformację i zdolność adaptacji do zmieniającej się rzeczywistości społeczno‑gospodarczej.\n\n[3] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #35)\nmilitarną oparto na zasadzie obrony totalnej, realizowanej w czterech wymiarach: militarnym, gospodarczym, cywilnym (ochrona ludności i infrastruktury) i psychologicznym (utrzymanie woli obrony kraju)27. Wiarygodne odstraszanie potencjalnego agresora miało być dla Finlandii przepustką do trzymania się poza rywalizacją mocarstw. W obszarze militarnym Finlandia postawiła na armię poborową z dużym rozwinięciem mobilizacyjnym oraz wprowadzenie terytorialnej organizacji wojsk lądowych obejmującej całość kraju (obrona terytorialna). W 1975 r. potencjał mobilizacyjny państwa wynosił 700 tys. żołnierzy, czyli ok. 15% całości populacji. Spośród niemilitarnych aspektów obrony totalnej największe znaczenie przypadło natomiast wzmacnianiu obrony cywilnej. W 1958 r. wystartował ambitny program budowy schronów zdolnych do przyjęcia niemal połowy mieszkańców. Fińscy decydenci chcieli w ten sposób ograniczyć straty cywilne, gdyż przewidywali, że w razie globalnego konfliktu kraj – ze względu na położenie w pobliżu strategicznych baz radzieckich na Półwyspie Kolskim – nie uniknie ataków atomowych.\n\n[4] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #137)\nEstonia w 1993 r. zrezygnowała z utrzymania poradzieckiego systemu obrony cywilnej, stworzonego pod kątem wojny nuklearnej. Analiza zimnowojennych schronów wykazała, że starczyłyby one dla zaledwie 5% populacji. Ostatecznie podjęto decyzję, że Estonia nie będzie budować własnego systemu schronów na wzór fiński. Wynika to nie tylko ze znacznych kosztów takich inwestycji, lecz także z ograniczonych możliwości przeprowadzenia skutecznej ewakuacji w obliczu krótkiego czasu między ostrzeżeniem ludności a ewentualnym atakiem rakietowym. Zamiast tego władze planują wykorzystanie jako schronów istniejącej infrastruktury – budynków administracji publicznej i prywatnych (np. podziemnych garaży) w kluczowych lokalizacjach (głównie w największych miastach). Wybrane obiekty zostaną zaadaptowane do roli schronu, a za ich utrzymanie odpowiedzialna będzie służba ratownicza, która otrzyma na ten cel dodatkowe środki. F. Obrona psychologiczna. W świecie mediów społecznościowych i nowych narzędzi manipulacji rośnie znaczenie obrony psychologicznej.\n\n[5] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #70)\nW kraju nadal buduje się nowe schrony i modernizuje już istniejące. Aktualizuje się też plany ewakuacyjne (organizowane są ćwiczenia ewakuacji) i wzmacnia współpracę z przedsiębiorcami. Generalna inspekcja każdego schronu ma miejsce co 10 lat (mniejsze odbywają się częściej)61. Specyfiką Finlandii jest też rozwinięty rynek firm oferujących usługi związane z utrzymaniem schronów. Można w nich zlecić przegląd lub naprawę schronienia, uzupełnić zaopatrzenie i zamówić nowy sprzęt. W ostatnich latach Finlandia podjęła szereg ważnych inicjatyw na rzecz wzmocnienia bezpieczeństwa wewnętrznego. Ich motorem był m.in. zamach Obrona cywilna angażuje straż pożarną oraz służby ratownicze i medyczne. Civil defence protects the civilian population, Ministry of the Interior of Finland, www.valtioneuvosto.fi. Civil defence shelters would be used during military threat, Ministry of the Interior of Finland, www.valtioneuvosto.fi. N. Niitra, Shelters in Estonia good for nothing, Postimees, 21.04.2014, www.news.postimees.ee. M. Chance, E. Burrows, Helsinki’s bunker city: How Finland has survived in Russia’s dark shadow, CNN, 15.07.2018, www.edition.cnn.com.",
+      "pliki": [
+        "backend_answers_ollama.json",
+        "backend_answers_vllm.json"
+      ],
+      "n_wystapien": 2,
+      "oczekiwanie": "przejście",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "65%"
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        }
+      ],
+      "po": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "65%",
+              "grounded": true,
+              "reason": "Tekst mówi o rozbudowanej sieci schronów dla ludności w Finlandii, która może przyjąć ok. 65% mieszkańców."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "65%",
+              "grounded": true,
+              "reason": "Tekst mówi o rozbudowanej sieci schronów dla ludności w Finlandii, która może przyjąć ok. 65% mieszkańców."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "65%",
+              "grounded": true,
+              "reason": "Tekst mówi o rozbudowanej sieci schronów dla ludności w Finlandii, która może przyjąć ok. 65% mieszkańców."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g25",
+      "answer": "[1]",
+      "context": "[1] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #19)\nW 2008 r. państwa leżące nad Oceanem Arktycznym (Kanada, Rosja, Norwegia, Dania i USA) potwierdziły, że prawo morza będzie podstawą ich współpracy regionalnej, zarządzania Arktyką i rozstrzygania sporów terytorialnych (Deklaracja z Ilulissat)6. Porządek prawnomiędzynarodowy na omawianym obszarze kształtują też starsze akty prawne. Najważniejszy z nich to Traktat Spitsbergeński z 1920 r. Przyznaje on Norwegii suwerenne prawa do archipelagu Svalbard, a jednocześnie zapewnia kilkudziesięciu innym sygnatariuszom, w tym Polsce, równy dostęp do wysp i możliwość prowadzenia tam działalności gospodarczej. Obok Norwegii korzysta z niej tylko Rosja, posiadająca w Barentsburgu kopalnię węgla i konsulat. Do nowszych porozumień arktycznych należą m.in. Międzynarodowy kodeks dla statków eksploatowanych na wodach polarnych z 2015 r. Istnieje wiele definicji południowej granicy Arktyki.\n\n[2] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #18)\nDla ułatwienia często przyjmuje się, że kraina leży za granicą koła podbiegunowego (66°33′39″ N). Region tworzą Ocean Arktyczny (Lodowaty), archipelagi i wyspy, w tym największa wyspa świata – Grenlandia – oraz północne wybrzeża Eurazji i Ameryki Północnej3. Zamieszkuje go ok. 4 mln osób (połowa żyje w Rosji), z czego ludność rdzenna stanowi 10%4. Sytuację prawnomiędzynarodową w Arktyce reguluje przede wszystkim Konwencja Narodów Zjednoczonych o prawie morza z 1982 r. Określa ona prawa, obowiązki i zakres jurysdykcji państw nadbrzeżnych Oceanu Arktycznego, status wód międzynarodowych (morze pełne), archipelagów i cieśnin, a także zasady wytyczania granic morskich wyłącznych stref ekonomicznych i szelfu kontynentalnego5. W 2008 r. państwa leżące nad Oceanem Arktycznym (Kanada, Rosja, Norwegia, Dania i USA) potwierdziły, że prawo morza będzie podstawą ich współpracy regionalnej, zarządzania Arktyką i rozstrzygania sporów terytorialnych (Deklaracja z Ilulissat)6. Porządek prawnomiędzynarodowy na omawianym obszarze kształtują też starsze akty prawne.\n\n[3] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #21)\nWysuwano je, aby zapobiec sytuacji, w której arktyczne wyspy zostałyby uznane za terra nullius i zagarnięte przez innych pod pretekstem braku efektywnej okupacji. R. Bierzanek, J. Symonides, Prawo międzynarodowe publiczne, Warszawa 2009, s. 243. Spośród państw arktycznych Konwencji o prawie morza nie ratyfikowały tylko Stany Zjednoczone, które jednak w praktyce uznają jej postanowienia. Przykładem jest zgoda Waszyngtonu na stosowanie dokumentu w odniesieniu do Arktyki w Deklaracji z Ilulissat. i umowa w sprawie zapobiegania nieuregulowanym połowom na morzu pełnym w środkowej części Oceanu Arktycznego z 2018 r. Ważnym osiągnięciem było podpisanie przez członków Rady Arktycznej w 2011 r. porozumienia o współpracy w poszukiwaniach i ratownictwie (SAR), dzielącego obszar podbiegunowy na strefy odpowiedzialności poszczególnych państw nadbrzeżnych. Arktykę zmienia globalne ocieplenie, w ostatnim półwieczu postępujące w regionie podbiegunowym trzy razy szybciej niż średnio na świecie7. Przyspiesza ono topnienie grenlandzkiego lądolodu, pokrywającego ok. 80% powierzchni liczącej ponad 2 mln km2 wyspy.\n\n[4] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #36)\nTo Ottawa zainicjowała powstanie Rady Arktycznej w 1996 r. Liberalne rządy premiera Justina Trudeau (od 2015 r.), zaangażowanego w pojednanie z rdzenną ludnością, dążą do poprawy warunków socjalnych żyjących na północy Inuitów. Na stosunkach z autochtonami zaważyły trudne wydarzenia z przeszłości, m.in. kontrowersyjne relokacje za koło podbiegunowe, które w latach pięćdziesiątych miały zademonstrować, że północne krańce Kanady są zamieszkałe i rząd jest ich suwerennym i prawnym zwierzchnikiem21. „Suwerenność” to wciąż słowo klucz do zrozumienia arktycznej polityki Kanady22. Rozszerzanie przez nią jurysdykcji na północnych obszarach morskich (początkowo w zakresie ochrony środowiska) rozpoczęło się już w latach siedemdziesiątych, przed przyjęciem Konwencji Narodów Zjednoczonych o prawie morza (1982)23. Skutkowało ono wybuchem sporów terytorialno‑prawnych na północy – o status Przejścia Północno‑Zachodniego oraz o rozgraniczenie obszarów morskich z USA (na Morzu Beauforta) i z Danią/Grenlandią (na Morzu Lincolna).\n\n[5] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #27)\nArt. 77(1) stwierdza, że „państwo nadbrzeżne wykonuje suwerenne prawa w odniesieniu do szelfu kontynentalnego w celu jego badania i eksploatacji jego zasobów naturalnych”, choć zgodnie z art. 78(1) prawa państwa „w odniesieniu do szelfu kontynentalnego nie wpływają na status prawny wód pokrywających szelf ani przestrzeni powietrznej ponad tymi wodami”. Norweskie roszczenia do szelfu na Morzu Barentsa i Norweskim oraz na Oceanie Arktycznym zostały zaakceptowane w 2009 r. Rosyjskie sięgają wyłącznych stref ekonomicznych Grenlandii i Kanady. Z kolei USA nie mogą wysuwać roszczeń do szelfu arktycznego, gdyż nie ratyfikowały Konwencji o prawie morza. Konwencja Narodów Zjednoczonych o prawie morza, Unia Europejska, 1998, eur-lex.europa.eu. rozstrzygać je w oparciu o prawo morza, a stosowne wnioski złożono w Komisji Granic Szelfu Kontynentalnego12. Stany Zjednoczone, Kanada, Dania (Grenlandia) i Norwegia przygotowują się też na negatywne skutki globalnego ocieplenia.",
+      "pliki": [
+        "backend_answers_ollama.json"
+      ],
+      "n_wystapien": 1,
+      "oczekiwanie": "blokada",
+      "tezy_stare": [],
+      "tezy_nowe": [],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        }
+      ],
+      "po": [
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": []
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": []
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": []
+        }
+      ]
+    },
+    {
+      "id": "o02",
+      "answer": "12 [3]",
+      "context": "[1] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #0)\nPOLARNY KWARTET NATO USA, KANADA, DANIA I NORWEGIA W ARKTYCE POLARNY KWARTET NATO USA, KANADA, DANIA I NORWEGIA W ARKTYCE Piotr Szymański WARSZAWA MARZEC 2023 POLARNY KWARTET NATO USA, KANADA, DANIA I NORWEGIA W ARKTYCE Piotr Szymański © Copyright by Ośrodek Studiów Wschodnich im. Marka Karpia REDAKCJA MERYTORYCZNA Wojciech Konończuk, Justyna Gotkowska, Witold Rodkiewicz REDAKCJA Tomasz Strzelczyk WSPÓŁPRACA Szymon Sztyk, Katarzyna Kazimierska MAPA Wojciech Mańkowski OPRACOWANIE GRAFICZNE OSW SKŁAD IMAGINI ZDJĘCIE NA OKŁADCE aerophoto / Shutterstock.com Ośrodek Studiów Wschodnich im. Marka Karpia ul. Koszykowa 6a, 00-564 Warszawa tel.: (+48) 22 525 80 00, info@osw.waw.pl www.osw.waw.pl ISBN 978-83-67159-30-2 Spis treści TEZY | 5 WSTĘP | 10 I. SPECYFIKA REGIONU ARKTYCZNEGO | 13 II. PRIORYTETY „ARKTYCZNEJ CZWÓRKI” | 17 1. USA | 17 2. Kanada | 18 3. Dania | 20 4. Norwegia | 21 5. Unia Europejska | 22 6. NATO | 24 III. POZOSTALI AKTORZY WOBEC ARKTYKI | 26 1. Rosja | 26 2. Chiny | 28 IV. GOSPODARKA I HANDEL | 31 1. USA | 31 2. Kanada | 32 3. Dania | 33 4. Norwegia | 34 V. BEZPIECZEŃSTWO I OBRONNOŚĆ | 36 1. USA | 36 2. Kanada | 38 3. Dania | 40 4. Norwegia | 41 VI.\n\n[2] (źródło: PW_Szwedzka-polityka-bezpieczenstwa_net(1) #15)\nMimo coraz bardziej pesymistycznej oceny wyzwań i zagrożeń polityka bezpieczeństwa i obronna nie była dotychczas traktowana priorytetowo przez socjaldemokratyczno‑zielony gabinet Stefana Löfvena. Rosnąca niepewność w regionie nordycko‑bałtyckim pozostawała dla rządzącej od 2014 r. koalicji mniejszościowej jednym z wielu problemów i znalazła się na końcu listy wyzwań wymienionych w zawartej z partiami opozycyjnymi w 2019 r. umowie, która umożliwiła rządzącym pozostanie u władzy na kolejną kadencję. Znalazły się na niej wówczas również: zmiany klimatyczne, problemy z integracją migrantów i segregacją społeczną w Szwecji, globalizacja, negatywnie wpływająca na konkurencyjność rodzimej gospodarki, rosnące nierówności ekonomiczne i polaryzacja społeczeństwa, działalność gangów czy wreszcie problemy w kwestiach mieszkaniowych2. Dotychczasowe miejsce polityki bezpieczeństwa i obronnej PKB Polski w analizowanym roku wyniósł 532 mld euro. Gross domestic product at market prices, Eurostat. Dane dotyczące populacji zob. Population projections, Eurostat, ec.europa.eu/eurostat.\n\n[3] (źródło: Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW #992)\nW konsekwencji „żydowski i demokratyczny” – według własnej definicji – Izrael często jest w praktyce państwem demokratycznym dla swoich obywateli żydowskich, a żydowskim dla arabskich. Etnonarodowy pierwiastek oraz fakt posiadania de facto kolonii czy terytoriów zależnych, na które rozciąga się władza państwowa Izraela, ale zasady demokracji i rządy prawa już nie, upodabniają go bardziej do państw europejskich sprzed II wojny światowej (np. II RP w odniesieniu do pierwszego aspektu, a kolonialnej Francji – do drugiego) niż do jakiegokolwiek współczesnego kraju Starego Kontynentu. Tam, gdzie chodzi o kwestie wewnątrzpolityczne ważne dla żydowskiej większości – takie jak organizacja sądownictwa, rola religii, służba wojskowa ultraortodoksyjnych mężczyzn, polityka społeczno-gospodarcza czy ocena Netanjahu – tam istnieje też rzeczywisty demokratyczny spór i szeroki wachlarz opinii, które wolno swobodnie wyrażać. Jednocześnie problemy społeczności arabskiej oraz sprawy dla niej istotne są z punktu widzenia mainstreamu miejscowego życia politycznego zagadnieniami zupełnie peryferyjnymi, a arabska reprezentacja w parlamencie jest z trudem tolerowana.\n\n[4] (źródło: Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW #259)\nPełnoskalowa agresja Rosji przeciwko Ukrainie zadziałała jak przeciąg, który nie dość, że rozsypał większość już dopasowanych elementów, to jeszcze część wywiał za okno, a w zamian przywiał dodatkową stertę kartoników, które mylą i przeszkadzają w pracy. Czasem trzeba udzielić odpowiedzi wcześniej, niż znajdzie się odpowiedni – o ile w ogóle się znajdzie. Wtedy pomagają doświadczenie i intuicja analityczna. Z tą drugą można się urodzić, to pierwsze przychodzi z kolejnymi latami układania puzzli. Nawet jeśli jednak dysponujemy obydwoma przymiotami, i tak popełnimy błędy, zwłaszcza badając sferę militarną w działaniu. Mając tę świadomość, nie należy przechodzić nad nimi do porządku dziennego: każda pomyłka to nowe doświadczenie, z którego należy wyciągnąć wnioski. Im więcej doświadczeń, tym większa satysfakcja, że mimo wszelkich przeciwności dostarcza się wiedzy rzetelnej i – szczególnie w Polsce – potrzebnej. Sztukowanie brakujących puzzli, czyli jak badać wojnę Ćwiczenia z myślenia – o analizie energetyki Agata Łoskot-Strachota Energetyka jest olbrzymim obszarem badawczym, przedmiotem wielorakich specjalizacji.\n\n[5] (źródło: Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW #953)\ndrugie w razie potrzeby skłonni są „dialog” z władzą kontynuować. tam wrócić”. Zresztą w ostatnich latach równie często jak o Rosji można posłuchać o Uberze i studiach w Polsce (albo w Tanzanii, jak w przypadku córki starego znajomego), branży turystycznej w Turcji, truskawkach w Wielkiej Brytanii, fabryce w Korei, sektorze usług w Japonii lub wycieczce do Dubaju. I to wszystko – ta Rosja i anty-Rosja, retradycjonalizacja i pęd do nowoczesności, lokalność i globalność – to nie sztuczny kolaż, ale organiczna, spójna, a zarazem dynamiczna całość, która faktycznie nie tyle „jest”, ile cały czas „staje się”. To rozmowa daje przedsmak złożonego podejścia do władzy i demokracji. Polityka nie jest naturalnym tematem. Ani tradycje (patriarchalny model społeczeństwa, brak realnych wzorców kulturowych), ani brak odpowiednich instytucji, ani medialny obraz skutków demokracji na Ukrainie (wojna) nie zachęcają do tego ustroju. Zasadniczo władza – im znajduje się dalej, tym lepiej – ma zapewnić bezpieczeństwo i nie przeszkadzać w zarabianiu na życie.",
+      "pliki": [
+        "backend_answers_vllm.json"
+      ],
+      "n_wystapien": 1,
+      "oczekiwanie": "blokada",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "12"
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        }
+      ],
+      "po": [
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": [
+            {
+              "claim": "12",
+              "grounded": false,
+              "reason": "Tekst mówi o polityce bezpieczeństwa i obronnej Szwecji oraz o problemach, które według koalicji rządzącej były ważniejsze niż bezpieczeństwo."
+            }
+          ]
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": [
+            {
+              "claim": "12",
+              "grounded": false,
+              "reason": "Tekst mówi o polityce bezpieczeństwa i obronnej Szwecji oraz o tym, że Rosja zaatakowała Ukrainę. Nie wspomina nic o wartości 12."
+            }
+          ]
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": [
+            {
+              "claim": "12",
+              "grounded": false,
+              "reason": "Tekst mówi o polityce bezpieczeństwa i obronnej Szwecji oraz o tym, że Rosja zaatakowała Ukrainę. Nie wspomina nic o wartości 12."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "o05",
+      "answer": "120 [1]",
+      "context": "[1] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #1)\n© Copyright by Ośrodek Studiów Wschodnich im. Marka Karpia REDAKCJA MERYTORYCZNA Justyna Gotkowska REDAKCJA Katarzyna Kazimierska, Adrianna Stawska-Ostaszewska WSPÓŁPRACA Szymon Sztyk OPRACOWANIE GRAFICZNE OSW SKŁAD Wojciech Mańkowski ZDJĘCIE NA OKŁADCE Lazy_Bear / envato.com Ośrodek Studiów Wschodnich im. Marka Karpia ul. Koszykowa 6a, 00-564 Warszawa tel.: (+48) 22 525 80 00, info@osw.waw.pl www.osw.waw.pl ISBN 978-83-68327-74-8 Spis treści WPROWADZENIE | 5 PODSUMOWANIE | 7 I. ORGANIZACJE I PLATFORMY WSPÓŁPRACY W OBSZARZE BEZPIECZEŃSTWA W REGIONIE MORZA BAŁTYCKIEGO | 10 1. Polityka obronna, bezpieczeństwa i zagraniczna | 10 1.1. Polityka obronna | 10 1.2. Polityka bezpieczeństwa | 14 1.3. Polityka zagraniczna | 15 1.4. Ekskluzywne formaty współpracy nordyckiej i bałtyckiej | 17 1.5. Inne formy współpracy | 18 2. Współpraca sektorowa | 19 2.1. Ochrona morskiej infrastruktury krytycznej | 19 2.2. Przeciwdziałanie flocie cieni | 24 2.3. Bezpieczeństwo energetyczne | 25 2.4. Ochrona ludności i obrona cywilna | 26 2.5. Współpraca w zakresie bezpieczeństwa wewnętrznego | 32 2.6. Materiały niebezpieczne na dnie Bałtyku | 34 2.7. Bezpieczeństwo żeglugi powietrznej i morskiej | 35 2.8. Inne | 37 II.\n\n[2] (źródło: Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW #223)\nPozwoli to efektywniej przeciwdziałać ich posunięciom. Zmagania z tarczą i mieczem. Służby specjalne jako wyzwanie analityczne Sztukowanie brakujących puzzli, czyli jak badać wojnę Andrzej Wilk Na pierwszy rzut oka sprawa wydaje się prosta: wystarczy policzyć żołnierzy, czołgi i rakiety plus resztę żelastwa w obu potencjalnie wrogich lub walczących ze sobą armiach i można stwierdzić, że armia A jest słabsza od B lub armia C niechybnie pokona D. Takie podejście pomija jednak szereg kluczowych czynników: wyszkolenie, motywację, morale, dowodzenie i sztukę wojenną, organizację i zgranie pododdziałów, innowacyjność, zaawansowanie technologiczne i kulturę techniczną, transport i łączność, zapasy amunicji, materiałów pędnych i smarów itd. A jeśli na dodatek licząc żołnierzy i ich wyposażenie, będziemy mieli do wyboru całą gamę niekoniecznie zbieżnych ze sobą liczb z różnych zakątków „galaktyki” informacyjnej? Gdyby zaś wojna trwała dłużej – jak ma to miejsce w przypadku trwającej agresji Rosji na Ukrainę – to co ze zdolnościami państwa do jej prowadzenia? Jak wyglądają jego możliwości gospodarcze i finansowe, nastawienie ludności i potencjał mobilizacyjny?\n\n[3] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #2)\nSpis treści WPROWADZENIE | 5 PODSUMOWANIE | 7 I. ORGANIZACJE I PLATFORMY WSPÓŁPRACY W OBSZARZE BEZPIECZEŃSTWA W REGIONIE MORZA BAŁTYCKIEGO | 10 1. Polityka obronna, bezpieczeństwa i zagraniczna | 10 1.1. Polityka obronna | 10 1.2. Polityka bezpieczeństwa | 14 1.3. Polityka zagraniczna | 15 1.4. Ekskluzywne formaty współpracy nordyckiej i bałtyckiej | 17 1.5. Inne formy współpracy | 18 2. Współpraca sektorowa | 19 2.1. Ochrona morskiej infrastruktury krytycznej | 19 2.2. Przeciwdziałanie flocie cieni | 24 2.3. Bezpieczeństwo energetyczne | 25 2.4. Ochrona ludności i obrona cywilna | 26 2.5. Współpraca w zakresie bezpieczeństwa wewnętrznego | 32 2.6. Materiały niebezpieczne na dnie Bałtyku | 34 2.7. Bezpieczeństwo żeglugi powietrznej i morskiej | 35 2.8. Inne | 37 II. WNIOSKI I REKOMENDACJE | 38 1. Rekomendacje ogólne | 38 2. Rekomendacje krótkookresowe | 39 3. Rekomendacje średnio- i długoterminowe | 43 ANEKS | 46 Tabela. Formaty współpracy w obszarze szeroko rozumianego bezpieczeństwa w regionie Morza Bałtyckiego | 46\n\n[4] (źródło: Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW #798)\nUstroje Kosowa czy Macedonii Północnej przewidują szeroką autonomię samorządów (nie zawsze urzeczywistnianą) i zapewniają ugrupowaniom reprezentującym mniejszości narodowe daleko idące uprawnienia. BiH cechuje się zaś władzą centralną o bardzo ograniczonych prerogatywach, operującą w reżimie konsensualnym zakładającym rządzenie przez elity polityczne trzech narodów – co miało umożliwić zawiązanie wspólnego państwa po konflikcie z lat 90. Niektóre państwa regionu są właściwie homogeniczne (Albania) albo żyją w nich nieliczne mniejszości (Serbia), inne – zróżnicowane, jak Macedonia Północna (udział Albańczyków w populacji wynosi 25%), BiH (Boszniacy – 50,1%, Bałkany Zachodnie, czyli jak badać peryferie peryferii …i duża wewnętrzna różnorodność Serbowie – 30,8%, Chorwaci – 15,5%) czy wreszcie Czarnogóra, gdzie naród tytularny nie stanowi większości (Czarnogórcy – 45%, Serbowie – 29%, Bośniacy – 9%, Albańczycy – 5%). Te różnice trzeba brać pod uwagę przy analizie sytuacji w poszczególnych państwach. Założenia dotyczące jednego mogą się zupełnie nie sprawdzać w odniesieniu do innego – mimo podobieństw.\n\n[5] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #111)\nspraw morskich i sankcji rozszerzony format NB8 służący zwalczaniu floty cieni; grupuje państwa nadbrzeżne Morza Bałtyckiego i Morza Północnego rozszerzenie formatu NB8++ o przedstawicieli państw G7 inicjatywa współpracy energetycznej w UE, obejmująca spotkania ministrów energii, wyższych urzędników i przedstawicieli szczebla technicznego platforma współpracy ministrów odpowiedzialnych za bezpieczeństwo wewnętrzne, gotowość i odporność (wzmacniająca współpracę we wdrażaniu Strategii na rzecz unii gotowości) Nazwa Od Członkowie* Opis Haga DK, FI, IS, NO, SE format współpracy nordyckich ministrów ds. obrony cywilnej NORDRED DK, FI, IS, NO, SE współpraca służb ratowniczych i straży pożarnych NORDHELS (Grupa Svalbard) AX (W. Alandzkie), DK, FO (W. Owcze), FI, GL (Grenlandia), IS, NO, SE Nordyckie porozumienie ws. wzajemnej pomocy kryzysowej Bezpieczeństwo wewnętrzne Forum Współpracy Służb Granicznych Państw Regionu Morza Bałtyckiego (BSRBCC) DK, EE, FI, DE, LV, LT, NO, PL, SE",
+      "pliki": [
+        "backend_answers_vllm.json"
+      ],
+      "n_wystapien": 1,
+      "oczekiwanie": "blokada",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "120"
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": []
+        }
+      ],
+      "po": [
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": [
+            {
+              "claim": "120",
+              "grounded": false,
+              "reason": "Raport Ośrodka Studiów Wschodnich opisuje formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego i nie zawiera informacji o liczbie 120."
+            }
+          ]
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": [
+            {
+              "claim": "120",
+              "grounded": false,
+              "reason": "Raport Ośrodka Studiów Wschodnich opisuje formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego i nie zawiera informacji o liczbie 120."
+            }
+          ]
+        },
+        {
+          "frac": 0.0,
+          "blokuje": true,
+          "verdicts": [
+            {
+              "claim": "120",
+              "grounded": false,
+              "reason": "Raport Ośrodka Studiów Wschodnich opisuje formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego i nie zawiera informacji o liczbie 120."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "wzorce": [
+    {
+      "id": "g05",
+      "question": "Gdzie mieści się dowództwo Bałtyckiej Grupy Zadaniowej (CTF Baltic)?",
+      "answer": "W Rostocku. [1]",
+      "context": "[1] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #15)\nMisję realizowano początkowo z Litwy (Szawle), ale stopniowo – w związku z jej wzmocnieniem po aneksji Krymu – włączano do BAP bazy w Estonii (Ämari), Polsce (Malbork) i na Łotwie (Lielvārde). Po wtargnięciu rosyjskich bezzałogowców w przestrzeń powietrzną Polski we wrześniu 2025 r. Naczelny Dowódca Sił Sojuszniczych w Europie uruchomił wzmocnioną aktywność natowską (enhanced Vigilance Activity, eVA) Eastern Sentry, której celem jest koordynacja i poprawa ochrony przestrzeni powietrznej na wschodniej flance. Dzięki temu BAP jest obecnie wspierany przez dodatkowe niemieckie, duńskie i brytyjskie dyżurne pary samolotów z rodzimych baz odpowiednio w Laage, Skrydstrup i Coningsby. Domenę morską integruje wielonarodowe Dowództwo Bałtyckiej Grupy Zadaniowej (Commander Task Force Baltic, CTF Baltic) w Rostocku, sformowane w październiku 2024 r. Powstało ono w strukturze sił NATO na bazie dowództwa marynarki wojennej RFN w Rostocku. W czasie pokoju ten element sztabowy liczy do 180 oficerów oddelegowanych z Niemiec, Polski, państw bałtyckich i nordyckich (bez Islandii), Holandii, Wielkiej Brytanii, Francji i Włoch. CTF Baltic będzie rotować.\n\n[2] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #16)\nCTF Baltic będzie rotować. Od 2028 r. przeniesione zostanie do Gdyni i osadzone w powstającym dowództwie POLMARFOR w ramach polskiego Centrum Operacji Morskich – Dowództwo Komponentu Morskiego, a po kolejnych czterech latach – do Szwecji. CTF Baltic dowodzi morskim komponentem wzmocnionej aktywności NATO (eVA) na Bałtyku – Baltic Sentry. Rozpoczęte w styczniu 2025 r. działania mają na celu ochronę podmorskiej infrastruktury krytycznej. Bałtycka Konferencja Dowódców (Baltic Commanders Conference). Coroczna konferencja zainaugurowana przez Niemcy w 2015 r. stanowi forum dialogu przedstawicieli marynarek wojennych państw regionu. Ostatnie spotkanie odbyło się w marcu 2026 r. w Turku. Wzięli w nim udział dowódcy marynarek wojennych Danii, Estonii, Finlandii, Litwy, Łotwy, Niemiec, Polski i Szwecji oraz dowódcy Dowództwa Sojuszniczych Sił Morskich MARCOM i CTF Baltic. Format 3+3. W 2023 r. z inicjatywy Niemiec utworzono format konsultacji państw ramowych i gospodarzy wysuniętych sił NATO w państwach bałtyckich (FLF). Zrzesza on ministrów obrony Litwy, Łotwy i Estonii oraz odpowiednio Niemiec, o działaniach na wschodniej flance NATO. skowej z listopada 2024 r.).\n\n[3] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #106)\nFormaty współpracy w obszarze szeroko rozumianego bezpieczeństwa w regionie Morza Bałtyckiego Nazwa Od Członkowie* Opis Polityka obronna DK, EE, FI, FR, DE, IT, LV, LT, NL, NO, PL, SE, GB Commander Task Force Baltic (CTF Baltic)** DK, EE, FI, DE, LV, LT, NO, PL, SE Bałtycka Konferencja Dowódców Grupa Północna DK, EE, FI, DE, IS, LV, LT, NL, NO, PL, SE, GB BE, CZ, DE, IT, LU, NL, PL, SK Obszar Mobilności Wojskowej Europy Środkowo-Północnej Połączone Siły Ekspedycyjne (JEF) DK, EE, FI, IS, LV, LT, NL, NO, SE, GB rotacyjne dowództwo morskie NATO dla Morza Bałtyckiego (do 2028 r. z kwaterą w Rostocku, Niemcy) dialog przedstawicieli marynarek wojennych regionu Morza Bałtyckiego 3+3 CA, EE, DE, LV, LT, GB format konsultacji MON państw ramowych oraz państw gospodarzy Wysuniętych Sił Lądowych NATO (FLF) w państwach bałtyckich konsultacje MON oraz szefów obrony dotyczące bezpieczeństwa i obrony w Europie Północnej ułatwianie przemieszczania wojsk w korytarzu mobilności wojskowej wielodomenowe siły szybkiego reagowania skoncentrowane na regionie nordyckim i bałtyckim; coroczne szczyty przywódców oraz spotkania na szczeblu MON i szefów obrony\n\n[4] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #12)\nSojusz Północnoatlantycki. Podstawową organizacją gwarantującą bezpieczeństwo regionu Morza Bałtyckiego jest NATO. Zostało ono wzmocnione nie tylko przez aktywowane od 2014 r. sojusznicze działania i środki, lecz także przez wejście do Sojuszu Finlandii i Szwecji kolejno w 2023 i 2024 r., które zmieniło region geostrategicznie. Jednak w praktyce, po zaakceptowaniu na szczycie NATO w Wilnie w 2023 r. regionalnych planów obronnych, które stanowią podstawę rozwijania sił, zdolności i ćwiczeń wojskowych, oraz przypisaniu formacji wojskowych do ich realizacji, region Morza Bałtyckiego jest w natowskiej Strukturze Dowodzenia podzielony. Za Europę Północną operacyjnie odpowiedzialne jest Sojusznicze Dowództwo Sił Połączonych NATO w Norfolk, którego rejon odpowiedzialności obejmuje pięć państw nordyckich. Za Europę Środkową odpowiada Sojusznicze Dowództwo Sił Połączonych NATO w Brunssum, któremu spośród państw obszaru bałtyckiego podlegają: Estonia, Litwa, Łotwa, Niemcy i Polska. NATO adaptuje również swoją Strukturę Sił w regionie Morza Bałtyckiego do wymogów obrony zbiorowej1.\n\n[5] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #13)\nNATO adaptuje również swoją Strukturę Sił w regionie Morza Bałtyckiego do wymogów obrony zbiorowej1. W domenie lądowej kluczowymi strukturami są Wielokorpusowe Dowództwo Komponentu Lądowego – Północ w Mikkeli, dowództwo Wielonarodowego Korpusu Północny-Wschód w Szczecinie, dowództwa Wielonarodowej Dywizji Północny-Wschód w Elblągu i Wielonarodowej Dywizji Północ w Ādaži. W Polsce, na Litwie, Łotwie i w Estonii rozmieszczono wysunięte siły lądowe NATO (Forward Land Forces). Są one tworzone również na północy Finlandii. W domenie powietrznej dla północnej flanki powstało nordyckie Połączone Centrum Operacji Powietrznych (CAOC) w Bodø. Utworzenie nordyckiego CAOC ma odciążyć centrum w Uedem, które odpowiada za sojuszniczą przestrzeń powietrzną na północ od Alp. Regionalna współpraca sojusznicza obejmuje również pozyskiwanie zdolności wojskowych (choć formalnie nie jest to proces natowski). Dobrym przykładem są miny morskie (Naval Mines Cooperation).",
+      "oczekiwanie": "przejście",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "W Rostocku."
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        }
+      ],
+      "po": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W Rostocku.",
+              "grounded": true,
+              "reason": "Raport mówi o Dowództwie Bałtyckiej Grupy Zadaniowej (CTF Baltic) w Rostocku, sformowanym w październiku 2024 r. na bazie dowództwa marynarki wojennej RFN w Rostocku."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W Rostocku.",
+              "grounded": true,
+              "reason": "Raport mówi o Dowództwie Bałtyckiej Grupy Zadaniowej (CTF Baltic) w Rostocku, sformowanym w październiku 2024 r. na bazie dowództwa marynarki wojennej RFN w Rostocku."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W Rostocku.",
+              "grounded": true,
+              "reason": "Raport mówi o Dowództwie Bałtyckiej Grupy Zadaniowej (CTF Baltic) w Rostocku, sformowanym w październiku 2024 r. na bazie dowództwa marynarki wojennej RFN w Rostocku."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g09",
+      "question": "Od którego roku działa misja Baltic Air Policing?",
+      "answer": "Od 2004 r. [1]",
+      "context": "[1] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #14)\nDobrym przykładem są miny morskie (Naval Mines Cooperation). W lipcu 2024 r. podpisano stosowny list intencyjny, a w październiku 2025 r. ministrowie obrony Danii, Estonii, Finlandii, Litwy, Łotwy, Niemiec, Norwegii, Polski i Szwecji zawarli umowę ramową określającą zasady wspólnych zakupów, logistyki i eksploatacji systemów min morskich. Czołową rolę w projekcie odgrywa Finlandia, która wspólnie z Danią, Litwą, Niemcami i Norwegią przygotowuje umowę wykonawczą. Od 2004 r. w regionie działa natowska misja nadzoru przestrzeni powietrznej państw bałtyckich Baltic Air Policing (BAP) wykonywana przez siły powietrzne państw członkowskich NATO. Reaguje ona w przypadku naruszeń przestrzeni powietrznej oraz przelotów rosyjskich samolotów wojskowych, które mogą zagrażać żegludze cywilnej (bez planu lotu, komunikacji radiowej i transpondera). Misję realizowano początkowo z Litwy (Szawle), ale stopniowo – w związku z jej wzmocnieniem po aneksji Krymu – włączano do BAP bazy w Estonii (Ämari), Polsce (Malbork) i na Łotwie (Lielvārde).\n\n[2] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #15)\nMisję realizowano początkowo z Litwy (Szawle), ale stopniowo – w związku z jej wzmocnieniem po aneksji Krymu – włączano do BAP bazy w Estonii (Ämari), Polsce (Malbork) i na Łotwie (Lielvārde). Po wtargnięciu rosyjskich bezzałogowców w przestrzeń powietrzną Polski we wrześniu 2025 r. Naczelny Dowódca Sił Sojuszniczych w Europie uruchomił wzmocnioną aktywność natowską (enhanced Vigilance Activity, eVA) Eastern Sentry, której celem jest koordynacja i poprawa ochrony przestrzeni powietrznej na wschodniej flance. Dzięki temu BAP jest obecnie wspierany przez dodatkowe niemieckie, duńskie i brytyjskie dyżurne pary samolotów z rodzimych baz odpowiednio w Laage, Skrydstrup i Coningsby. Domenę morską integruje wielonarodowe Dowództwo Bałtyckiej Grupy Zadaniowej (Commander Task Force Baltic, CTF Baltic) w Rostocku, sformowane w październiku 2024 r. Powstało ono w strukturze sił NATO na bazie dowództwa marynarki wojennej RFN w Rostocku. W czasie pokoju ten element sztabowy liczy do 180 oficerów oddelegowanych z Niemiec, Polski, państw bałtyckich i nordyckich (bez Islandii), Holandii, Wielkiej Brytanii, Francji i Włoch. CTF Baltic będzie rotować.\n\n[3] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #36)\nObok państw nadbałtyckich w działaniach tych udział biorą okręty Stałych Zespołów Morskich NATO, a także jednostki sojuszników spoza regionu – m.in. USA, Wielkiej Brytanii i Francji. Wsparcia udzielają też Połączone Siły Ekspedycyjne (JEF) poprzez pomoc w identyfikacji statków floty cieni z wykorzystaniem sztucznej inteligencji (operacja „Nordic Warden”). Analogiczny zaawansowany system sojuszniczy „Mainsail” wprowadziło też NATO. Wykorzystuje on algorytmy sztucznej inteligencji do przetwarzania zbiorów danych z rozproszonych źródeł rozpoznania obrazowego, systemów hydrolokacyjnych i podwodnych sieci sensorowych. Task Force X Baltic (TFX-Baltic). Inicjatywa zainaugurowana przez Sojusznicze Dowództwo ds. Transformacji na początku 2025 r. w ramach szerszego programu Task Force X ma na celu pobudzenie szybkiego rozwoju i wdrażania morskich technologii bezzałogowych wspieranych rozwiązaniami AI do marynarek wojennych. Efektem końcowym ma być rozmieszczenie autonomicznych systemów do stałego monitorowania, nadzoru i ochrony morskiej infrastruktury krytycznej. W pracach uczestniczy osiem nadbałtyckich państw NATO, a także sojusznicy spoza regionu (m.in. USA, Holandia i Francja).\n\n[4] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #119)\nIch zadaniem jest testowanie procedur i sprawdzenie przygotowania państw bałtyckich do przyjęcia sił sojuszniczych. Zwykle uczestniczy w nich kilkuset żołnierzy i cywilów z trzech państw bałtyckich, a także przedstawiciele sojuszników i struktur NATO. W przeszłości Baltic Host integrowano z odbywającymi się równolegle ćwiczeniami poligonowymi na terytorium Litwy, Łotwy i Estonii, np. amerykańskimi Saber Strike. Gospodarzem Baltic Host jest co roku inny kraj bałtycki. Ćwiczenia są elementem szerszej współpracy państw bałtyckich w zakresie HNS115. W przypadku Estonii angażują one m.in.: kancelarię premiera, resorty polityki społecznej, gospodarki i komunikacji, agencję mienia wojskowego, policję, straż graniczną, służbę ratowniczą, administrację morską i drogową, służbę zdrowia, policję bezpieczeństwa oraz wybrane przedsiębiorstwa państwowe i prywatne (np. dystrybutora energii elektrycznej, koleje państwowe i tallińskie porty morski i lotniczy). Od 2015 r. biorą w nich udział Grupy Integracyjne Sił NATO (NFIU)116. W zakresie cywilnego wsparcia dla estońskiej armii ważną decyzją było stworzenie przez Urząd ds.\n\n[5] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #16)\nCTF Baltic będzie rotować. Od 2028 r. przeniesione zostanie do Gdyni i osadzone w powstającym dowództwie POLMARFOR w ramach polskiego Centrum Operacji Morskich – Dowództwo Komponentu Morskiego, a po kolejnych czterech latach – do Szwecji. CTF Baltic dowodzi morskim komponentem wzmocnionej aktywności NATO (eVA) na Bałtyku – Baltic Sentry. Rozpoczęte w styczniu 2025 r. działania mają na celu ochronę podmorskiej infrastruktury krytycznej. Bałtycka Konferencja Dowódców (Baltic Commanders Conference). Coroczna konferencja zainaugurowana przez Niemcy w 2015 r. stanowi forum dialogu przedstawicieli marynarek wojennych państw regionu. Ostatnie spotkanie odbyło się w marcu 2026 r. w Turku. Wzięli w nim udział dowódcy marynarek wojennych Danii, Estonii, Finlandii, Litwy, Łotwy, Niemiec, Polski i Szwecji oraz dowódcy Dowództwa Sojuszniczych Sił Morskich MARCOM i CTF Baltic. Format 3+3. W 2023 r. z inicjatywy Niemiec utworzono format konsultacji państw ramowych i gospodarzy wysuniętych sił NATO w państwach bałtyckich (FLF). Zrzesza on ministrów obrony Litwy, Łotwy i Estonii oraz odpowiednio Niemiec, o działaniach na wschodniej flance NATO. skowej z listopada 2024 r.).",
+      "oczekiwanie": "przejście",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "Od 2004 r."
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        }
+      ],
+      "po": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "Od 2004 r.",
+              "grounded": true,
+              "reason": "Kontekst mówi o natowskiej misji nadzoru przestrzeni powietrznej państw bałtyckich Baltic Air Policing (BAP), która działa od 2004 r. w regionie."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "Od 2004 r.",
+              "grounded": true,
+              "reason": "Tekst mówi o natowskiej misji nadzoru przestrzeni powietrznej państw bałtyckich Baltic Air Policing (BAP), która działa od 2004 r. w regionie."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "Od 2004 r.",
+              "grounded": true,
+              "reason": "Tekst mówi o natowskiej misji nadzoru przestrzeni powietrznej państw bałtyckich Baltic Air Policing (BAP), która działa od 2004 r. w regionie."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g12",
+      "question": "Kiedy Rosja opuściła Radę Państw Morza Bałtyckiego?",
+      "answer": "W 2022 r. [1]",
+      "context": "[1] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #7)\nChoć sojusznicze odstraszanie i obrona zapewniane są w ramach NATO, to nasilenie przez Rosję działań hybrydowych wymierzonych w państwa położone nad Bałtykiem wzmacnia potrzebę lepszej koordynacji w sferze szeroko rozumianego bezpieczeństwa. • Po opuszczeniu organizacji przez Rosję w 2022 r. Rada Państw Morza Bałtyckiego (RPMB) – której członkami są Dania, Estonia, Finlandia, Islandia, Litwa, Łotwa, Niemcy, Norwegia, Polska, Szwecja i Unia Europejska – stanowi jedyną regionalną platformę dialogu politycznego wysokiego szczebla, zrzeszającą wszystkie „podobnie myślące” państwa obszaru nordycko- -bałtyckiego, które wyróżnia zbieżność percepcji wyzwań i zagrożeń w Europie. Przekłada się to na rosnące znaczenie kwestii bezpieczeństwa w RPMB. tyckiego funkcjonują liczne formaty współpracy sektorowej. Większość z nich zajmuje się różnymi aspektami ochrony ludności i obrony cywilnej, bezpieczeństwa infrastruktury krytycznej, przeciwdziałania flocie cieni czy presji migracyjnej. Liczba i różnorodność form kooperacji (o zróżnicowanym członkostwie) stanowią o sile regionu i świadczą o wspólnych interesach i tożsamości.\n\n[2] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #70)\nEuroarktyczna Rada jest dziś organizacją do pewnego stopnia w stanie zawieszenia. Kontakty z Rosjanami wstrzymano w marcu 2022 r., a Rosja wystąpiła z Rady we wrześniu 2023 r. Z kolei Finlandia ogłosiła decyzję o wystąpieniu w 2024 r., która weszła w życie z końcem ub.r. 2.5. Współpraca w zakresie bezpieczeństwa wewnętrznego Finlandia, Litwa, Łotwa, Niemcy, Polska) resorty spraw wewnętrznych. Dokument przewiduje współpracę w zakresie zarządzania transgranicznymi ewakuacjami i niekontrolowanym przepływem osób w regionie, w tym aspektami związanymi z ich przyjęciem, rejestracją i dalszym przemieszczaniem. Kooperacja ma zostać osadzona we wspólnym planowaniu, koordynacji procedur i wymianie informacji. Obejmuje to wspólną ocenę wydolności systemu transportowego, identyfikację korytarzy ewakuacyjnych wraz z przejściami granicznymi oraz potencjalnymi punktami tranzytowymi i recepcji, a także wspieranie współpracy cywilno-wojskowej i partnerstw publiczno-prywatnych.\n\n[3] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #12)\nSojusz Północnoatlantycki. Podstawową organizacją gwarantującą bezpieczeństwo regionu Morza Bałtyckiego jest NATO. Zostało ono wzmocnione nie tylko przez aktywowane od 2014 r. sojusznicze działania i środki, lecz także przez wejście do Sojuszu Finlandii i Szwecji kolejno w 2023 i 2024 r., które zmieniło region geostrategicznie. Jednak w praktyce, po zaakceptowaniu na szczycie NATO w Wilnie w 2023 r. regionalnych planów obronnych, które stanowią podstawę rozwijania sił, zdolności i ćwiczeń wojskowych, oraz przypisaniu formacji wojskowych do ich realizacji, region Morza Bałtyckiego jest w natowskiej Strukturze Dowodzenia podzielony. Za Europę Północną operacyjnie odpowiedzialne jest Sojusznicze Dowództwo Sił Połączonych NATO w Norfolk, którego rejon odpowiedzialności obejmuje pięć państw nordyckich. Za Europę Środkową odpowiada Sojusznicze Dowództwo Sił Połączonych NATO w Brunssum, któremu spośród państw obszaru bałtyckiego podlegają: Estonia, Litwa, Łotwa, Niemcy i Polska. NATO adaptuje również swoją Strukturę Sił w regionie Morza Bałtyckiego do wymogów obrony zbiorowej1.\n\n[4] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #62)\nKooperacja polarna w ramach Rady została jednak przerwana w marcu 2022 r. Wówczas Kanada, USA, Islandia, Dania, Norwegia, Szwecja i Finlandia wydały wspólne oświadczenie potępiające agresję Rosji oraz pogwałcenie przez nią zasad suwerenności i integralności terytorialnej. Zdecydowały też o „czasowym zawieszeniu udziału we wszystkich spotkaniach Rady”51. Współpracę Sankcje finansowe oraz wstrzymanie inwestycji i ograniczenie aktywności zachodnich firm – w szczególności koncernów energetycznych (m.in. Shell, Total, BP, ExxonMobil) – w Rosji w reakcji na jej inwazję na Ukrainę podminowuje aspiracje Moskwy w zakresie rozwoju gospodarczego arktycznej części kraju. Posunięcia te jeszcze bardziej spowolnią rozwój tamtejszego sektora gazu skroplonego (brak dostępu do nowoczesnych technologii LNG wskutek restrykcji UE) i realizację planów zwiększenia eksportu na rynki azjatyckie. Odbiją się również negatywnie na projektach naftowych. Ponadto unijne sankcje zredukują wykorzystanie PDM jako międzykontynentalnego szlaku handlowego53.\n\n[5] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #24)\ni wspieraniem rdzennej ludności. Należą do niej Islandia, Kanada, Norwegia, Szwecja, Finlandia, Dania, Rosja i USA (państwa te współpracują także w ramach Arktycznego Forum Straży Przybrzeżnej). Rada podejmuje decyzje jednomyślnie9. Nie jest organizacją międzynarodową (gdyż sprzeciwiają się temu Stany Zjednoczone) i nie przyjmuje wiążących prawnie regulacji, choć służy ich wypracowywaniu. Nie zajmuje się też sprawami wojskowymi, które omawia się na spotkaniach Arctic Security Forces Roundtable w gronie przedstawicieli sił zbrojnych USA, Kanady, państw nordyckich oraz czterech państw niearktycznych – Wielkiej Brytanii, Francji, Holandii i Niemiec (od 2014 r. bez udziału Rosji)10. Ważną rolę regionalną odgrywa Euro-Arktyczna Rada Morza Barentsa, skupiająca kraje nordyckie, Rosję i Komisję Europejską. Arktycznymi ośrodkami kooperacji naukowej są międzynarodowe stacje polarne. Od 2014 r. miejscowe przedsiębiorstwa zrzesza niezależna Arktyczna Rada Ekonomiczna. Rosnąca rywalizacja USA, Chin i Rosji oznacza zmianę pozimnowojennego paradygmatu relacji międzynarodowych w Arktyce.",
+      "oczekiwanie": "przejście",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "W 2022 r."
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        }
+      ],
+      "po": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W 2022 r.",
+              "grounded": true,
+              "reason": "Raport mówi o tym, że Rosja opuściła Radę Państw Morza Bałtyckiego w 2022 roku, a Finlandia ogłosiła decyzję o wystąpieniu w 2024 r., która weszła w życie z końcem ub.r."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W 2022 r.",
+              "grounded": true,
+              "reason": "Raport mówi o tym, że Rosja opuściła Radę Państw Morza Bałtyckiego w 2022 roku, a Finlandia ogłosiła decyzję o wystąpieniu z Rady w 2024 r."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W 2022 r.",
+              "grounded": true,
+              "reason": "Raport mówi o tym, że Rosja opuściła Radę Państw Morza Bałtyckiego w 2022 roku, a Finlandia ogłosiła decyzję o wystąpieniu z Rady w 2024 r."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g13",
+      "question": "Jaki odsetek mieszkańców mogą przyjąć fińskie schrony dla ludności?",
+      "answer": "Około 65%. [1]",
+      "context": "[1] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #69)\nSkładają się na nią system ostrzegania, procedury ewakuacyjne i rozbudowana sieć schronów dla ludności57. Obecnie w Finlandii znajduje się ok. 45 tys. schronów (85% stanowią schrony prywatne), które mogą przyjąć ok. 3,6 mln osób (65% populacji)58. Są one skoncentrowane w większych ośrodkach miejskich (głównie aglomeracja helsińska). W Finlandii każdy budynek o powierzchni powyżej 1,2 tys. metrów kwadratowych musi dysponować schronem, a obowiązek jego budowy spoczywa na firmie deweloperskiej, co podnosi ceny lokali (w Helsinkach schrony drąży się też w skalistym podłożu, na którym wzniesione jest miasto). Swoje schrony mają również najważniejsze inNa co dzień schrony wykorzystywane są jako miejsca użyteczności publicznej: parkingi, hale sportowe czy stacje metra60. Dysponują niezbędnym wyposażeniem (łóżka, węzły sanitarne, woda, żywność, leki). Każdy ze schronów musi mieć możliwość przyjęcia cywilów w ciągu 72 godzin. Ich wykorzystanie przewiduje się w razie nie tylko konfliktu zbrojnego, lecz także groźby zawalenia budynku, promieniowania czy wykrycia obecności niebezpiecznych substancji. W kraju nadal buduje się nowe schrony i modernizuje już istniejące.\n\n[2] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #5)\ncywilna i mechanizm zapewniania bezpieczeństwa dostaw, newralgiczny dla państwa położonego na peryferiach Unii Europejskiej i zależnego od handlu drogą morską. Finlandia dysponuje rozbudowaną siecią schronów dla ludności, która może przyjąć ok. 65% mieszkańców. Za utrzymanie państwowych zapasów kryzysowych – niezbędnych do produkcji energii i żywności, zapewnienia opieki medycznej oraz prowadzenia działań zbrojnych – odpowiada natomiast Narodowa Agencja Dostaw Awaryjnych. obronności znane są wielu decydentom. Ponadto pogłębianiu kontaktów wojskowo‑cywilnych służą Kursy Obrony Narodowej, czyli spotkania kierownictwa wojskowego z liderami społeczeństwa obywatelskiego, biznesu, administracji i samorządów, a także działalność Narodowego Stowarzyszenia Szkolenia Obronnego, kanalizującego ochotnicze zaangażowanie proobronne. Duże znaczenie ma również wysoki poziom edukacji, zwiększający społeczną odporność na dezinformację i zdolność adaptacji do zmieniającej się rzeczywistości społeczno‑gospodarczej.\n\n[3] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #35)\nmilitarną oparto na zasadzie obrony totalnej, realizowanej w czterech wymiarach: militarnym, gospodarczym, cywilnym (ochrona ludności i infrastruktury) i psychologicznym (utrzymanie woli obrony kraju)27. Wiarygodne odstraszanie potencjalnego agresora miało być dla Finlandii przepustką do trzymania się poza rywalizacją mocarstw. W obszarze militarnym Finlandia postawiła na armię poborową z dużym rozwinięciem mobilizacyjnym oraz wprowadzenie terytorialnej organizacji wojsk lądowych obejmującej całość kraju (obrona terytorialna). W 1975 r. potencjał mobilizacyjny państwa wynosił 700 tys. żołnierzy, czyli ok. 15% całości populacji. Spośród niemilitarnych aspektów obrony totalnej największe znaczenie przypadło natomiast wzmacnianiu obrony cywilnej. W 1958 r. wystartował ambitny program budowy schronów zdolnych do przyjęcia niemal połowy mieszkańców. Fińscy decydenci chcieli w ten sposób ograniczyć straty cywilne, gdyż przewidywali, że w razie globalnego konfliktu kraj – ze względu na położenie w pobliżu strategicznych baz radzieckich na Półwyspie Kolskim – nie uniknie ataków atomowych.\n\n[4] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #137)\nEstonia w 1993 r. zrezygnowała z utrzymania poradzieckiego systemu obrony cywilnej, stworzonego pod kątem wojny nuklearnej. Analiza zimnowojennych schronów wykazała, że starczyłyby one dla zaledwie 5% populacji. Ostatecznie podjęto decyzję, że Estonia nie będzie budować własnego systemu schronów na wzór fiński. Wynika to nie tylko ze znacznych kosztów takich inwestycji, lecz także z ograniczonych możliwości przeprowadzenia skutecznej ewakuacji w obliczu krótkiego czasu między ostrzeżeniem ludności a ewentualnym atakiem rakietowym. Zamiast tego władze planują wykorzystanie jako schronów istniejącej infrastruktury – budynków administracji publicznej i prywatnych (np. podziemnych garaży) w kluczowych lokalizacjach (głównie w największych miastach). Wybrane obiekty zostaną zaadaptowane do roli schronu, a za ich utrzymanie odpowiedzialna będzie służba ratownicza, która otrzyma na ten cel dodatkowe środki. F. Obrona psychologiczna. W świecie mediów społecznościowych i nowych narzędzi manipulacji rośnie znaczenie obrony psychologicznej.\n\n[5] (źródło: Raport__Nowe-pomysly-na-obrone-totalna_net_0 #70)\nW kraju nadal buduje się nowe schrony i modernizuje już istniejące. Aktualizuje się też plany ewakuacyjne (organizowane są ćwiczenia ewakuacji) i wzmacnia współpracę z przedsiębiorcami. Generalna inspekcja każdego schronu ma miejsce co 10 lat (mniejsze odbywają się częściej)61. Specyfiką Finlandii jest też rozwinięty rynek firm oferujących usługi związane z utrzymaniem schronów. Można w nich zlecić przegląd lub naprawę schronienia, uzupełnić zaopatrzenie i zamówić nowy sprzęt. W ostatnich latach Finlandia podjęła szereg ważnych inicjatyw na rzecz wzmocnienia bezpieczeństwa wewnętrznego. Ich motorem był m.in. zamach Obrona cywilna angażuje straż pożarną oraz służby ratownicze i medyczne. Civil defence protects the civilian population, Ministry of the Interior of Finland, www.valtioneuvosto.fi. Civil defence shelters would be used during military threat, Ministry of the Interior of Finland, www.valtioneuvosto.fi. N. Niitra, Shelters in Estonia good for nothing, Postimees, 21.04.2014, www.news.postimees.ee. M. Chance, E. Burrows, Helsinki’s bunker city: How Finland has survived in Russia’s dark shadow, CNN, 15.07.2018, www.edition.cnn.com.",
+      "oczekiwanie": "przejście",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "Około 65%."
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        }
+      ],
+      "po": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "Około 65%.",
+              "grounded": true,
+              "reason": "Kontekst mówi o tym, że w Finlandii znajduje się rozbudowana sieć schronów dla ludności, która może przyjąć ok. 65% mieszkańców."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "Około 65%.",
+              "grounded": true,
+              "reason": "Kontekst mówi o tym, że w Finlandii znajduje się ok. 45 tys. schronów, które mogą przyjąć ok. 3,6 mln osób (65% populacji)."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "Około 65%.",
+              "grounded": true,
+              "reason": "Kontekst mówi o tym, że w Finlandii znajduje się ok. 45 tys. schronów, które mogą przyjąć ok. 3,6 mln osób (65% populacji)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g25",
+      "question": "W którym roku państwa arktyczne potwierdziły prawo morza jako podstawę współpracy (Deklaracja z Ilulissat)?",
+      "answer": "W 2008 r. [1]",
+      "context": "[1] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #19)\nW 2008 r. państwa leżące nad Oceanem Arktycznym (Kanada, Rosja, Norwegia, Dania i USA) potwierdziły, że prawo morza będzie podstawą ich współpracy regionalnej, zarządzania Arktyką i rozstrzygania sporów terytorialnych (Deklaracja z Ilulissat)6. Porządek prawnomiędzynarodowy na omawianym obszarze kształtują też starsze akty prawne. Najważniejszy z nich to Traktat Spitsbergeński z 1920 r. Przyznaje on Norwegii suwerenne prawa do archipelagu Svalbard, a jednocześnie zapewnia kilkudziesięciu innym sygnatariuszom, w tym Polsce, równy dostęp do wysp i możliwość prowadzenia tam działalności gospodarczej. Obok Norwegii korzysta z niej tylko Rosja, posiadająca w Barentsburgu kopalnię węgla i konsulat. Do nowszych porozumień arktycznych należą m.in. Międzynarodowy kodeks dla statków eksploatowanych na wodach polarnych z 2015 r. Istnieje wiele definicji południowej granicy Arktyki.\n\n[2] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #18)\nDla ułatwienia często przyjmuje się, że kraina leży za granicą koła podbiegunowego (66°33′39″ N). Region tworzą Ocean Arktyczny (Lodowaty), archipelagi i wyspy, w tym największa wyspa świata – Grenlandia – oraz północne wybrzeża Eurazji i Ameryki Północnej3. Zamieszkuje go ok. 4 mln osób (połowa żyje w Rosji), z czego ludność rdzenna stanowi 10%4. Sytuację prawnomiędzynarodową w Arktyce reguluje przede wszystkim Konwencja Narodów Zjednoczonych o prawie morza z 1982 r. Określa ona prawa, obowiązki i zakres jurysdykcji państw nadbrzeżnych Oceanu Arktycznego, status wód międzynarodowych (morze pełne), archipelagów i cieśnin, a także zasady wytyczania granic morskich wyłącznych stref ekonomicznych i szelfu kontynentalnego5. W 2008 r. państwa leżące nad Oceanem Arktycznym (Kanada, Rosja, Norwegia, Dania i USA) potwierdziły, że prawo morza będzie podstawą ich współpracy regionalnej, zarządzania Arktyką i rozstrzygania sporów terytorialnych (Deklaracja z Ilulissat)6. Porządek prawnomiędzynarodowy na omawianym obszarze kształtują też starsze akty prawne.\n\n[3] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #21)\nWysuwano je, aby zapobiec sytuacji, w której arktyczne wyspy zostałyby uznane za terra nullius i zagarnięte przez innych pod pretekstem braku efektywnej okupacji. R. Bierzanek, J. Symonides, Prawo międzynarodowe publiczne, Warszawa 2009, s. 243. Spośród państw arktycznych Konwencji o prawie morza nie ratyfikowały tylko Stany Zjednoczone, które jednak w praktyce uznają jej postanowienia. Przykładem jest zgoda Waszyngtonu na stosowanie dokumentu w odniesieniu do Arktyki w Deklaracji z Ilulissat. i umowa w sprawie zapobiegania nieuregulowanym połowom na morzu pełnym w środkowej części Oceanu Arktycznego z 2018 r. Ważnym osiągnięciem było podpisanie przez członków Rady Arktycznej w 2011 r. porozumienia o współpracy w poszukiwaniach i ratownictwie (SAR), dzielącego obszar podbiegunowy na strefy odpowiedzialności poszczególnych państw nadbrzeżnych. Arktykę zmienia globalne ocieplenie, w ostatnim półwieczu postępujące w regionie podbiegunowym trzy razy szybciej niż średnio na świecie7. Przyspiesza ono topnienie grenlandzkiego lądolodu, pokrywającego ok. 80% powierzchni liczącej ponad 2 mln km2 wyspy.\n\n[4] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #36)\nTo Ottawa zainicjowała powstanie Rady Arktycznej w 1996 r. Liberalne rządy premiera Justina Trudeau (od 2015 r.), zaangażowanego w pojednanie z rdzenną ludnością, dążą do poprawy warunków socjalnych żyjących na północy Inuitów. Na stosunkach z autochtonami zaważyły trudne wydarzenia z przeszłości, m.in. kontrowersyjne relokacje za koło podbiegunowe, które w latach pięćdziesiątych miały zademonstrować, że północne krańce Kanady są zamieszkałe i rząd jest ich suwerennym i prawnym zwierzchnikiem21. „Suwerenność” to wciąż słowo klucz do zrozumienia arktycznej polityki Kanady22. Rozszerzanie przez nią jurysdykcji na północnych obszarach morskich (początkowo w zakresie ochrony środowiska) rozpoczęło się już w latach siedemdziesiątych, przed przyjęciem Konwencji Narodów Zjednoczonych o prawie morza (1982)23. Skutkowało ono wybuchem sporów terytorialno‑prawnych na północy – o status Przejścia Północno‑Zachodniego oraz o rozgraniczenie obszarów morskich z USA (na Morzu Beauforta) i z Danią/Grenlandią (na Morzu Lincolna).\n\n[5] (źródło: Raport-OSW_Polarny-kwartet-NATO_net_4 #27)\nArt. 77(1) stwierdza, że „państwo nadbrzeżne wykonuje suwerenne prawa w odniesieniu do szelfu kontynentalnego w celu jego badania i eksploatacji jego zasobów naturalnych”, choć zgodnie z art. 78(1) prawa państwa „w odniesieniu do szelfu kontynentalnego nie wpływają na status prawny wód pokrywających szelf ani przestrzeni powietrznej ponad tymi wodami”. Norweskie roszczenia do szelfu na Morzu Barentsa i Norweskim oraz na Oceanie Arktycznym zostały zaakceptowane w 2009 r. Rosyjskie sięgają wyłącznych stref ekonomicznych Grenlandii i Kanady. Z kolei USA nie mogą wysuwać roszczeń do szelfu arktycznego, gdyż nie ratyfikowały Konwencji o prawie morza. Konwencja Narodów Zjednoczonych o prawie morza, Unia Europejska, 1998, eur-lex.europa.eu. rozstrzygać je w oparciu o prawo morza, a stosowne wnioski złożono w Komisji Granic Szelfu Kontynentalnego12. Stany Zjednoczone, Kanada, Dania (Grenlandia) i Norwegia przygotowują się też na negatywne skutki globalnego ocieplenia.",
+      "oczekiwanie": "przejście",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "W 2008 r."
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        }
+      ],
+      "po": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W 2008 r.",
+              "grounded": true,
+              "reason": "Raport mówi o deklaracji z Ilulissat podpisanej w 2008 roku przez kraje nadbrzeżne Oceanu Arktycznego, które uznały prawo morza za podstawę współpracy regionalnej."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W 2008 r.",
+              "grounded": true,
+              "reason": "Raport mówi o deklaracji z Ilulissat podpisanej w 2008 roku przez kraje nadbrzeżne Oceanu Arktycznego, które uznały prawo morza za podstawę współpracy regionalnej."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "W 2008 r.",
+              "grounded": true,
+              "reason": "Raport mówi o deklaracji z Ilulissat podpisanej w 2008 roku przez kraje nadbrzeżne Oceanu Arktycznego, które uznały prawo morza za podstawę współpracy regionalnej."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g28",
+      "question": "Jaka organizacja jest podstawowym gwarantem bezpieczeństwa regionu Morza Bałtyckiego?",
+      "answer": "NATO. [1]",
+      "context": "[1] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #12)\nSojusz Północnoatlantycki. Podstawową organizacją gwarantującą bezpieczeństwo regionu Morza Bałtyckiego jest NATO. Zostało ono wzmocnione nie tylko przez aktywowane od 2014 r. sojusznicze działania i środki, lecz także przez wejście do Sojuszu Finlandii i Szwecji kolejno w 2023 i 2024 r., które zmieniło region geostrategicznie. Jednak w praktyce, po zaakceptowaniu na szczycie NATO w Wilnie w 2023 r. regionalnych planów obronnych, które stanowią podstawę rozwijania sił, zdolności i ćwiczeń wojskowych, oraz przypisaniu formacji wojskowych do ich realizacji, region Morza Bałtyckiego jest w natowskiej Strukturze Dowodzenia podzielony. Za Europę Północną operacyjnie odpowiedzialne jest Sojusznicze Dowództwo Sił Połączonych NATO w Norfolk, którego rejon odpowiedzialności obejmuje pięć państw nordyckich. Za Europę Środkową odpowiada Sojusznicze Dowództwo Sił Połączonych NATO w Brunssum, któremu spośród państw obszaru bałtyckiego podlegają: Estonia, Litwa, Łotwa, Niemcy i Polska. NATO adaptuje również swoją Strukturę Sił w regionie Morza Bałtyckiego do wymogów obrony zbiorowej1.\n\n[2] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #11)\nPunktem wyjścia mogłyby być: organizacja szczytu szefów rządów państw członkowskich RPMB, wprowadzenie spotkań ministrów spraw wewnętrznych, zmapowanie formatów regionalnej współpracy możliwych do szybkiego włączenia pod auspicje Rady, wzmocnienie jej roli jako platformy koordynacji przed wybranymi spotkaniami w UE, a także zaproszenie przedstawiciela NATO do udziału w jej pracach. • Polityczna i sektorowa adaptacja RPMB nie powinna być interpretowana jako sygnał sugerujący regionalizację europejskiego bezpieczeństwa – jego podstawą jest NATO oraz odstraszanie i obrona w ramach Sojuszu. Zintensyfikowanie współpracy w RPMB może jednak nie tylko wzmocnić przekaz państw regionu w kwestii wyzwań i zagrożeń, lecz – przede wszystkim – zwiększyć regionalną odporność poprzez lepszą koordynację i synergię działań zaangażowanych państw. I. ORGANIZACJE I PLATFORMY WSPÓŁPRACY W OBSZARZE BEZPIECZEŃSTWA W REGIONIE MORZA BAŁTYCKIEGO 1. Polityka obronna, bezpieczeństwa i zagraniczna 1.1. Polityka obronna Sojusz Północnoatlantycki. Podstawową organizacją gwarantującą bezpieczeństwo regionu Morza Bałtyckiego jest NATO.\n\n[3] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #44)\nCelem jest zagwarantowanie ciągłej dostępności co najŚrodki podejmowane w NATO i UE uzupełniane są przez kilka inicjatyw na szczeblu regionalnym. W deklaracji na rzecz wzmocnienia bezpieczeństwa w rejonie Bałtyku podpisanej 5 czerwca 2025 r. w Brukseli państwa regionu zobowiązały się, że będą dążyć do utrzymania kwestii jego bezpieczeństwa na liście priorytetów NATO (a także UE i innych organizacji). Dokument resortów obrony Polski, Litwy, Łotwy, Estonii, Finlandii, Szwecji, Niemiec, Danii i Norwegii (dołączyła w listopadzie 2025 r.) powstał z inicjatywy polskiego rządu. Przewiduje on wspieranie: ściślejszej współpracy NATO i UE na rzecz bezpieczeństwa regionalnego; Dowództwa Bałtyckiej Grupy Zadaniowej (CTF Baltic); natowskich inicjatyw na rzecz poprawy świadomości sytuacyjnej i odstraszania wrogiej aktywności na Bałtyku; utworzenia regionalnego hubu ochrony podmorskiej infrastruktury krytycznej (uzupełniającego Centrum Bezpieczeństwa Krytycznej Infrastruktury Podmorskiej NATO w MARCOM i Sieć Krytycznej Infrastruktury Podmorskiej NATO); dyskusji na rzecz wypracowania dalszych środków w zakresie ochrony podmorskiej infrastruktury krytycznej Morza Bałtyckiego.\n\n[4] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #85)\nIstnieje też problem przepływu informacji, świadomości sytuacyjnej, wzajemnej komunikacji i koordynacji oraz podziału zadań. Część formatów współpracy boryka się ze stagnacją i brakiem realnej aktywności, niektóre zostały wygaszone (np. Wymiar Północny, Grupa Zadaniowa Regionu Morza Bałtyckiego ds. Zwalczania Przestępczości Zorganizowanej) lub pozostają do pewnego stopnia w stanie zawieszenia w związku z rosyjską agresją na Ukrainę (np. Euroarktyczna Rada Morza Barentsa). W związku z tym sieć regionalnej współpracy wymaga uporządkowania i dyskusji o priorytetowych obszarach zaangażowania. Organizacją międzynarodową, która mogłaby stać się wehikułem integracji i koordynacji różnych formatów i działań w obszarze bezpieczeństwa, jest Rada Państw Morza Bałtyckiego zrzeszająca wszystkie demokratyczne państwa obszaru Morza Bałtyckiego. • Jakość, a nie ilość. Zdecydowana większość kluczowych zagadnień związanych z bezpieczeństwem regionalnym jest już w znacznym stopniu przedmiotem dialogu i współpracy w istniejących formatach regionalnych, a także na poziomie NATO i UE.\n\n[5] (źródło: Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1 #106)\nFormaty współpracy w obszarze szeroko rozumianego bezpieczeństwa w regionie Morza Bałtyckiego Nazwa Od Członkowie* Opis Polityka obronna DK, EE, FI, FR, DE, IT, LV, LT, NL, NO, PL, SE, GB Commander Task Force Baltic (CTF Baltic)** DK, EE, FI, DE, LV, LT, NO, PL, SE Bałtycka Konferencja Dowódców Grupa Północna DK, EE, FI, DE, IS, LV, LT, NL, NO, PL, SE, GB BE, CZ, DE, IT, LU, NL, PL, SK Obszar Mobilności Wojskowej Europy Środkowo-Północnej Połączone Siły Ekspedycyjne (JEF) DK, EE, FI, IS, LV, LT, NL, NO, SE, GB rotacyjne dowództwo morskie NATO dla Morza Bałtyckiego (do 2028 r. z kwaterą w Rostocku, Niemcy) dialog przedstawicieli marynarek wojennych regionu Morza Bałtyckiego 3+3 CA, EE, DE, LV, LT, GB format konsultacji MON państw ramowych oraz państw gospodarzy Wysuniętych Sił Lądowych NATO (FLF) w państwach bałtyckich konsultacje MON oraz szefów obrony dotyczące bezpieczeństwa i obrony w Europie Północnej ułatwianie przemieszczania wojsk w korytarzu mobilności wojskowej wielodomenowe siły szybkiego reagowania skoncentrowane na regionie nordyckim i bałtyckim; coroczne szczyty przywódców oraz spotkania na szczeblu MON i szefów obrony",
+      "oczekiwanie": "przejście",
+      "tezy_stare": [],
+      "tezy_nowe": [
+        "NATO."
+      ],
+      "przed": [
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false
+        }
+      ],
+      "po": [
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "NATO.",
+              "grounded": true,
+              "reason": "Tekst mówi o NATO jako podstawowej organizacji gwarantującej bezpieczeństwo regionu Morza Bałtyckiego."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "NATO.",
+              "grounded": true,
+              "reason": "Tekst mówi o NATO jako podstawowej organizacji gwarantującej bezpieczeństwo regionu Morza Bałtyckiego."
+            }
+          ]
+        },
+        {
+          "frac": 1.0,
+          "blokuje": false,
+          "verdicts": [
+            {
+              "claim": "NATO.",
+              "grounded": true,
+              "reason": "Tekst mówi o NATO jako podstawowej organizacji gwarantującej bezpieczeństwo regionu Morza Bałtyckiego."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
