@@ -135,3 +135,19 @@ SERVE_PORT = int(os.environ.get("SERVE_PORT", 8000))
 # żeby PIERWSZE pytanie użytkownika było szybkie (w CLI ten koszt płaci się przy każdym
 # uruchomieniu). Wyłączamy w testach — nie chcemy tam GPU.
 SERVE_WARMUP = True
+
+# --- Wgrywanie PDF-u ad hoc (etap 2 UI) ---
+# OSOBNA kolekcja, kasowana przy starcie I przy zamknięciu procesu. Nazwa jest inna niż
+# QDRANT_COLLECTION i to jest cała istota tej decyzji: `build_index.py` robi `delete_collection`
+# przy każdym buildzie, więc indeksowanie obcego dokumentu do kolekcji zmierzonej skasowałoby
+# ją i przebudowało razem z tym dokumentem — liczby z README przestałyby być odtwarzalne.
+# Indeks, na którym mierzę, musi być ZAMROŻONY (ta sama zasada, co held-out do kalibracji progu).
+UPLOAD_COLLECTION = "demo_upload"
+# Limity NIE są zabezpieczeniem (serwer stoi na 127.0.0.1, użytkownik jest jeden) — chronią demo
+# przed zamrożeniem: 2000-stronicowy tom to ~minuta parsowania i liczenia embeddingów.
+UPLOAD_MAX_BYTES = 25 * 1024 * 1024
+UPLOAD_MAX_PAGES = 300
+# Wykrywanie skanu: PDF bez warstwy tekstowej to obraz — PyMuPDF zwraca z niego kilkanaście
+# śmieciowych znaków na stronę (numeracja, artefakty), a nie zero. Dlatego próg nie może być
+# zerem. OCR-u świadomie nie mamy w pipeline, więc taki dokument odrzucamy z wyjaśnieniem.
+UPLOAD_MIN_CHARS_PER_PAGE = 100

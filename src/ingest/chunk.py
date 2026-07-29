@@ -139,9 +139,14 @@ def pack_chunks(
 
 # --- Spięcie: oczyszczone .txt -> chunks.jsonl --------------------------------
 
-def chunk_file(txt_path: Path) -> list[dict]:
-    """Zamienia jeden oczyszczony .txt na listę rekordów-chunków z metadanymi."""
-    text = txt_path.read_text(encoding="utf-8")
+def chunk_text(text: str, source: str) -> list[dict]:
+    """Oczyszczony TEKST + etykieta źródła -> rekordy chunków z metadanymi.
+
+    DLACZEGO osobno od `chunk_file`: dokument wgrany w UI (etap 2) nie istnieje na dysku, więc
+    nie ma z czego czytać ścieżki — a musi przejść DOKŁADNIE tę samą logikę cięcia, co korpus,
+    na którym zmierzone są liczby. Parametry (target/overlap/min) nadal z jednego miejsca
+    (`config`), więc „chunking demo" nie może się rozjechać z „chunkingiem zmierzonym".
+    """
     sentences = split_sentences(text)
     chunks = pack_chunks(
         sentences,
@@ -150,7 +155,6 @@ def chunk_file(txt_path: Path) -> list[dict]:
         min_chars=config.CHUNK_MIN_CHARS,
     )
 
-    source = txt_path.stem  # nazwa raportu = źródło do cytowania (na razie poziom dokumentu)
     records = []
     for i, chunk in enumerate(chunks):
         records.append({
@@ -161,6 +165,12 @@ def chunk_file(txt_path: Path) -> list[dict]:
             "text": chunk,
         })
     return records
+
+
+def chunk_file(txt_path: Path) -> list[dict]:
+    """Zamienia jeden oczyszczony .txt na listę rekordów-chunków z metadanymi.
+    Etykieta źródła = nazwa pliku (na razie cytujemy na poziomie dokumentu)."""
+    return chunk_text(txt_path.read_text(encoding="utf-8"), source=txt_path.stem)
 
 
 def main() -> None:

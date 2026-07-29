@@ -29,9 +29,44 @@ import fitz  # PyMuPDF
 
 # --- Krok 1: wyciągnięcie surowego tekstu strona po stronie ------------------
 
-def extract_pages(pdf_path: Path) -> list[str]:
+class PdfTooLong(ValueError):
+    """Dokument przekracza limit stron. OSOBNY typ, nie ogólny błąd odczytu.
+
+    DLACZEGO (sprawdzone na żywo na 518-stronicowym raporcie): zlane w jedno „nie udało się
+    odczytać PDF-a" prowadziłoby użytkownika w złą stronę — uszkodzonego pliku nie naprawi,
+    a za długi dokument może po prostu skrócić. Komunikat ma mówić, co zrobić.
     """
-    Zwraca listę stron jako surowy tekst.
+
+
+def extract_pages(pdf_path: Path) -> list[str]:
+    """Strony PDF-a Z PLIKU (ścieżka na dysku) — ingest wsadowy z `data/raw/`."""
+    doc = fitz.open(pdf_path)
+    return _pages_from_doc(doc)
+
+
+def extract_pages_bytes(data: bytes, max_pages: int | None = None) -> list[str]:
+    """Strony PDF-a Z BAJTÓW — ścieżka wgrywania w UI (etap 2).
+
+    DLACZEGO ISTNIEJE OSOBNY WARIANT: dokument demo nie ma prawa dotknąć dysku (ani `data/raw/`,
+    ani `/tmp`), więc PyMuPDF dostaje strumień bajtów, a nie ścieżkę. Cała logika ekstrakcji
+    i czyszczenia jest wspólna (`_pages_from_doc`, `clean_pages`) — to opakowanie, nie druga
+    implementacja parsera. Gdyby były dwie, dokument demo byłby parsowany inaczej niż korpus,
+    na którym zmierzone są liczby.
+
+    `max_pages` sprawdzamy PRZED ekstrakcją (`doc.page_count` jest tanie), bo sens limitu jest
+    właśnie w tym, żeby nie zapłacić czasu za 2000 stron.
+    """
+    doc = fitz.open(stream=data, filetype="pdf")
+    if max_pages is not None and doc.page_count > max_pages:
+        n = doc.page_count
+        doc.close()
+        raise PdfTooLong(f"PDF ma {n} stron, a limit dla dokumentu demo to {max_pages}.")
+    return _pages_from_doc(doc)
+
+
+def _pages_from_doc(doc) -> list[str]:
+    """
+    Zwraca listę stron jako surowy tekst. Zamyka dokument (właścicielem jest ta funkcja).
 
     DLACZEGO "blocks", a nie zwykłe get_text():
     PyMuPDF potrafi zwrócić tekst w blokach z współrzędnymi (x, y). Sortując bloki
@@ -39,7 +74,6 @@ def extract_pages(pdf_path: Path) -> list[str]:
     poprawną KOLEJNOŚĆ CZYTANIA w dokumentach dwukolumnowych. Zwykłe get_text("text")
     często miesza kolumny, sklejając zdanie z lewej z połową zdania z prawej.
     """
-    doc = fitz.open(pdf_path)
     pages: list[str] = []
     for page in doc:
         blocks = page.get_text("blocks")  # (x0, y0, x1, y1, "tekst", block_no, block_type)
@@ -142,11 +176,23 @@ def clean_text(text: str, running: set[str]) -> str:
 
 # --- Spięcie: PDF -> czysty .txt ---------------------------------------------
 
+def clean_pages(pages: list[str], running: set[str] | None = None) -> str:
+    """Strony surowe -> jeden oczyszczony tekst. Wydzielone, bo tej samej ścieżki potrzebuje
+    ingest z pliku (`parse_pdf`) i ingest z bajtów (upload w UI) — jedna definicja czyszczenia.
+
+    Kolejność jest istotna: `find_running_lines` musi widzieć WSZYSTKIE strony naraz (stopka
+    jest stopką dopiero wtedy, gdy powtarza się na wielu stronach), więc dopiero potem czyścimy
+    stronę po stronie. `running` można podać z zewnątrz, gdy wołający i tak je policzył
+    (statystyka w konsoli) — żeby nie liczyć tego samego dwa razy.
+    """
+    running = find_running_lines(pages) if running is None else running
+    return "\n\n".join(p for p in (clean_text(p, running) for p in pages) if p)
+
+
 def parse_pdf(pdf_path: Path, out_dir: Path) -> Path:
     pages = extract_pages(pdf_path)
     running = find_running_lines(pages)
-    cleaned_pages = [clean_text(p, running) for p in pages]
-    full_text = "\n\n".join(p for p in cleaned_pages if p)
+    full_text = clean_pages(pages, running)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{pdf_path.stem}.txt"
