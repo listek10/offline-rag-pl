@@ -2,7 +2,7 @@
 
 [![testy](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml/badge.svg)](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml)
 
-*Badge pokazuje 61 testów kontraktowych na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
+*Badge pokazuje testy kontraktowe (obecnie 82) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
 gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
 
 System **Retrieval-Augmented Generation** działający **w pełni offline**: odpowiada na pytania
@@ -260,14 +260,14 @@ Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
-pytest                                   # -> 61 passed in 0,57 s
+pytest                                   # -> 82 passed in 0,6 s
 ```
 
 Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`) są
 **leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
 w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
-`ModuleNotFoundError`, a mimo to **61 passed**. Bez `node` (opcjonalna zależność dev dla
-`tests/check_app_js.js`): **60 passed, 1 skipped**.
+`ModuleNotFoundError`, a mimo to **82 passed**. Bez `node` (opcjonalna zależność dev dla
+`tests/check_app_js.js`): **81 passed, 1 skipped**. Pierwszy przebieg CI: **82 passed w 2,13 s**.
 
 **Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,
 kolejności zdarzeń, chunkingu, metryk, BM25/RRF, routingu backendów. Nie dowodzi, że RAG

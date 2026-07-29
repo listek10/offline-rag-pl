@@ -63,7 +63,8 @@ jobs:
           echo "OK: brak torcha, testy lecą na czystym stdlibie + 4 paczkach"
 
       # `node` jest na runnerach ubuntu-latest preinstalowany, więc `tests/test_app_js.py`
-      # NIE zostanie pominięty — spodziewamy się 61 passed, nie 60 passed + 1 skipped.
+      # NIE zostanie pominięty — spodziewamy się pełnego zestawu, nie „…1 skipped".
+      # (Pierwszy zielony przebieg: 82 passed w 2,13 s, node v22.23.1.)
       # `-p no:randomly` nie jest potrzebne: testy nie zależą od kolejności.
       - name: Wersja node (informacyjnie — decyduje, czy test app.js leci czy jest skipowany)
         run: node --version
