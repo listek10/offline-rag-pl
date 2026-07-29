@@ -334,14 +334,16 @@ Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
-pytest                                   # -> 91 passed in 0,7 s
+pytest                                   # -> 140 passed, 9 skipped in 0,6 s
 ```
 
-Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`) są
+Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`, `fitz`) są
 **leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
 w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
-`ModuleNotFoundError`, a mimo to **91 passed**. Bez `node` (opcjonalna zależność dev dla
-`tests/check_app_js.js`): **90 passed, 1 skipped**. Pierwszy przebieg CI: **82 passed w 2,13 s**.
+`ModuleNotFoundError`, a mimo to **140 passed**. Pominięte 9 to testy wymagające `pymupdf`
+(prawdziwy PDF budowany w pamięci) i `qdrant-client` (kształt punktów) — w env projektu przechodzą:
+**149 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
+logiki UI**) pomija się jeszcze jeden test. Pierwszy przebieg CI: **82 passed w 2,13 s**.
 
 **Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,
 kolejności zdarzeń, chunkingu, metryk, BM25/RRF, routingu backendów. Nie dowodzi, że RAG
@@ -437,6 +439,53 @@ Trzy rzeczy, które te liczby pokazują:
   w ogóle pytany.
 - **Źródła są na ekranie po ~1 s, odpowiedź po 13-20 s.** Dlatego wysyłamy je w zdarzeniu
   `retrieval`, a nie razem z odpowiedzią — użytkownik czyta fragmenty, gdy model jeszcze pracuje.
+
+### Wgrywanie własnego PDF-u (demo na dokumencie nigdy niewidzianym)
+
+Panel korpusu nad wynikami: `korpus zmierzony` / `dokument ad hoc`. Wgrany PDF przechodzi
+**dokładnie tą samą ścieżką** (parsowanie → chunking → embedding → indeks → hybryda + rerank →
+trzy guardy → cytowanie), tylko do **osobnej, ulotnej kolekcji** `demo_upload`.
+
+Zmierzone na 100 stronach raportu świadomie trzymanego poza korpusem (`IV ROK WOJNY`, 2,7 MB):
+
+| co | liczba |
+|---|--:|
+| upload → 364 chunki w Qdrancie (parsowanie + embeddingi) | **17,6 s** |
+| pytanie o wgrany dokument (retrieval 3,1 s / generacja 9,3 s / weryfikacja 14,5 s) | **26,8 s** |
+| bramka na wgranym dokumencie / `grounded_fraction` | 0,993 ≥ 0,35 / **1,0** |
+| kolekcja zmierzona po demo | **1509 punktów — bez zmian** |
+| `run_eval.py` po demo (hybrid+rerank) | **recall@1 0,828 · recall@5 0,966 · MRR 0,886** — identycznie |
+
+**Co to udowadnia, a czego nie:** nie to, że „model generalizuje" (jego wagi są zamrożone, wiedza
+wchodzi przez prompt), a to, że **nowa wiedza kosztuje sekundy indeksowania, nie godziny treningu**.
+
+Cztery decyzje, które trzymają to w ryzach:
+- **Osobna kolekcja, kasowana przy zamknięciu *i przy starcie* procesu** — `kill -9` nie wykonuje
+  kodu zamykania, więc bez zamiatacza startowego „ulotność" byłaby obietnicą, nie właściwością
+  (sprawdzone: kolekcja utworzona ręcznie znika przy starcie serwera). Kod **odmawia pracy**, gdy
+  nazwa kolekcji demo zejdzie się z nazwą kolekcji zmierzonej — `build_index.py` kasuje kolekcję
+  przed zapisem, a `QDRANT_COLLECTION` jest nadpisywalne środowiskiem.
+- **Plik nie dotyka dysku** — surowe bajty z ciała POST-a prosto do `fitz.open(stream=…)`.
+  Świadomie **bez `multipart/form-data`**: Starlette trzyma `UploadFile` w
+  `SpooledTemporaryFile(max_size=1 MB)`, więc każdy PDF >1 MB wylądowałby w katalogu tymczasowym.
+- **Korpus jest parametrem retrievalu** (`src/retrieve/corpus.py`), a cache'e BM25 i mapy chunków
+  dostały *klucz*, nie eager-ładowanie — na leniwości stoi uruchamialność testów bez torcha.
+- **UI mówi, czego nie gwarantuje** — przy korpusie demo widoczne ostrzeżenie, że progi guardów są
+  kalibrowane na held-oucie z korpusu OSW, nie na tym dokumencie. Guardy działają, ich *zmierzone*
+  gwarancje się nie przenoszą.
+
+**Dwa wyniki uboczne, które znalazł dopiero prawdziwy dokument** (szczegóły: `NOTATKI_REKRUTER.md`):
+- **chunking zakłada prozę analityczną.** Raport pisany wypunktowaniami (bez kropek) nie daje
+  `split_sentences` gdzie ciąć: korpus bazowy ma max 2548 zn. i 0% chunków >2000 zn., wgrany
+  dokument **max 5614 zn. i 3% chunków >2000 zn.** przy podobnej średniej (średnia kłamie).
+- **koszt guardu #3 nie jest stały.** Pytanie ogólne na wielkim chunku: generacja 43,5 s
+  i **weryfikacja 264 s** (vs 26,7 s na korpusie bazowym), z odrzuceniem odpowiedzi
+  (`grounded_fraction` 0,0). Sędzia per-teza skaluje się z długością odpowiedzi — dlatego „~20 s
+  na pytanie" podaję zawsze razem z korpusem, na którym to zmierzyłem.
+
+Limity: **25 MB / 300 stron** (żeby 2000-stronicowy tom nie zamroził demo) i odrzucanie PDF-ów bez
+warstwy tekstowej (średnio <100 znaków na stronę → prawdopodobnie skan; OCR-u świadomie nie ma
+w pipeline). Każda odmowa mówi, **co zrobić** — limit stron ma inny komunikat niż uszkodzony plik.
 
 ### Decyzje projektowe warte odnotowania
 

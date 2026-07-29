@@ -4,8 +4,9 @@ Jedno źródło prawdy o tym, co zostało. Wcześniej ta lista żyła w rozmowie
 który jest w `.gitignore` — czyli nie istniała dla nikogo, kto otwiera repo. Trzymam ją tutaj,
 w repo, a brief tylko na nią wskazuje: dwie kopie jednej prawdy zawsze się rozjeżdżają.
 
-**Stan bazowy:** wszystkie 5 etapów z briefu + 6 ponad plan zamknięte, 12/12 checkpointów
-z `CLAUDE.md` pokrytych, 91 testów zielonych bez GPU, CI na GitHub Actions zielone.
+**Stan bazowy:** wszystkie 5 etapów z briefu + 7 ponad plan zamknięte, 12/12 checkpointów
+z `CLAUDE.md` pokrytych, 140 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
+/ `qdrant-client`; w env projektu 149), CI na GitHub Actions zielone.
 Liczby: `README.md`. Historia decyzji: `NOTATKI_REKRUTER.md`.
 
 Kolejność = rekomendacja, nie zależności. Każda pozycja ma **jak zmierzyć**, bo w tym projekcie
@@ -13,27 +14,28 @@ zmiana bez pomiaru nie jest zrobiona.
 
 ---
 
-## 1. UI etap 2 — wgrywanie PDF-u do ulotnej kolekcji  ⬜ REKOMENDOWANE NASTĘPNE
+## 1. Chunking na dokumentach listowych  ⬜ NOWE (wynik uboczny etapu 12)
 
-**Wartość:** największa demonstracyjna — rekruter przynosi własny PDF i widzi, że cały pipeline
-działa na dokumencie nigdy niewidzianym, bez dotykania modelu.
+**Problem (zmierzony 29.07 na wgranym raporcie `IV ROK WOJNY`, 100 stron):** `split_sentences`
+tnie po interpunkcji, a raport pisany **wypunktowaniami** nie ma kropek — więc `pack_chunks` nie
+ma gdzie przerwać. Rozkład: korpus bazowy max **2548** zn., 0% chunków >2000 zn.; wgrany dokument
+max **5614** zn., **3% chunków >2000 zn.** przy podobnej średniej (1151 vs 1092 — średnia kłamie).
 
-**Projekt jest gotowy:** `docs/specs/2026-07-28-ui-panel-design.md` **sekcja 8** (osobna kolekcja
-`demo_upload` kasowana przy starcie i zamknięciu, plik nie dotyka dysku — `fitz.open(stream=…)`,
-wykrywanie skanu po znakach/stronę, limity 25 MB / 300 stron, ostrzeżenie w UI że próg bramki
-nie jest kalibrowany na obcym dokumencie). Sekcja 10 ma uwagę do wznowienia.
+**Dlaczego to boli, a nie jest kosmetyką:** na wielkim chunku pytanie ogólne dało generację 43,5 s
+i **weryfikację 264 s** (vs 26,7 s na korpusie bazowym), a guard #3 odrzucił odpowiedź
+(`grounded_fraction` 0,0). Koszt guardu #3 rośnie z liczbą tez × wielkością kontekstu.
 
-**Praca backendowa:** parametryzacja kolekcji w `search.py`, cache `get_bm25()` i `_get_chunks()`
-kluczowany korpusem, warianty `extract_pages`/`chunk_file` na bajtach.
+**Czego NIE robić od razu:** zmiana `split_sentences`/`pack_chunks` dotyka korpusu bazowego, więc
+unieważnia zmierzone liczby (recall@1 0,83, MRR 0,89, A/B chunkingu z etapu 8) do czasu ponownego
+pomiaru. Kandydat na najtańszy wariant: twardy limit długości „zdania" (dzielenie po `\n`/`•`
+dopiero, gdy fragment przekracza np. 1,5× target) — czyli reguła awaryjna, nie nowa strategia.
 
-**Dwie pułapki, obie zapisane w specu:**
-- `build_index.py` robi `delete_collection` przy każdym buildzie → podpięcie go pod przycisk
-  „wgraj PDF" **skasowałoby zmierzoną kolekcję**; indeks, na którym mierzę, musi być zamrożony;
-- `_get_chunks()`/`get_bm25()` to leniwe singletony, na których stoi testowalność bez GPU
-  (patrz `requirements-dev.txt`) — kluczowanie korpusem **nie może** zamienić ich na eager.
+**Jak zmierzyć:** `src/eval/ab_chunking.py` istnieje i mierzy warianty w osobnych kolekcjach;
+warunek wejścia to **brak regresji** na gold secie (`run_eval.py`) plus rozkład długości chunków
+przed/po na dokumencie listowym.
 
-**Definicja zrobienia:** obcy PDF → odpowiedź z cytatem, kolekcja bazowa nietknięta
-(`run_eval.py` daje te same liczby po demo), testy kontraktowe bez GPU.
+**Definicja zrobienia:** liczba „przed/po" dla obu korpusów (bazowy bez regresji, listowy z max
+chunkiem w granicach targetu) albo wynik negatywny z nazwaną ceną.
 
 ---
 
@@ -110,4 +112,11 @@ z liczbami identycznymi jak przed zmianą.
   pytań, ale w produkcji zerowy (sędzia blokuje 9/9), a reguła u sędziego rozbraja detekcję
   prawdziwej podmiany (18/18 → 10/18). Nic nie weszło do runtime; liczby w README i notatniku.
 - Oznaczenie stanu w planie UI i specu — `d60e05a`
+- **UI etap 2: wgrywanie PDF-u do ulotnej kolekcji** — etap 12 (29.07). Korpus jako parametr
+  retrievalu (`src/retrieve/corpus.py`, cache'e kluczowane, nadal leniwe), ingest z bajtów
+  (`fitz.open(stream=…)`, bez multiparta — `UploadFile` zapisuje >1 MB na dysk), osobna kolekcja
+  `demo_upload` z zamiataczem przy starcie i zamknięciu + odmowa przy zbieżności nazw kolekcji,
+  jedna fabryka punktów Qdranta dla ingestu wsadowego i uploadu. **DOWÓD:** 100 stron → 364 chunki
+  w 17,6 s, odpowiedź z cytatem w 26,8 s, kolekcja zmierzona 1509 punktów bez zmian, `run_eval.py`
+  po demo identyczny (0,828 / 0,966 / 0,886). Testy 91 → 140 bez GPU, `check_app_js.js` 13 → 31.
 - Usunięte trzy zmergowane gałęzie zdalne (SHA w historii `main`, odtwarzalne)

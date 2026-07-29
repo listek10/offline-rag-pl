@@ -2,7 +2,7 @@
 #
 #     python -m venv .venv && source .venv/bin/activate
 #     pip install -r requirements-dev.txt         # 61 MB venva, ~5 s bez cache
-#     pytest                                      # -> 82 passed, ~0,6 s (stan 29.07)
+#     pytest                                      # -> 140 passed, 9 skipped, ~0,6 s (stan 29.07)
 #
 # CO TO UDOWADNIA, A CZEGO NIE — to rozróżnienie jest ważniejsze od samego zielonego koloru:
 #   pytest      dowodzi KONTRAKTÓW (kształt odpowiedzi API, kolejność zdarzeń, chunking, metryki,
@@ -17,7 +17,7 @@
 # ciężkie importy (sentence_transformers, qdrant_client, CrossEncoder) siedzą w środku funkcji
 # jako leniwe singletony (src/retrieve/search.py, src/index/build_index.py, src/retrieve/rerank.py),
 # a `fitz` w parse_pdf.py, którego żaden test nie importuje. Zmierzone: CAŁY zestaw przechodzi
-# w venvie zawierającym wyłącznie te cztery paczki poniżej (29.07: 82 testy, 0,5 s).
+# w venvie zawierającym wyłącznie te cztery paczki poniżej (29.07: 140 testów, 0,6 s).
 
 pytest>=8.0          # runner; testy działają też przez `python tests/test_chunk.py`
 
@@ -36,4 +36,9 @@ uvicorn>=0.30
 # --- zależność OPCJONALNA, nie-pipowa ---
 # `node` (dowolna świeża wersja) uruchamia tests/check_app_js.js — logikę UI sprawdzamy
 # wykonaniem na atrapie DOM, nie czytaniem. Bez node'a ten JEDEN test się POMIJA
-# (`pytest.mark.skipif`), reszta przechodzi: 81 passed, 1 skipped.
+# (`pytest.mark.skipif`), reszta przechodzi.
+#
+# Tak samo POMIJANE (a nie atrapowane) są testy wymagające `pymupdf` i `qdrant-client`: pierwsze
+# budują PRAWDZIWY PDF w pamięci, drugie sprawdzają kształt punktu Qdranta. Atrapa PDF-a nie
+# sprawdziłaby niczego ciekawego, bo cała trudność jest w tym, co PyMuPDF zwraca z prawdziwego
+# pliku. Stan 29.07: 140 passed / 9 skipped tutaj, 149 passed w env projektu.
