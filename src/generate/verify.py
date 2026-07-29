@@ -18,7 +18,7 @@ SĘDZIA = INNY MODEL niż generator (Gemma vs Qwen) — mniej skorelowanych bł�
 - CICHY FALSE-REFUSAL na poprawnych PARAFRAZACH: gdy odpowiedź trafnie parafrazuje źródło innymi
   słowami, surowy sędzia może powiedzieć NIE i ubić dobrą odpowiedź. Użytkownik zobaczy „nie
   znajduję w źródłach" i wywnioskuje, że korpusu tego nie zawiera — a zawiera. Dlatego prompt
-  sędziego JAWNIE dopuszcza parafrazę i wnioskowanie z kontekstu (patrz _JUDGE_GROUNDED).
+  sędziego JAWNIE dopuszcza parafrazę i wnioskowanie z kontekstu (patrz JUDGE_GROUNDED).
 
 Progiem sterujemy z configu (`VERIFY_MIN_SUPPORTED`) i kalibrujemy go na held-oucie — tak samo
 jak próg bramki, mierząc OBIE strony błędu (przecieki i false-refusale).
@@ -43,7 +43,11 @@ from src.ingest.chunk import split_sentences
 #    bo ogólne „bądź surowy" nie działało.
 # 3. Wymuszamy jednozdaniowe UZASADNIENIE przed werdyktem — po pierwsze kieruje uwagę modelu na
 #    podmiot ZANIM wyda ocenę, po drugie zostaje w logu, więc guard nie jest czarną skrzynką.
-_JUDGE_GROUNDED = """Jesteś adwersaryjnym weryfikatorem. Twoim zadaniem jest PODWAŻYĆ twierdzenie.
+#
+# Nazwa jest PUBLICZNA (bez podkreślenia), bo harness ewaluacyjny musi umieć porównać ten prompt
+# z wariantem — dokładnie tak, jak `answer()` przyjmuje `system` dla promptu generatora. Guard,
+# którego promptu nie da się podmienić w pomiarze, jest nieaudytowalny.
+JUDGE_GROUNDED = """Jesteś adwersaryjnym weryfikatorem. Twoim zadaniem jest PODWAŻYĆ twierdzenie.
 DOMYŚLNY werdykt to NIE. TAK wolno Ci wydać tylko wtedy, gdy w KONTEKŚCIE istnieje zdanie JAWNIE \
 łączące podmiot z twierdzenia z podaną wartością.
 NAJCZĘSTSZA PUŁAPKA: kontekst zawiera podobną liczbę lub nazwę, ale dotyczącą INNEGO państwa, \
@@ -66,7 +70,7 @@ def to_claims(answer_text: str) -> list[str]:
     return [s for s in split_sentences(txt) if len(s) > 15]
 
 
-def judge_grounded(context: str, claim: str) -> tuple[bool, str]:
+def judge_grounded(context: str, claim: str, system: str | None = None) -> tuple[bool, str]:
     """Pyta model-sędziego, czy teza jest poparta kontekstem. Zwraca (werdykt, uzasadnienie).
 
     Import lokalny — unika cyklu (answer.py importuje verify.py, a wywołanie LLM mieszka w answer.py).
@@ -76,7 +80,7 @@ def judge_grounded(context: str, claim: str) -> tuple[bool, str]:
     from src.generate.answer import call_ollama
 
     p = f"KONTEKST:\n{context}\n\nTWIERDZENIE: {claim}\n\nWeryfikuj."
-    out = call_ollama(p, system=_JUDGE_GROUNDED, model=config.JUDGE_MODEL)
+    out = call_ollama(p, system=system or JUDGE_GROUNDED, model=config.JUDGE_MODEL)
     upper = out.upper()
     verdict = "TAK" in upper.split("WERDYKT:")[-1][:12] if "WERDYKT:" in upper else False
     reason = next((l.split(":", 1)[1].strip() for l in out.splitlines()
@@ -84,17 +88,26 @@ def judge_grounded(context: str, claim: str) -> tuple[bool, str]:
     return verdict, reason
 
 
-def grounded_fraction(context: str, answer_text: str) -> tuple[float, list[dict]]:
+def grounded_fraction(context: str, answer_text: str,
+                      system: str | None = None) -> tuple[float, list[dict]]:
     """Zwraca (udział tez popartych kontekstem, lista {claim, grounded, reason}).
 
     Brak tez (np. bardzo krótka odpowiedź) traktujemy jako 1.0 — guard nie ma czego zakwestionować
     i nie powinien wtedy blokować; to świadoma decyzja „fail-open" w tym jednym przypadku.
+
+    ZMIERZONA KONSEKWENCJA (etap 11, `src/eval/ab_prompt.py`): ta furtka jest DZIURĄ, nie tylko
+    ustępstwem. `to_claims()` usuwa markery `[n]` i odsiewa fragmenty ≤15 znaków, więc wyjścia
+    `"[1]"` (sam cytat) i `"444 [5]"` (arytmetyka z cytatem, zabroniona zasadą 1 promptu) mają
+    ZERO tez i przechodzą przez wszystkie trzy guardy do użytkownika. Zmierzone na 9 wyjściach po
+    stronie pułapek i 3 przeciekach spoza korpusu. NIE zamykam tego tutaj na wyczucie: „brak tez
+    -> blokuj" tyka też krótkich POPRAWNYCH odpowiedzi („ok. 3 mld euro [2]"), więc zmiana wymaga
+    własnego pomiaru obu stron błędu (pozycja 3 w `TODO.md`).
     """
     claims = to_claims(answer_text)
     if not claims:
         return 1.0, []
     verdicts = []
     for c in claims:
-        ok, reason = judge_grounded(context, c)
+        ok, reason = judge_grounded(context, c, system=system)
         verdicts.append({"claim": c, "grounded": ok, "reason": reason})
     return sum(v["grounded"] for v in verdicts) / len(verdicts), verdicts

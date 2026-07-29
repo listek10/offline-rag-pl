@@ -4,8 +4,8 @@ Jedno źródło prawdy o tym, co zostało. Wcześniej ta lista żyła w rozmowie
 który jest w `.gitignore` — czyli nie istniała dla nikogo, kto otwiera repo. Trzymam ją tutaj,
 w repo, a brief tylko na nią wskazuje: dwie kopie jednej prawdy zawsze się rozjeżdżają.
 
-**Stan bazowy:** wszystkie 5 etapów z briefu + 5 ponad plan zamknięte, 12/12 checkpointów
-z `CLAUDE.md` pokrytych, 82 testy zielone bez GPU, CI na GitHub Actions zielone.
+**Stan bazowy:** wszystkie 5 etapów z briefu + 6 ponad plan zamknięte, 12/12 checkpointów
+z `CLAUDE.md` pokrytych, 91 testów zielonych bez GPU, CI na GitHub Actions zielone.
 Liczby: `README.md`. Historia decyzji: `NOTATKI_REKRUTER.md`.
 
 Kolejność = rekomendacja, nie zależności. Każda pozycja ma **jak zmierzyć**, bo w tym projekcie
@@ -13,41 +13,7 @@ zmiana bez pomiaru nie jest zrobiona.
 
 ---
 
-## 1. Fałszywe odmowy od form przymiotnikowych  ⬜ REKOMENDOWANE NASTĘPNE
-
-**Problem (zmierzony 29.07, etap 10):** korpus mówi „**łotewskie** 1,548 mld", pytanie mówi
-„**Łotwy**" → model odmawia, choć chunk z odpowiedzią stoi na **pozycji 1** (rerank 0,931).
-`blocked_by=None`, czyli odmawia sam generator (guard #1), a nie bramka. Retrieval jest bez winy.
-Dotyczy `t05` i `t06` w `gold_set/entity_traps.jsonl`.
-
-To **lustrzane odbicie** podmiany podmiotu: ten sam model raz przypisuje wartość za szeroko
-(liczba Norwegii → Dania), a raz odmawia przypisania, choć fakt jest wprost w kontekście.
-
-**Hipoteza:** instrukcja systemowa w `answer.py` (`SYSTEM_PROMPT`) nie mówi modelowi, że forma
-przymiotnikowa („łotewskie wydatki") nazywa ten sam podmiot co rzeczownik z pytania („Łotwy”).
-Prompt jest surowy anty-halucynacyjnie i model rozstrzyga wątpliwość na „nie znajduję".
-
-**Jak zmierzyć (narzędzia GOTOWE, nic nie trzeba pisać):**
-```bash
-python src/eval/eval_traps.py --prepare              # generacja RAZ, obecny prompt
-python src/eval/eval_traps.py --compare --repeats 3  # klasy: poprawna / podmiana / odmowa
-python src/eval/eval_answers.py                     # KONTROLA drugiej strony błędu
-```
-**Obie strony trzeba raportować**, bo rozluźnienie promptu może podnieść przecieki:
-- zysk: `t05`/`t06` przechodzą z `odmowa` do `poprawna`,
-- koszt: `refusal` na pytaniach spoza korpusu (gold set n=7 + held-out n=17) nie może spaść.
-
-**Uwaga metodologiczna (nie pomiń):** pomiar musi być **parowany** — temperatura 0 nie daje
-powtarzalności (zmierzone, etap 10). Przy zmianie promptu generacja i tak się zmienia, więc
-parowanie robimy po stronie guardów, a samą zmianę promptu mierzymy na **wielu powtórzeniach**
-i raportujemy rozkład, nie jedną liczbę.
-
-**Definicja zrobienia:** liczba „przed/po" dla obu stron błędu w README + wpis w notatniku.
-Wynik negatywny (prompt nie pomaga albo koszt za duży) jest **pełnowartościowym zakończeniem**.
-
----
-
-## 2. UI etap 2 — wgrywanie PDF-u do ulotnej kolekcji  ⬜
+## 1. UI etap 2 — wgrywanie PDF-u do ulotnej kolekcji  ⬜ REKOMENDOWANE NASTĘPNE
 
 **Wartość:** największa demonstracyjna — rekruter przynosi własny PDF i widzi, że cały pipeline
 działa na dokumencie nigdy niewidzianym, bez dotykania modelu.
@@ -71,11 +37,17 @@ kluczowany korpusem, warianty `extract_pages`/`chunk_file` na bajtach.
 
 ---
 
-## 3. Zbiór pułapek `n=7` → uczciwe `n`  ⬜
+## 2. Zbiór pułapek `n=7` → uczciwe `n`  ⬜ (etap 11 podniósł wagę tej pozycji)
 
 **Po co:** wynik negatywny guardu #4 (etap 10) opiera się na 7 pytaniach, z czego podmiana
 zaszła realnie w **jednym**. Mogę więc powiedzieć „nie zadziałał tam, gdzie mogłem zmierzyć",
 a nie „nie działa". To jedyna droga, żeby ten guard dostał uczciwą drugą szansę.
+
+**Drugi powód, mocniejszy (etap 11):** decyzja o prompcie sędziego stoi na JEDNYM pytaniu z
+prawdziwą podmianą (`t01`) i JEDNYM z fałszywą odmową (`t06`). Zmierzona wymiana (fałszywa odmowa
+9/9 → 0/9 blokad kosztem podmiany 18/18 → 10/18) jest wyraźna, ale opiera się na dwóch pytaniach.
+Przy większym `n` może się okazać, że da się znaleźć brzmienie reguły, które kupuje jedno bez
+drugiego — dziś nie mam podstawy, żeby to twierdzić ani temu zaprzeczyć.
 
 **Czego dokładnie potrzeba:** pułapek typu **bałtyckiego** — wielkość i podmiot w JEDNYM zdaniu
 (tam guard ma podstawę do werdyktu). Typ polarny (anafora „wyniosły *one* 8,4 mld") sprawia,
@@ -88,6 +60,27 @@ w znak (tak jak `evidence` w gold secie). Skrypt sprawdzający był użyty przy 
 **Definicja zrobienia:** `eval_traps.py --compare` na powiększonym zbiorze; guard #4 albo
 pokazuje zysk przy zerowym koszcie (wtedy wraca do rozmowy o włączeniu), albo zostaje odrzucony
 z mocniejszym n.
+
+---
+
+## 3. Dziura fail-open w guardzie #3 — odpowiedzi bez ani jednej tezy  ⬜ (nowe, z etapu 11)
+
+**Problem (zmierzony 29.07, etap 11):** `grounded_fraction()` zwraca 1.0, gdy odpowiedź nie ma
+ani jednej tezy — świadomy fail-open („nie ma czego podważać"). Ale `to_claims()` usuwa markery
+`[n]` i odsiewa fragmenty ≤15 znaków, więc wyjścia `"[1]"` i `"444 [5]"` mają **zero tez** i
+przechodzą przez **wszystkie trzy guardy** do użytkownika. Zmierzone na 9 wyjściach po stronie
+pułapek i 3 przeciekach spoza korpusu. Dotyczy produkcji, nie tylko odrzuconego wariantu promptu.
+
+**Dlaczego to nie jest jednolinijkowa poprawka:** „brak tez → blokuj" tyka też krótkich,
+POPRAWNYCH odpowiedzi. Granica jest w `to_claims()` (próg 15 znaków po usunięciu cytowań), więc
+zmiana wymaga sprawdzenia, co dziś przechodzi jako teza, a co nie.
+
+**Jak zmierzyć:** `ab_prompt.py` ma już zapisane odpowiedzi z obu stron błędu — nowa reguła daje
+się ocenić na nich bez generacji (pomiar parowany, zero GPU po stronie generatora). Do tego
+`eval_answers.py` na false-refusal krótkich odpowiedzi z korpusu (np. „ok. 3 mld euro [2]").
+
+**Definicja zrobienia:** liczba „przed/po" dla obu stron + brak nowych false-refusali na gold
+secie, albo wynik negatywny z nazwaną ceną.
 
 ---
 
@@ -112,5 +105,9 @@ z liczbami identycznymi jak przed zmianą.
 - CI na GitHub Actions, 82 testy bez GPU — `97d366a`
 - Metryka widząca podmianę podmiotu + zbiór pułapek + baseline — `bc697e2`
 - Guard #4: zaprojektowany, zmierzony, **ODRZUCONY** (wynik negatywny) — `48c46f1`
+- Fałszywe odmowy od form przymiotnikowych: **DWA wyniki negatywne** (prompt generatora
+  i prompt sędziego), harness `src/eval/ab_prompt.py` + 9 testów — etap 11. Zysk realny na 1 z 2
+  pytań, ale w produkcji zerowy (sędzia blokuje 9/9), a reguła u sędziego rozbraja detekcję
+  prawdziwej podmiany (18/18 → 10/18). Nic nie weszło do runtime; liczby w README i notatniku.
 - Oznaczenie stanu w planie UI i specu — `d60e05a`
 - Usunięte trzy zmergowane gałęzie zdalne (SHA w historii `main`, odtwarzalne)

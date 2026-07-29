@@ -181,8 +181,10 @@ def e2e_refusal(scored: list[dict]) -> dict:
     Rozkład score'ów mówi tylko o bramce. Ale przeciek przez bramkę nie oznacza automatycznie
     halucynacji (LLM z kontekstem „na temat, ale bez odpowiedzi" może sam odmówić), a guard #3
     może z kolei ubić poprawną PARAFRAZĘ. Dlatego dla każdej konfiguracji mierzymy jednocześnie:
-      - refusal na 18 pytaniach SPOZA korpusu (ile złego zatrzymujemy),
-      - false-refusal na 12 pytaniach Z korpusu (ile dobrego przy tym tracimy).
+      - refusal na 17 pytaniach SPOZA korpusu (ile złego zatrzymujemy),
+      - false-refusal na 13 pytaniach Z korpusu (ile dobrego przy tym tracimy).
+    (17/13, a nie 18/12: h18 było błędnie oznaczone jako spoza korpusu — korpus ma odpowiedź
+    w chunku #97. Liczby w docstringu muszą iść za danymi, inaczej cytuję nieistniejący pomiar.)
     Bez drugiej kolumny pierwsza jest bez znaczenia — próg 999 daje refusal 1.00 i bezużyteczny system.
     """
     from src.generate.answer import answer, refused

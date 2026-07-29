@@ -2,7 +2,7 @@
 
 [![testy](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml/badge.svg)](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml)
 
-*Badge pokazuje testy kontraktowe (obecnie 82) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
+*Badge pokazuje testy kontraktowe (obecnie 91) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
 gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
 
 System **Retrieval-Augmented Generation** działający **w pełni offline**: odpowiada na pytania
@@ -235,6 +235,80 @@ Dwie rzeczy, których nauczyła ta próba, ważniejsze niż sam guard:
    właśnie zdanie o Rosji, więc testy były zielone na łatwiejszej rzeczywistości niż prawdziwa;
    błąd wyszedł dopiero w pomiarze end-to-end. Testy przepisane na fragmenty nieskrócone.
 
+### Fałszywe odmowy od form przymiotnikowych — WYNIK NEGATYWNY, ale z mechanizmem
+
+Lustrzana awaria tej samej osi: korpus mówi „**łotewskie** 1,548 mld", pytanie mówi „**Łotwy**"
+i generator odmawia, choć chunk stoi na pozycji 1 (rr=0,931). Dowód rozstrzygający, że wina nie
+leży w retrievalu: pytany o **Estonię** ten sam model z tego samego chunka wypisuje „…Estonii
+2,316 mld, podczas gdy **łotewskie 1,548**, a **litewskie 2,048**". Fakt jest widziany i czytany —
+barierą jest wyłącznie forma gramatyczna nazwy. Harness: `src/eval/ab_prompt.py`.
+
+**Drabina wariantów zadeklarowana przed pomiarem, jedna zmiana na szczebel** (v3 = produkcyjny
+prompt + jedno zdanie o formie przymiotnikowej; v4 = v3 + jedno zdanie „nie przenoś wartości
+między podmiotami"; `v2bis` = ten sam tekst co v2, czyli **kontrola poziomu szumu**):
+
+| wariant | poprawna | niejedn. | **PODMIANA** | inna-błędna | odmowa |
+|---|--:|--:|--:|--:|--:|
+| v2 (produkcja) | 6 | 3 | **3** | 0 | 9 |
+| v2bis (kontrola szumu) | 6 | 3 | **3** | 0 | 9 |
+| v3 = v2 + reguła formy | 12 | 0 | **3** | 3 | 3 |
+| v4 = v3 + zakaz przenoszenia | 9 | 0 | **3** | 6 | 3 |
+
+7 pułapek × 3 powtórzenia generacji. **Kontrola szumu wyszła zero** — `v2bis` zgadza się z `v2`
+na każdym pytaniu i na każdym przecieku, więc różnice v2→v3 są przypisywalne promptowi.
+Per pytanie: `t06` Litwa **odmowa → poprawna 3/3** (cel osiągnięty), `t04` Estonia
+niejednoznaczna → poprawna, ale `t05` Łotwa **odmowa → `"[1]"`** — model zamiast odpowiedzi
+emituje sam marker cytowania. `t01` (podmiana) bez zmian 3/3, a **v4 jest wprost gorszy**:
+kasuje zysk na `t06` (też do `"[1]"`) i nie naprawia `t01`, czyli reguła anty-przenoszeniowa
+nie kupuje nic.
+
+**Koszt — refusal na pytaniach spoza korpusu, bramka WYŁĄCZONA** (izolacja guardu #1: przy
+włączonej bramce pytania nie doszłyby do promptu i każdy wariant dałby ~1,00 z konstrukcji):
+
+| wariant | gold (7×3) | held-out (17×3) | przecieki |
+|---|--:|--:|---|
+| v2 / v2bis | 0,86 | **0,94** | `o05`, `h19` |
+| v3 / v4 | 0,86 | **0,82** | `o05`, `h19`, **`h15`**, **`h27`** |
+
+Najciekawszy koszt nie jest w liczbie, a w treści: `h27` to „Ile to jest 37 razy 12?" — pod v2
+model odmawiał, pod v3 odpowiada **„444 [5]"**. Policzył i podpiął cytat, łamiąc zasadę 1 tego
+samego promptu („NIE wykonuj obliczeń"). Rozluźnienie w jednym miejscu osłabiło przestrzeganie
+reguł w innym.
+
+**Dlaczego zysk i tak nie istnieje w produkcji — sędzia ma tę samą ślepotę.** Odzyskaną,
+poprawną odpowiedź o Litwie guard #3 blokuje **9/9**, a uzasadnienie sędziego brzmi: „Kontekst
+mówi o wydatkach obronnych Estonii, Łotwy i Litwy" — widzi temat i odmawia potwierdzenia
+wartości, choć w kontekście stoi „litewskie 2,048 mld". Nie przypadek: prompt sędziego wymaga
+zdania *jawnie* łączącego podmiot z wartością i każe najpierw szukać pułapki „inne państwo".
+A/B promptu sędziego na **tych samych** odpowiedziach (pomiar parowany w mocnym sensie, 9 ocen
+na pytanie, bo sędzia jest stochastyczny):
+
+| | produkcyjny prompt sędziego | + reguła formy |
+|---|--:|--:|
+| `t06` — **poprawna** odpowiedź fałszywie blokowana | 9/9 | **0/9** |
+| `t01` — **prawdziwa podmiana** (Danii przypisane 1,75% Norwegii) | 18/18 | **10/18** |
+
+**Wniosek: nie zmieniam ani promptu generatora, ani promptu sędziego.** Reguła kasuje fałszywą
+odmowę do zera i tą samą zmianą rozbraja jedyny guard, który łapie prawdziwe kłamstwo — w 8 z 18
+ocen przepuszcza podmianę. Przy asymetrii kosztów tego zastosowania (pewne kłamstwo z cytatem
+jest droższe od odmowy) to zła wymiana. Fałszywa odmowa i podmiana podmiotu **nie są dwoma
+błędami, a dwoma końcami jednej osi** — i moje guardy mają jeden suwak na obie.
+
+**Efekt uboczny, ważniejszy od samego A/B: guard #3 ma dziurę fail-open.** `grounded_fraction()`
+zwraca 1.0, gdy odpowiedź nie ma ani jednej tezy — świadoma decyzja („nie ma czego podważać").
+Ale `"[1]"` i `"444 [5]"` też nie mają tez, więc **przechodzą przez wszystkie trzy guardy** i
+trafiłyby do użytkownika jako odpowiedź. Zmierzone: 9 takich wyjść po stronie zysku i 3 po
+stronie kosztu. Dziura jest niezależna od promptu — dotyczy też produkcji.
+
+**Metodologia, która o mało nie zepsuła tego pomiaru.** Pierwszy przebieg puszczał warianty
+blokami (całe v2, potem v3, potem v4) i „pokazał" regresję Norwegii pod v3 (poprawna 3/3 →
+odmowa 3/3). Nieprawda: dryf w czasie jest w tym systemie zmierzonym faktem, więc „czas" i
+„numer wariantu" były tą samą zmienną. Po przejściu na przeplot (powtórzenie na zewnątrz,
+warianty wewnątrz) i dołożeniu kontroli `v2bis` okazało się, że `t02` odmawia pod **każdym**
+wariantem, produkcyjnym włącznie. Wadliwy przebieg został w repo
+(`results/ab_prompt_blokowy.json`) jako materiał dowodowy, a kolejność pilnuje teraz test
+kontraktowy, nie moja pamięć.
+
 ---
 
 ## Stack
@@ -260,14 +334,14 @@ Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
-pytest                                   # -> 82 passed in 0,6 s
+pytest                                   # -> 91 passed in 0,7 s
 ```
 
 Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`) są
 **leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
 w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
-`ModuleNotFoundError`, a mimo to **82 passed**. Bez `node` (opcjonalna zależność dev dla
-`tests/check_app_js.js`): **81 passed, 1 skipped**. Pierwszy przebieg CI: **82 passed w 2,13 s**.
+`ModuleNotFoundError`, a mimo to **91 passed**. Bez `node` (opcjonalna zależność dev dla
+`tests/check_app_js.js`): **90 passed, 1 skipped**. Pierwszy przebieg CI: **82 passed w 2,13 s**.
 
 **Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,
 kolejności zdarzeń, chunkingu, metryk, BM25/RRF, routingu backendów. Nie dowodzi, że RAG
@@ -302,6 +376,10 @@ python src/generate/answer.py "Które państwa tworzą arktyczny kwartet NATO?"
 # 6. Ewaluacja
 python src/eval/run_eval.py       # retrieval: recall@k, MRR (dense vs hybryda vs +rerank)
 python src/eval/eval_answers.py   # odpowiedzi: refusal, faithfulness, relevance
+python src/eval/eval_traps.py --prepare && python src/eval/eval_traps.py --compare  # podmiana podmiotu
+python src/eval/ab_prompt.py                      # A/B instrukcji: obie strony błędu naraz
+python src/eval/ab_prompt.py --sedzia --warianty v2 v3 --sedzia-powtorzenia 3   # A/B promptu sędziego
+python src/eval/ab_prompt.py --raport             # tabele z zapisanego wyniku, bez GPU
 ```
 > **Offline w runtime:** po pobraniu modeli ustaw `HF_HUB_OFFLINE=1` — całość działa bez sieci.
 
@@ -529,7 +607,15 @@ tests/                  # chunking, metryki, BM25/RRF, mostek strumienia, kontra
 - **Formy przymiotnikowe powodują fałszywe odmowy** (zmierzone): korpus mówi „**łotewskie**
   1,548 mld", pytanie mówi „**Łotwy**" — model odmawia, choć chunk z odpowiedzią stoi na
   **pozycji 1** (rr=0,931). Retrieval bez winy. To lustrzane odbicie podmiany podmiotu: ten sam
-  model raz przypisuje za dużo, raz za mało.
+  model raz przypisuje za dużo, raz za mało. **Próba naprawy promptem: wynik negatywny z
+  liczbami** (sekcja wyżej) — reguła o formie przymiotnikowej zeruje fałszywą odmowę u sędziego
+  (9/9 → 0/9 blokad), ale wykrywanie **prawdziwej** podmiany spada 18/18 → 10/18. Jeden suwak
+  na oba końce jednej osi; zostawiam surowy wariant, bo kłamstwo z cytatem jest droższe od odmowy.
+- **Guard #3 przepuszcza odpowiedzi bez ani jednej tezy** (`grounded_fraction` = 1.0 przy zerze
+  tez — świadomy fail-open, „nie ma czego podważać"). Zmierzona konsekwencja: wyjścia w rodzaju
+  `"[1]"` albo `"444 [5]"` (arytmetyka z fałszywym cytatem) przechodzą przez **wszystkie trzy
+  guardy**. Nie domknięte — zamknięcie dziury wymaga własnego pomiaru obu stron błędu, bo próg
+  „ile tez wystarczy" dotyka też krótkich, poprawnych odpowiedzi.
 - **Jakość etykiet zbioru ewaluacyjnego jest częścią systemu:** jedno pytanie held-outu (`h18`) było
   błędnie oznaczone jako „spoza korpusu", co zawyżało raportowaną przerwę rozkładów (−0.243 zamiast
   −0.145). Znalazłem to dopiero na demo z prawdziwymi modelami — stąd zasada trzymania surowych
