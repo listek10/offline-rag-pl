@@ -202,6 +202,39 @@ odpowiedzi **inny model-sędzia (Gemma)** sprawdza KAŻDĄ tezę przeciw konteks
 - **Trade-off (kontekst wywiadowczy):** fałszywa odmowa = ponowne zapytanie analityka; pewna
   halucynacja = błędna decyzja. Dlatego surowy próg (1.0) jest uzasadniony.
 
+### Podmiana podmiotu — pomiar i WYNIK NEGATYWNY próby czwartego guardu
+
+Najpierw trzeba było naprawić metrykę, bo istniejące liczyły tę awarię jako sukces (patrz „Znane
+ograniczenia"). Powstał zbiór **7 pytań-pułapek** (`gold_set/entity_traps.jsonl`, cytaty walidowane
+programowo w korpusie) na dwóch klastrach, w których wartości są rozróżnialne tylko przez podmiot:
+polarny (Kanada 26 mld/**1,3%**, Dania 5,3 mld/**1,3%**, Norwegia 8,4 mld/1,75% — procent Kanady
+i Danii jest identyczny) oraz bałtycki, gdzie trzy kwoty stoją w **jednym zdaniu** (Estonia 2,316 /
+Łotwa 1,548 / Litwa 2,048 mld).
+
+Pomiar **parowany** — jedna generacja, warianty guardów na tych samych odpowiedziach, 3 powtórzenia
+dla stochastycznego sędziego (`src/eval/eval_traps.py`):
+
+| wariant | poprawna | niejedn. | **PODMIANA** | odmowa |
+|---|--:|--:|--:|--:|
+| bez guardów post-generacyjnych | 9 | 3 | **3** | 6 |
+| guard #3 (sędzia Gemma) | 9 | 3 | **0** | 9 |
+| guard #4 — przypisanie wielkości (kandydat) | 9 | 3 | **3** | 6 |
+| guard #3 + #4 | 9 | 3 | **0** | 9 |
+
+**Wniosek: guardu #4 NIE włączyłem.** Guard #3 domyka podmianę 3/3 przy zerowym koszcie, a kandydat
+abstynuje wszędzie — zero zysku. Zostaje w repo (`src/generate/attribution.py`, 11 testów na
+nieskróconych fragmentach korpusu) jako udokumentowana próba: **negatywny wynik z liczbami jest
+wart więcej niż guard dodany na wyczucie.**
+
+Dwie rzeczy, których nauczyła ta próba, ważniejsze niż sam guard:
+1. **Reguła „najbliższa wcześniejsza wzmianka" w obrębie chunka jest aktywnie szkodliwa.**
+   Przypisywała 1,75% PKB *Rosji*, bo dwa zdania przed liczbą stoi „…Globus III w Vardø przy
+   granicy z **Rosją**" — i blokowała **poprawną** odpowiedź o Norwegii. W raportach
+   geopolitycznych przypadkowych nazw państw jest pełno.
+2. **Testy na fragmencie „prawdziwym, ale skróconym" są fałszywym dowodem.** Mój skrót usunął
+   właśnie zdanie o Rosji, więc testy były zielone na łatwiejszej rzeczywistości niż prawdziwa;
+   błąd wyszedł dopiero w pomiarze end-to-end. Testy przepisane na fragmenty nieskrócone.
+
 ---
 
 ## Stack
@@ -476,10 +509,27 @@ tests/                  # chunking, metryki, BM25/RRF, mostek strumienia, kontra
   answerability`); dołożony guard #3 (weryfikacja ugruntowania po generacji) podnosi refusal na
   held-oucie **0.94 → 1.00**, ale kosztem **0.15 false-refusal** (2/13) tam i ~7% (2/29) na gold
   secie. System nie jest tu idealny — każdą warstwę mierzę osobno.
-- **Podmiana podmiotu przechodzi przez wszystkie trzy guardy** (zreprodukowane): na pytanie o wydatki
-  obronne **Danii** pipeline podaje **1,75% PKB**, czyli liczbę **Norwegii**, choć poprawne 1,3% jest
-  w kontekście. Sędzia głosuje TAK, uzasadniając to zdaniem o Norwegii. To najpoważniejsze znane
-  ograniczenie tej architektury — patrz sekcja o guardzie #3.
+- **Podmiana podmiotu** — na pytanie o wydatki obronne **Danii** generator podaje **1,75% PKB**,
+  czyli liczbę **Norwegii** (dosłownie to samo zdanie co dla pytania o Norwegię), choć poprawne
+  1,3% jest w kontekście. Zmierzone osobnym harnessem (niżej): guard #3 **łapie to 3/3** przy
+  tym brzmieniu pytania, ale w demo z innym brzmieniem przepuścił, a sędzia uzasadnił TAK
+  zdaniem o Norwegii. Czyli awaria jest **zależna od brzmienia pytania**, a nie domknięta —
+  i to jest najpoważniejsze znane ograniczenie tej architektury.
+- **Metryki jakości odpowiedzi były na tę awarię ŚLEPE** (naprawione): `faithfulness` liczyło
+  podmianę jako wierną (sędzia głosował TAK), `false-refusal` jako poprawną (system odpowiedział),
+  `relevance` jako na temat. Pole `gold["answer"]` leżało w danych i **nie było czytane przez
+  żaden skrypt ewaluacyjny**. Dopiero `src/eval/metrics.py::classify_trap_answer` sprawdza
+  deterministycznie, czy w odpowiedzi stoi WARTOŚĆ właściwego podmiotu.
+- **Temperatura 0 nie daje powtarzalności** (zmierzone): to samo pytanie odpowiadało poprawnie
+  3/3, po przerwie odmawiało 3/3, przy identycznym retrievalu (top_score 0,9964, te same 5
+  chunków). Wykluczone pomiarem: wpływ flagi `verify` na generację, zimne przeładowanie modelu,
+  kolejność żądań. Konsekwencja praktyczna: **porównania „przed/po" muszą być parowane** —
+  generacja raz, warianty guardów oceniane na tej samej odpowiedzi (`eval_traps.py --prepare`
+  / `--compare`), inaczej różnica miesza efekt guardu z tym szumem.
+- **Formy przymiotnikowe powodują fałszywe odmowy** (zmierzone): korpus mówi „**łotewskie**
+  1,548 mld", pytanie mówi „**Łotwy**" — model odmawia, choć chunk z odpowiedzią stoi na
+  **pozycji 1** (rr=0,931). Retrieval bez winy. To lustrzane odbicie podmiany podmiotu: ten sam
+  model raz przypisuje za dużo, raz za mało.
 - **Jakość etykiet zbioru ewaluacyjnego jest częścią systemu:** jedno pytanie held-outu (`h18`) było
   błędnie oznaczone jako „spoza korpusu", co zawyżało raportowaną przerwę rozkładów (−0.243 zamiast
   −0.145). Znalazłem to dopiero na demo z prawdziwymi modelami — stąd zasada trzymania surowych
