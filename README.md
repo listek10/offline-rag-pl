@@ -1,5 +1,10 @@
 # offline-rag-pl — offline'owy RAG na polskich raportach analitycznych
 
+[![testy](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml/badge.svg)](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml)
+
+*Badge pokazuje 61 testów kontraktowych na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
+gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
+
 System **Retrieval-Augmented Generation** działający **w pełni offline**: odpowiada na pytania
 na podstawie polskich raportów analitycznych (OSW/PISM), **cytuje źródło** i ma **zmierzoną
 jakość** (gold set + metryki + poprawa „przed/po"). Projekt portfolio pod stanowisko AI/LLMOps.

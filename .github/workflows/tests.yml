@@ -1,0 +1,72 @@
+name: testy
+
+# DLACZEGO TO CI W OGÓLE MOŻE ISTNIEĆ: runner GitHuba nie ma GPU, Qdranta ani Ollamy — a mimo to
+# przechodzi CAŁY zestaw testów, bo ciężkie importy w `src/` są leniwe, a retrieval i LLM są
+# w testach podmienione atrapami. Instalujemy WYŁĄCZNIE `requirements-dev.txt` (61 MB), nie
+# `requirements.txt` (~2,5 GB przez torcha) — ściąganie torcha na maszynę bez GPU zabrałoby
+# minuty i nie udowodniłoby niczego więcej.
+#
+# CZEGO TEN WORKFLOW NIE DOWODZI (uczciwie, bo zielony badge łatwo przeczytać za szeroko):
+# dowodzi KONTRAKTÓW (kształt odpowiedzi API, kolejność zdarzeń, chunking, metryki, BM25/RRF,
+# routing backendów LLM) na czystej maszynie. Nie dowodzi, że RAG odpowiada dobrze — to mierzy
+# ewaluacja na gold secie (`src/eval/run_eval.py`), która wymaga GPU i usług, więc leci lokalnie.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Najmniejsze potrzebne uprawnienia tokenu. Ten workflow tylko czyta kod — nie publikuje
+# artefaktów, nie komentuje PR-ów, nie pisze do repo. Domyślny zestaw byłby szerszy niż trzeba.
+permissions:
+  contents: read
+
+# Kolejny push na tę samą gałąź anuluje poprzedni przebieg — nie płacimy za wyniki,
+# które i tak są nieaktualne.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      # Akcje przypięte do tagów major, nie do SHA. Trade-off świadomy: tag dostaje łatki
+      # bezpieczeństwa sam, SHA daje pełną niezmienność za cenę ręcznych aktualizacji.
+      # W repo publicznym wybieram czytelność; w środowisku o wysokich wymaganiach
+      # bezpieczeństwa przypiąłbym SHA (albo w ogóle nie używał zewnętrznych akcji).
+      - uses: actions/checkout@v4
+
+      # Python 3.11 — ta sama wersja co w env deweloperskim (`conda create ... python=3.11`).
+      # Świadomie BEZ macierzy 3.11/3.12: projekt deklaruje 3.11, a czerwony badge z powodu
+      # wersji, której nie wspieram, byłby dezinformacją, nie sygnałem.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Instalacja zależności dev
+        run: pip install -r requirements-dev.txt
+
+      # Ten krok pilnuje INWARIANTU, nie kodu: ścieżka testowa ma zostać lekka. Gdyby ktoś
+      # (także ja za pół roku) dopisał do `requirements-dev.txt` paczkę ciągnącą torcha,
+      # testy dalej byłyby zielone, a „weryfikacja za 61 MB" cicho przestałaby być prawdą.
+      # Dlatego niespełnienie tego warunku ma być BŁĘDEM, nie notatką w logu.
+      - name: Kontrola — ścieżka dev nie ciągnie stacku ML
+        run: |
+          if python -c "import torch" 2>/dev/null; then
+            echo "::error::torch trafił do zależności dev — ścieżka testowa przestała być lekka"
+            exit 1
+          fi
+          echo "OK: brak torcha, testy lecą na czystym stdlibie + 4 paczkach"
+
+      # `node` jest na runnerach ubuntu-latest preinstalowany, więc `tests/test_app_js.py`
+      # NIE zostanie pominięty — spodziewamy się 61 passed, nie 60 passed + 1 skipped.
+      # `-p no:randomly` nie jest potrzebne: testy nie zależą od kolejności.
+      - name: Wersja node (informacyjnie — decyduje, czy test app.js leci czy jest skipowany)
+        run: node --version
+
+      - name: pytest
+        run: pytest -q
