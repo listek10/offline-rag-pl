@@ -15,15 +15,20 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
-CHUNKS_PATH = PROCESSED_DIR / "chunks.jsonl"   # wynik etapu 2 (jeden chunk = jedna linia JSON)
+# Ścieżka do chunków nadpisywalna środowiskiem — pod A/B chunkingu (etap 8) każdy wariant ma
+# WŁASNY plik i WŁASNĄ kolekcję, żeby nie nadpisywać jedynego indeksu i móc powtórzyć wynik:
+#     CHUNKS_PATH=data/processed/chunks_c600.jsonl QDRANT_COLLECTION=osw_reports_bge_m3_c600 ...
+CHUNKS_PATH = Path(os.environ.get("CHUNKS_PATH", PROCESSED_DIR / "chunks.jsonl"))
 GOLD_PATH = ROOT / "gold_set" / "gold.jsonl"   # zbiór ewaluacyjny (etap 4)
 
 # --- Chunking (etap 2) ---
 # Mierzymy w ZNAKACH jako tani proxy długości. Dokładny pomiar w tokenach wymagałby
 # tokenizera modelu embeddingowego — dodamy, jeśli ewaluacja pokaże, że warto.
 # ~1200 znaków ≈ ~500 tokenów dla polskiego (polski jest "token-cięższy" niż angielski).
-CHUNK_TARGET_CHARS = 1200      # docelowy rozmiar chunka
-CHUNK_OVERLAP_CHARS = 180      # ~15% zakładki — by myśl na styku dwóch chunków nie wypadła
+# Rozmiar i zakładka są nadpisywalne środowiskiem WYŁĄCZNIE pod eksperyment A/B (etap 8) —
+# domyślne wartości zostają tutaj, więc zasada „konfiguracja w jednym miejscu" jest zachowana.
+CHUNK_TARGET_CHARS = int(os.environ.get("CHUNK_TARGET_CHARS", 1200))   # docelowy rozmiar chunka
+CHUNK_OVERLAP_CHARS = int(os.environ.get("CHUNK_OVERLAP_CHARS", 180))  # ~15% zakładki — by myśl na styku dwóch chunków nie wypadła
 CHUNK_MIN_CHARS = 250          # krótsze "ochłapy" doklejamy do poprzedniego, nie emitujemy osobno
 
 # --- Embeddingi (etap 2: indeks) ---
@@ -41,7 +46,8 @@ EMBED_NORMALIZE = True         # znormalizowane wektory -> cosine == dot
 QDRANT_HOST = "localhost"
 QDRANT_PORT = 6333
 # Nazwa kolekcji opisowa: korpus + model, żeby dało się trzymać kilka wariantów obok siebie.
-QDRANT_COLLECTION = "osw_reports_bge_m3"
+# Nadpisywalna środowiskiem — patrz CHUNKS_PATH (A/B chunkingu trzyma warianty w osobnych kolekcjach).
+QDRANT_COLLECTION = os.environ.get("QDRANT_COLLECTION", "osw_reports_bge_m3")
 QDRANT_DISTANCE = "cosine"     # patrz EMBED_NORMALIZE; standard dla tekstu
 
 # --- Retrieval (etap 3) ---

@@ -57,6 +57,67 @@ Dwustopniowy retrieval (szybki bi-encoder → dokładny cross-encoder), hybryda 
 *Reranking podniósł recall@1 (trafny fragment był w puli, ale nie na górze); hybryda podniosła
 sufit recall@10 z 0.93 do 0.97 (BM25 dorzucił trafienia leksykalne, których dense nie wyciągał).*
 
+### Chunking — A/B trzech rozmiarów (a nie „dobrane z rozsądku")
+
+Rozmiar chunka to najczęstsze pytanie o RAG, więc nie zostaje przy uzasadnieniu — jest zmierzony.
+Trzy warianty, **stały udział zakładki 15%**, ten sam gold set i ten sam tor retrievalu
+(`src/eval/ab_chunking.py`; każdy wariant w osobnej kolekcji Qdranta i osobnym procesie):
+
+| wariant | chunków | śr. znaków | trafnych* | R@1 | R@3 | R@5 | R@10 | MRR |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| *dense (sam retrieval gęsty)* | | | | | | | | |
+| 600 zn. | 4001 | 524 | 1.62 | **0.655** | 0.759 | 0.828 | 0.897 | **0.726** |
+| 1200 zn. (baseline) | 1509 | 1092 | 1.21 | 0.448 | 0.724 | 0.759 | 0.931 | 0.613 |
+| 2000 zn. | 835 | 1888 | 1.21 | 0.517 | 0.759 | 0.931 | 0.966 | 0.676 |
+| *hybrid+rerank (ścieżka produkcyjna)* | | | | | | | | |
+| 600 zn. | 4001 | 524 | 1.62 | 0.793 | 0.862 | 0.862 | 0.897 | 0.833 |
+| 1200 zn. (baseline) | 1509 | 1092 | 1.21 | 0.793 | 0.931 | 0.966 | 0.966 | 0.863 |
+| **2000 zn.** | 835 | 1888 | 1.21 | 0.793 | **0.966** | **0.966** | **1.000** | **0.879** |
+
+\* *„trafnych" = średnia liczba chunków zawierających cytat-dowód. Rośnie, gdy podział duplikuje
+tekst w zakładce, więc część różnicy w recall może brać się z redundancji, nie z dopasowania —
+kolumna jest w tabeli właśnie po to, żeby to było widać. 1200 i 2000 mają identyczne 1.21, więc
+ich porównanie nie jest tym efektem zaburzone.*
+
+**Trzy odczyty:**
+1. **W ścieżce produkcyjnej 2000 zn. domyka sufit: R@10 = 1.000** — po raz pierwszy żadne pytanie
+   nie wypada z top-10, w tym `g21` (pojęciowe), które wypadało nawet w hybrid+rerank.
+2. **600 zn. mierzalnie szkodzi** (R@5 0.862 vs 0.966 = 3 pytania), mimo że dostało *więcej*
+   „biletów" (1.62 vs 1.21) — traci `g00` i `g10`, których większe chunki znajdują. Cytaty się
+   w nich mieszczą, więc to nie artefakt metryki, a brak kontekstu w krótkim fragmencie.
+3. **Bez rerankingu wnioski się odwracają:** małe chunki celują lepiej wysoko (dense R@1 0.655 vs
+   0.448), bo krótszy fragment ma ciaśniejszy temat, ale obniżają sufit. Dwuetapowy retrieval
+   przesuwa wagę na sufit, bo **reranker przestawia, ale nie dobiera** — nie wymyśli kandydata,
+   którego nie dostał.
+
+**Dlaczego mimo tego 1200 zostaje wartością domyślną** — 2000 zn. przy `top_k=5` daje prompt
+~9440 znaków ≈ **3630 tokenów**, a `LLM_NUM_CTX=4096` musi pomieścić jeszcze instrukcję
+systemową, pytanie i odpowiedź: nie zmieści się. Przy wyrównanym budżecie promptu przewaga znika:
+
+| przy ~2100-2200 tokenach promptu | recall |
+|---|--:|
+| 1200 zn., `top_k=5` | 0.966 |
+| 2000 zn., `top_k=3` | 0.966 |
+
+**Uczciwie o sile dowodu:** n=29, więc jedno pytanie = 3,4 pkt proc. Przewaga 2000 nad 1200 to
+**1-2 pytania** — poziom szumu, nie dowód; strata 600 to 3 pytania, czyli już sygnał. Wniosek,
+który się broni: *w zakresie 1200-2000 zn. rozmiar nie jest dźwignią jakości — dźwignią były
+reranking i hybryda; poniżej ~600 zn. jakość spada.* Podniesienie `num_ctx` do 8192 kosztowałoby
+KV-cache ~460 MB na sekwencję (56 KB/token — patrz sekcja o serwowaniu), więc to decyzja
+o VRAM, nie o chunkingu.
+
+**Jak mierzona jest prawda:** recall po `chunk_id` przestaje mieć sens, gdy zmienia się rozmiar
+chunka (numeracja się przesuwa). Dlatego każde pytanie z korpusu ma w gold secie `evidence` —
+krótki **dosłowny cytat** z odpowiedzią; trafiony chunk to taki, który go zawiera. Definicja jest
+niezależna od podziału i **surowsza** (chunk „na temat", ale bez odpowiedzi, nie liczy się).
+Na baseline kosztuje ~2 pkt MRR (0.886 → 0.863) przy niezmienionym recall@5 — te dwie definicje
+dają różne liczby bezwzględne, więc nie wolno ich mieszać w jednym porównaniu.
+
+```bash
+python src/eval/ab_chunking.py                 # 3 warianty: chunking -> indeks -> ewaluacja
+python src/eval/run_eval.py --truth evidence   # ewaluacja z prawdą przez cytat-dowód
+```
+
 ### Jakość odpowiedzi
 | metryka | wynik |
 |---|--:|
@@ -327,8 +388,10 @@ src/serve/              # api.py (3 endpointy), stream.py (mostek callback->iter
 src/serve/vllm_serve.py # start serwera vLLM z parametrami z configu (osobne env conda, offline)
 src/eval/               # metrics.py, run_eval.py (retrieval), eval_answers.py (odpowiedzi),
                         # calibrate_gate.py (kalibracja progu bramki na held-oucie),
-                        # bench_llm.py (przepustowość backendów), compare_backends.py (jakość)
-gold_set/gold.jsonl     # zbiór ewaluacyjny (pytanie -> odpowiedź -> chunk źródłowy)
+                        # bench_llm.py (przepustowość backendów), compare_backends.py (jakość),
+                        # ab_chunking.py (A/B rozmiaru chunka: chunking -> indeks -> ewaluacja)
+gold_set/gold.jsonl     # zbiór ewaluacyjny (pytanie -> odpowiedź -> chunk źródłowy -> `evidence`:
+                        # dosłowny cytat z odpowiedzią, prawda niezależna od podziału na chunki)
 gold_set/heldout_gate.jsonl # held-out do kalibracji progu — NIGDY nieraportowany jako metryka
 docs/specs/, docs/plans/# spec i plan implementacji UI (decyzje + odrzucone alternatywy)
 tests/                  # chunking, metryki, BM25/RRF, mostek strumienia, kontrakt API, logika app.js
