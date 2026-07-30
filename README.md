@@ -264,26 +264,77 @@ odpowiedzi **inny model-sędzia (Gemma)** sprawdza KAŻDĄ tezę przeciw konteks
 ### Podmiana podmiotu — pomiar i WYNIK NEGATYWNY próby czwartego guardu
 
 Najpierw trzeba było naprawić metrykę, bo istniejące liczyły tę awarię jako sukces (patrz „Znane
-ograniczenia"). Powstał zbiór **7 pytań-pułapek** (`gold_set/entity_traps.jsonl`, cytaty walidowane
-programowo w korpusie) na dwóch klastrach, w których wartości są rozróżnialne tylko przez podmiot:
+ograniczenia"). Powstał zbiór pytań-pułapek (`gold_set/entity_traps.jsonl`, cytaty walidowane
+programowo w korpusie) na klastrach, w których wartości są rozróżnialne tylko przez podmiot:
 polarny (Kanada 26 mld/**1,3%**, Dania 5,3 mld/**1,3%**, Norwegia 8,4 mld/1,75% — procent Kanady
 i Danii jest identyczny) oraz bałtycki, gdzie trzy kwoty stoją w **jednym zdaniu** (Estonia 2,316 /
 Łotwa 1,548 / Litwa 2,048 mld).
 
+Pierwszy pomiar (n=7) miał wadę, którą trzeba nazwać wprost: guard #4 abstynował na 6 z 7 pytań,
+a podmiana zaszła realnie w **jednym** — więc uczciwym wnioskiem było „nie zadziałał tam, gdzie
+mogłem zmierzyć", a nie „nie działa". Dlatego zbiór został powiększony do **21 pułapek**, i to nie
+ręcznie, a **minerem, który przeszukuje korpus funkcjami produkcyjnymi guardu**
+(`src/eval/mine_traps.py`): kandydat przechodzi wtedy i tylko wtedy, gdy `attributed_entities()`
+umie jednoznacznie wskazać właściciela wielkości. „Typ bałtycki" przestaje być moją oceną i staje
+się definicją operacyjną. Leksykonu guardu **nie rozszerzałem** — to byłoby strojenie guardu
+pod zbiór testowy.
+
 Pomiar **parowany** — jedna generacja, warianty guardów na tych samych odpowiedziach, 3 powtórzenia
-dla stochastycznego sędziego (`src/eval/eval_traps.py`):
+dla stochastycznego sędziego (`src/eval/eval_traps.py`, 21 pytań × 3 = 63 obserwacje):
 
-| wariant | poprawna | niejedn. | **PODMIANA** | odmowa |
-|---|--:|--:|--:|--:|
-| bez guardów post-generacyjnych | 9 | 3 | **3** | 6 |
-| guard #3 (sędzia Gemma) | 9 | 3 | **0** | 9 |
-| guard #4 — przypisanie wielkości (kandydat) | 9 | 3 | **3** | 6 |
-| guard #3 + #4 | 9 | 3 | **0** | 9 |
+| wariant | poprawna | niejedn. | **PODMIANA** | inna-bł. | odmowa |
+|---|--:|--:|--:|--:|--:|
+| bez guardów post-generacyjnych | 51 | 0 | **3** | 0 | 9 |
+| guard #3 (sędzia Gemma) | 51 | 0 | **0** | 0 | 12 |
+| guard #4 — przypisanie wielkości (kandydat) | 51 | 0 | **3** | 0 | 9 |
+| guard #4 + szersze jednostki | 51 | 0 | **3** | 0 | 9 |
+| guard #3 + #4 | 51 | 0 | **0** | 0 | 12 |
 
-**Wniosek: guardu #4 NIE włączyłem.** Guard #3 domyka podmianę 3/3 przy zerowym koszcie, a kandydat
-abstynuje wszędzie — zero zysku. Zostaje w repo (`src/generate/attribution.py`, 11 testów na
-nieskróconych fragmentach korpusu) jako udokumentowana próba: **negatywny wynik z liczbami jest
-wart więcej niż guard dodany na wyczucie.**
+**Audyt warunku wstępnego** (`--audyt`, bez LLM-a) — bo „podmiana nie zaszła" znaczy coś innego,
+gdy w kontekście nie było cudzej liczby:
+
+| | n=7 (etap 10) | n=21 (etap 16) |
+|---|--:|--:|
+| REALNE pułapki (cudza liczba w podanym kontekście) | — | **19/21** |
+| odpowiadalne (prawda w kontekście) | — | 21/21 |
+| w zasięgu guardu #4 (wydaje werdykt, nie abstynuje) | 3/7 | **13/21** |
+| **rozstrzygające** (pułapka **i** zasięg) | **1** | **11** |
+
+**Wniosek: guardu #4 NIE włączyłem — teraz z 11-krotnie mocniejszą podstawą.** Na 13 pytaniach,
+w których guard miał podstawę do werdyktu, wydał **13 werdyktów poprawnych i zero blokad**: nie
+jest zepsuty, jest bezużyteczny na tym korpusie. Jedyna realna podmiana (t01) siedzi w zdaniu
+z anaforą („wyniosły **one** 8,4 mld"), gdzie guard z założenia milczy, a guard #3 ją domyka 3/3
+przy zerowym koszcie. Warunek powrotu jest dziś węższy i sprawdzalny: pułapki, w których model
+**realnie** podmienia podmiot, a wielkość stoi w jednym zdaniu z nazwą. Korpus 5 raportów tego
+nie dostarcza — na 19 realnych pułapek model podmienił **raz**.
+
+Trzy rzeczy, które ten pomiar wyprodukował poza samym werdyktem:
+
+1. **Miner znalazł defekt w guardzie, którego miał tylko dostarczyć dane.** `ENTITY_FORMS`
+   dopasowywał formę jako dowolny podciąg, więc „ba**dani**a" liczyło się jako wzmianka **Danii**
+   (335 z 463 trafień formy `dani` w korpusie), „b**ryg**ada" jako **Łotwa** (85 z 89),
+   „**finansowanie**" jako **Finlandia**, „jezusa" jako **USA** — razem **1010 fałszywych
+   wzmianek**. Dla reguły „najbliższa wcześniejsza wzmianka" to nie szum, a **odwrócenie
+   werdyktu**: w zdaniu „Estoński budżet obronny ma zapewnione stabilne **finansowanie** na
+   poziomie co najmniej **2% PKB**" guard przypisywał 2% Finlandii i zapytany o Estonię
+   **zablokowałby poprawną odpowiedź**. Naprawa (forma musi zaczynać słowo + formy będące
+   prefiksem zwykłych słów wypisane w odmianach) zmierzona w `src/eval/ab_lexicon.py`:
+   19 fałszywych właścicielstw zniknęło, 4 podmienione na prawdziwe, **0 utraconego zasięgu**,
+   werdykty na odpowiedziach z etapu 10 **identyczne** (czyli tamte liczby pozostają ważne).
+2. **Część abstynencji nie wynikała z projektu guardu, a z listy jednostek.** Korpus pisze
+   „25 tys.", model odpowiada „25 **tysięcy**" — guard widział odpowiedź bez wielkości i milczał.
+   Wariant z szerszymi jednostkami dokłada 2 werdykty (13 → 15), obie poprawne, i **nadal zero
+   blokad**; do produkcji nie wchodzi, bo nie ma czego kupić.
+3. **Walidator zbioru złapał dwa błędy w moich danych** (`mine_traps.py --waliduj`, kod wyjścia
+   ≠ 0): `t04`–`t06` wskazywały chunk `__114`, choć po naprawie ogona z etapu 14 cytat siedzi
+   w `__113` (granice chunków się ruszają, a `source_chunk` nie był weryfikowany), oraz — groźniejsze
+   — **dwa pytania miały w korpusie po dwie prawdziwe odpowiedzi**: duńskie roszczenia szelfowe
+   to i „0,9 mln km²" (podział „arktycznego tortu"), i „ok. 900 km²" (na północ od wyspy). Model
+   odpowiedział drugą liczbą i metryka policzyła to jako błąd. **Poprawna odpowiedź liczona jako
+   awaria to najgroźniejszy rodzaj błędu w ewaluacji** — zawyża awaryjność i kieruje pracę na
+   nieistniejący problem. Detektor tej klasy siedzi teraz w `--audyt` (klasa `inna-bledna`
+   + werdykt guardu „wartość należy do pytanego podmiotu" = pytanie prawdopodobnie
+   niejednoznaczne).
 
 Dwie rzeczy, których nauczyła ta próba, ważniejsze niż sam guard:
 1. **Reguła „najbliższa wcześniejsza wzmianka" w obrębie chunka jest aktywnie szkodliwa.**
@@ -352,6 +403,15 @@ odmowę do zera i tą samą zmianą rozbraja jedyny guard, który łapie prawdzi
 ocen przepuszcza podmianę. Przy asymetrii kosztów tego zastosowania (pewne kłamstwo z cytatem
 jest droższe od odmowy) to zła wymiana. Fałszywa odmowa i podmiana podmiotu **nie są dwoma
 błędami, a dwoma końcami jednej osi** — i moje guardy mają jeden suwak na obie.
+
+**Granica tego wniosku, której powiększenie zbioru NIE przesunęło.** Tabela wyżej stoi na dwóch
+pytaniach: jednym z fałszywą odmową (`t06`) i jednym z prawdziwą podmianą (`t01`). Zbiór pułapek
+urósł potem do 21 (etap 16) i podniósł zasięg guardu #4 z 1 do 11 pytań rozstrzygających — ale
+dla TEJ decyzji nie zmienia prawie nic, i trzeba to powiedzieć wprost: na 19 realnych pułapek
+model podmienił podmiot **wciąż tylko raz** (`t01`), więc prawa kolumna tabeli miałaby to samo
+`n`. Strona fałszywych odmów zyskała jedno pytanie (odmowy modelu: `t05`, `t06` i nowe `t09`).
+Powiększanie zbioru pułapek **nie jest** więc drogą do rozstrzygnięcia tej wymiany — drogą jest
+korpus, w którym model podmienia podmiot częściej.
 
 **Efekt uboczny, ważniejszy od samego A/B: guard #3 miał dziurę fail-open.** `grounded_fraction()`
 zwracało 1.0, gdy odpowiedź nie ma ani jednej tezy — świadoma decyzja („nie ma czego podważać").
@@ -455,15 +515,15 @@ Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
-pytest                                   # -> 178 passed, 9 skipped in 0,7 s
+pytest                                   # -> 196 passed, 9 skipped in 1,2 s
 ```
 
 Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`, `fitz`) są
 **leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
 w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
-`ModuleNotFoundError`, a mimo to **178 passed**. Pominięte 9 to testy wymagające `pymupdf`
+`ModuleNotFoundError`, a mimo to **196 passed**. Pominięte 9 to testy wymagające `pymupdf`
 (prawdziwy PDF budowany w pamięci) i `qdrant-client` (kształt punktów) — w env projektu przechodzą:
-**187 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
+**205 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
 logiki UI**) pomija się jeszcze jeden test. Pierwszy przebieg CI: **82 passed w 2,13 s**.
 
 **Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,

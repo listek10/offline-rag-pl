@@ -1,0 +1,193 @@
+{
+  "wzmianki": {
+    "przed": 5141,
+    "po": 4131
+  },
+  "wielkosci": 327,
+  "z_wlascicielem": {
+    "przed": 98,
+    "po": 79
+  },
+  "jednoznaczne": {
+    "przed": 98,
+    "po": 79
+  },
+  "zmienione": {
+    "PW_Szwedzka-polityka-bezpieczenstwa_net(1)__28|32": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "PW_Szwedzka-polityka-bezpieczenstwa_net(1)__28|29": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "PW_Szwedzka-polityka-bezpieczenstwa_net(1)__28|39": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1__42|70": {
+      "przed": [
+        "Finlandia"
+      ],
+      "po": []
+    },
+    "Raport_OSW-Formaty współpracy w obszarze bezpieczeństwa w regionie Morza Bałtyckiego_1__43|70": {
+      "przed": [
+        "Finlandia"
+      ],
+      "po": []
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__6|2": {
+      "przed": [
+        "Finlandia"
+      ],
+      "po": [
+        "Estonia"
+      ]
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__7|2": {
+      "przed": [
+        "Finlandia"
+      ],
+      "po": [
+        "Estonia"
+      ]
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__82|50": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__83|50": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__110|2": {
+      "przed": [
+        "Finlandia"
+      ],
+      "po": []
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__111|2": {
+      "przed": [
+        "Finlandia"
+      ],
+      "po": []
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__112|25": {
+      "przed": [
+        "Łotwa"
+      ],
+      "po": [
+        "Estonia"
+      ]
+    },
+    "Raport__Nowe-pomysly-na-obrone-totalna_net_0__112|4": {
+      "przed": [
+        "Łotwa"
+      ],
+      "po": [
+        "Estonia"
+      ]
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__424|4": {
+      "przed": [
+        "Rosja"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__585|75": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__586|75": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__590|79": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__590|53": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__626|36": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__808|76": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__808|36": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__808|20": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    },
+    "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__808|37": {
+      "przed": [
+        "Dania"
+      ],
+      "po": []
+    }
+  },
+  "werdykty_guardu4": {
+    "t01": {
+      "przed": null,
+      "po": null
+    },
+    "t02": {
+      "przed": null,
+      "po": null
+    },
+    "t03": {
+      "przed": true,
+      "po": true
+    },
+    "t04": {
+      "przed": true,
+      "po": true
+    },
+    "t05": {
+      "przed": null,
+      "po": null
+    },
+    "t06": {
+      "przed": null,
+      "po": null
+    },
+    "t07": {
+      "przed": true,
+      "po": true
+    }
+  }
+}

@@ -2,21 +2,33 @@
 src/generate/attribution.py
 Kandydat na guard #4: KONTROLA PRZYPISANIA WIELKOŚCI DO PODMIOTU (anti-„podmiana podmiotu").
 
-╔══ STATUS: ZMIERZONY I **NIEWŁĄCZONY** DO PRODUKCJI — WYNIK NEGATYWNY ═════════════════════╗
+╔══ STATUS: ZMIERZONY DWA RAZY I **NIEWŁĄCZONY** DO PRODUKCJI — WYNIK NEGATYWNY ════════════╗
 ║ `answer()` NIE woła tego modułu. Zostaje w repo jako udokumentowana, przetestowana próba    ║
 ║ z pomiarem, bo negatywny wynik z liczbami jest wart więcej niż guard dodany „na wyczucie".  ║
-║ Pomiar parowany na 7 pytaniach-pułapkach (`src/eval/eval_traps.py`, 3 powtórzenia):         ║
-║     bez guardów post:  poprawna 9  PODMIANA 3  odmowa 6                                    ║
-║     guard #3 (sędzia): poprawna 9  PODMIANA 0  odmowa 9   <- łapie wszystko, koszt 0        ║
-║     ten guard:         poprawna 9  PODMIANA 3  odmowa 6   <- ABSTYNUJE wszędzie, zero zysku ║
-║ Przyczyna: w jedynym przypadku, w którym podmiana realnie zaszła, zdanie z liczbą używa     ║
-║ anafory („wyniosły ONE 8,4 mld"), więc reguła ograniczona do zdania nie ma podstawy do      ║
-║ werdyktu — i zgodnie z projektem woli nie wiedzieć, niż zgadnąć. Wcześniejsza, śmielsza     ║
-║ wersja (szukanie wstecz w całym bloku) była AKTYWNIE SZKODLIWA: przypisywała 1,75% PKB      ║
-║ *Rosji* („…Globus III w Vardø przy granicy z Rosją" dwa zdania wcześniej) i blokowała       ║
-║ poprawną odpowiedź o Norwegii. Warunek włączenia: zbiór pułapek, w którym wielkości stoją   ║
-║ w jednym zdaniu z podmiotem (typ bałtycki) i na którym ten guard pokaże zysk przy zerowym   ║
-║ koszcie — wtedy wraca do rozmowy, na tych samych zasadach: najpierw pomiar.                 ║
+║                                                                                            ║
+║ POMIAR 1 (etap 10, n=7): guard abstynował na 6 z 7 pytań, więc wniosek brzmiał uczciwie     ║
+║ „nie zadziałał tam, gdzie mogłem zmierzyć" — podmiana zaszła realnie w JEDNYM pytaniu.      ║
+║                                                                                            ║
+║ POMIAR 2 (etap 16, n=21 — zbiór zbudowany minerem `src/eval/mine_traps.py` POD TEN guard,   ║
+║ tak by wielkość i podmiot stały w jednym zdaniu; 3 powtórzenia, pomiar parowany):           ║
+║     bez guardów post:   poprawna 51  PODMIANA 3  odmowa 9                                  ║
+║     guard #3 (sędzia):  poprawna 51  PODMIANA 0  odmowa 12  <- łapie, koszt 0               ║
+║     ten guard:          poprawna 51  PODMIANA 3  odmowa 9   <- ZERO BLOKAD                  ║
+║     ten guard + szersze jednostki: identycznie                                              ║
+║ Audyt zasięgu (`eval_traps.py --audyt`): 19/21 pytań to REALNE pułapki (cudza liczba jest   ║
+║ w kontekście), 13/21 jest w zasięgu tego guardu, **11/21 rozstrzyga** (pułapka I zasięg) —  ║
+║ wobec 1 pytania w pomiarze 1. Na wszystkich 13 pytaniach w zasięgu guard wydał werdykt      ║
+║ POPRAWNY („wartość należy do pytanego podmiotu") — czyli nie jest zepsuty, jest bezużyteczny║
+║ na tym korpusie: nie ma czego blokować.                                                     ║
+║ Przyczyna niezmieniona: jedyna realna podmiana (t01) siedzi w zdaniu z anaforą („wyniosły   ║
+║ ONE 8,4 mld"), więc reguła ograniczona do zdania nie ma podstawy do werdyktu — i zgodnie    ║
+║ z projektem woli nie wiedzieć, niż zgadnąć. Wcześniejsza, śmielsza wersja (szukanie wstecz  ║
+║ w całym bloku) była AKTYWNIE SZKODLIWA: przypisywała 1,75% PKB *Rosji* („…Globus III        ║
+║ w Vardø przy granicy z Rosją" dwa zdania wcześniej) i blokowała poprawną odpowiedź          ║
+║ o Norwegii.                                                                                 ║
+║ Warunek powrotu jest teraz WĘŻSZY i sprawdzalny: pułapki, w których model REALNIE podmienia ║
+║ podmiot, a wielkość stoi w jednym zdaniu z nazwą. Tego korpus 5 raportów nie dostarcza —    ║
+║ na 19 realnych pułapek model podmienił raz, i to w typie anaforycznym.                      ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════╝
 
 PROBLEM, KTÓRY TO ROZWIĄZUJE (zmierzony, nie hipotetyczny):
@@ -68,15 +80,28 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 # Leksykon form: podmiot kanoniczny -> formy (małymi literami), po których go rozpoznajemy.
 # Zakres = korpus projektu (bezpieczeństwo nordycko-bałtyckie). Formy dobrane tak, żeby złapać
 # odmianę rzeczownika I formę przymiotnikową, bo raporty używają obu wymiennie.
+#
+# ═══ FORMA JEST PREFIKSEM SŁOWA, NIE DOWOLNYM PODCIĄGIEM (naprawa zmierzona) ═══
+# Pierwsza wersja szukała form jako podciągu w dowolnym miejscu słowa i było to CICHO błędne:
+# „ba-DANI-a" liczyło się jako wzmianka Danii (335 z 463 trafień formy „dani" w korpusie!),
+# „b-RYG-ada" jako Łotwa (85 z 89), „cy-WILNO-wojskowy" jako Litwa, „jezusa" jako USA.
+# Dla guardu przypisania to nie kosmetyka: fałszywa wzmianka stojąca bliżej liczby PORYWA
+# przypisanie i daje albo blokadę poprawnej odpowiedzi, albo przepuszczenie podmiany.
+# Dlatego forma musi zaczynać SŁOWO (`\b`), a formy, które są prefiksem zwykłych polskich słów,
+# są wypisane w pełnych odmianach: „dani" (→ danina, Daniel) rozbite na „dania/danii/danią/danię",
+# „fin" (→ finansowanie, definicja) na „finów/finowie/finom/finami", „ryg" (→ brygada, rygor)
+# na „ryga/rygi/rygą/rydze". Koszt: dłuższa lista i ryzyko, że jakiejś odmiany zabraknie —
+# ale brak odmiany daje ABSTYNENCJĘ (guard milczy), a fałszywa wzmianka dawała WERDYKT.
+# W tym kierunku wolimy się mylić, więc ten koszt jest zamierzony.
 ENTITY_FORMS: dict[str, tuple[str, ...]] = {
-    "Dania":      ("dani", "duń", "duns", "kopenhag"),
+    "Dania":      ("dania", "danii", "danią", "danię", "duń", "duns", "kopenhag"),
     "Norwegia":   ("norwe", "norwes", "oslo"),
     "Szwecja":    ("szwecj", "szwed", "sztokholm"),
-    "Finlandia":  ("finlandi", "fiń", "fin", "helsink"),
+    "Finlandia":  ("finlandi", "fiń", "finów", "finowie", "finom", "finami", "helsink"),
     "Islandia":   ("islandi", "islandz", "reykjav"),
     "Estonia":    ("estoni", "estoń", "eston", "tallin"),
-    "Łotwa":      ("łotw", "łotew", "ryg"),
-    "Litwa":      ("litw", "litew", "wilno", "wilnie"),
+    "Łotwa":      ("łotw", "łotew", "ryga", "rygi", "rygą", "rydze"),
+    "Litwa":      ("litw", "litew", "wilno", "wilnie", "wilna"),
     "Kanada":     ("kanad", "ottaw"),
     "USA":        ("usa", "stany zjednoczone", "amerykan", "waszyngton"),
     "Rosja":      ("rosj", "rosyj", "moskw", "kreml"),
@@ -85,32 +110,43 @@ ENTITY_FORMS: dict[str, tuple[str, ...]] = {
     "Grenlandia": ("grenlandi", "grenlandz"),
 }
 
+# Skróty muszą być CAŁYM słowem: „usa" jako prefiks łapie „usamodzielnił", „usankcjonowano",
+# „usatysfakcjonuje". Cyfra po formie jest dopuszczalna, bo parser PDF-a dokleja numery
+# przypisów do słowa („usa110", „Danią121") — to artefakt korpusu, nie inne słowo.
+WHOLE_WORD_FORMS = frozenset({"usa"})
 
-def entity_in(text: str) -> str | None:
-    """Który podmiot z leksykonu jest nazwany w tekście (np. w pytaniu). None = żaden.
+_LETTER = "a-zA-Zа-яąćęłńóśźżĄĆĘŁŃÓŚŹŻ"
 
-    Przy wielu trafieniach bierzemy NAJPÓŹNIEJSZE — w pytaniach typu „Ile wynosiły wydatki
-    obronne Danii w 2021 r.?" podmiot stoi po rzeczowniku opisującym wielkość, a ewentualna
-    wcześniejsza nazwa (np. „w NATO") jest tłem, nie tematem.
-    """
-    low = text.lower()
-    best, best_pos = None, -1
-    for ent, forms in ENTITY_FORMS.items():
-        for f in forms:
-            pos = low.rfind(f)
-            if pos > best_pos:
-                best, best_pos = ent, pos
-    return best
+
+def _form_pattern(form: str) -> re.Pattern[str]:
+    tail = rf"(?![{_LETTER}])" if form in WHOLE_WORD_FORMS else ""
+    return re.compile(rf"\b{re.escape(form)}{tail}")
+
+
+# Kompilujemy raz — `_mentions` woła się dla każdego zdania każdego chunka w kontekście.
+_FORM_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = tuple(
+    (_form_pattern(f), ent) for ent, forms in ENTITY_FORMS.items() for f in forms
+)
 
 
 def _mentions(text: str) -> list[tuple[int, str]]:
     """Wszystkie wzmianki podmiotów w tekście jako (pozycja, podmiot), posortowane po pozycji."""
     low = text.lower()
-    out = []
-    for ent, forms in ENTITY_FORMS.items():
-        for f in forms:
-            out.extend((m.start(), ent) for m in re.finditer(re.escape(f), low))
-    return sorted(out)
+    return sorted((m.start(), ent) for pat, ent in _FORM_PATTERNS for m in pat.finditer(low))
+
+
+def entity_in(text: str) -> str | None:
+    """Który podmiot z leksykonu jest nazwany w tekście (np. w pytaniu). None = żaden.
+
+    Bierzemy NAJPÓŹNIEJSZĄ wzmiankę — w pytaniach typu „Ile wynosiły wydatki obronne Danii
+    w 2021 r.?" podmiot stoi po rzeczowniku opisującym wielkość, a ewentualna wcześniejsza
+    nazwa (np. „w NATO") jest tłem, nie tematem.
+
+    Ta funkcja liczy wzmianki TĄ SAMĄ regułą co `_mentions` (jedno miejsce, jedna reguła):
+    gdyby pytanie i kontekst rozpoznawały podmioty inaczej, guard porównywałby jabłka z gruszkami.
+    """
+    ms = _mentions(text)
+    return ms[-1][1] if ms else None
 
 
 # Wielkość = liczba + JEDNOSTKA. Rok („2021 r.") jednostki nie ma i celowo nie jest wielkością:
