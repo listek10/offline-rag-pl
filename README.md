@@ -2,8 +2,9 @@
 
 [![testy](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml/badge.svg)](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml)
 
-*Badge pokazuje testy kontraktowe (obecnie 178) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
-gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
+*Badge pokazuje testy kontraktowe na czystej maszynie bez GPU: obecnie **196 passed, 9 skipped**
+(pominięte wymagają `pymupdf` / `qdrant-client` — w środowisku projektu przechodzą, **205 passed**).
+Jakość odpowiedzi mierzy gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
 
 System **Retrieval-Augmented Generation** działający **w pełni offline**: odpowiada na pytania
 na podstawie polskich raportów analitycznych (OSW/PISM), **cytuje źródło** i ma **zmierzoną
