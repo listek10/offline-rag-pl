@@ -1,0 +1,611 @@
+{
+  "truth": "evidence",
+  "chunks_path": "/tmp/claude-1000/-home-maciek-Pulpit-offline-rag-pl/4a9f7bc5-33fe-4517-982f-a5bc7d3ee462/scratchpad/chunks_nowy.jsonl",
+  "collection": "osw_reports_bge_m3_ogon",
+  "chunk_target_chars": 1200,
+  "chunk_overlap_chars": 180,
+  "n_in_corpus": 29,
+  "aggregates": {
+    "dense": {
+      "recall@1": 0.4482758620689655,
+      "recall@3": 0.7241379310344828,
+      "recall@5": 0.7586206896551724,
+      "recall@10": 0.9310344827586207,
+      "MRR": 0.6124794745484401
+    },
+    "hybrid+rr": {
+      "recall@1": 0.7931034482758621,
+      "recall@3": 0.9310344827586207,
+      "recall@5": 0.9655172413793104,
+      "recall@10": 0.9655172413793104,
+      "MRR": 0.8632183908045976
+    }
+  },
+  "per_question": {
+    "dense": [
+      {
+        "id": "g00",
+        "type": "faktograficzne",
+        "rr": 0.5,
+        "n_relevant": 2,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g01",
+        "type": "pojęciowe",
+        "rr": 0.0,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 0.0
+      },
+      {
+        "id": "g02",
+        "type": "faktograficzne",
+        "rr": 0.125,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g03",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g04",
+        "type": "nazwa-własna",
+        "rr": 0.3333333333333333,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g05",
+        "type": "faktograficzne",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g06",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g07",
+        "type": "nazwa-własna",
+        "rr": 0.125,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g08",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g09",
+        "type": "faktograficzne",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g10",
+        "type": "parafraza",
+        "rr": 0.14285714285714285,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g11",
+        "type": "pojęciowe",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g12",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g13",
+        "type": "faktograficzne",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g14",
+        "type": "pojęciowe",
+        "rr": 0.14285714285714285,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g15",
+        "type": "pojęciowe",
+        "rr": 0.14285714285714285,
+        "n_relevant": 2,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g16",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g17",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g18",
+        "type": "pojęciowe",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g19",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g20",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g21",
+        "type": "pojęciowe",
+        "rr": 0.0,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 0.0
+      },
+      {
+        "id": "g22",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g23",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g24",
+        "type": "faktograficzne",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g25",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g26",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g27",
+        "type": "nazwa-własna",
+        "rr": 0.25,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g28",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      }
+    ],
+    "hybrid+rr": [
+      {
+        "id": "g00",
+        "type": "faktograficzne",
+        "rr": 0.5,
+        "n_relevant": 2,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g01",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g02",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g03",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g04",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g05",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g06",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g07",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g08",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g09",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g10",
+        "type": "parafraza",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g11",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g12",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g13",
+        "type": "faktograficzne",
+        "rr": 0.5,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g14",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g15",
+        "type": "pojęciowe",
+        "rr": 0.2,
+        "n_relevant": 2,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g16",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g17",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g18",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g19",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g20",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g21",
+        "type": "pojęciowe",
+        "rr": 0.0,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 0.0,
+        "h@5": 0.0,
+        "h@10": 0.0
+      },
+      {
+        "id": "g22",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g23",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g24",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g25",
+        "type": "nazwa-własna",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g26",
+        "type": "faktograficzne",
+        "rr": 1.0,
+        "n_relevant": 1,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g27",
+        "type": "nazwa-własna",
+        "rr": 0.3333333333333333,
+        "n_relevant": 1,
+        "h@1": 0.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      },
+      {
+        "id": "g28",
+        "type": "pojęciowe",
+        "rr": 1.0,
+        "n_relevant": 2,
+        "h@1": 1.0,
+        "h@3": 1.0,
+        "h@5": 1.0,
+        "h@10": 1.0
+      }
+    ]
+  },
+  "refusal": null
+}

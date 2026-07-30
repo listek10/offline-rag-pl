@@ -1,0 +1,32 @@
+{
+  "rozklad": {
+    "zrodlo": "IV ROK WOJNY_2.pdf",
+    "przed": {
+      "n_chunks": 1939,
+      "avg": 1105,
+      "p50": 1113,
+      "p99": 1363,
+      "max": 5722,
+      "pct_ponad_1500": 0.88,
+      "pct_ponad_2000": 0.62
+    },
+    "tylko_limit_zdania": {
+      "n_chunks": 1947,
+      "avg": 1100,
+      "p50": 1114,
+      "p99": 1416,
+      "max": 2417,
+      "pct_ponad_1500": 0.98,
+      "pct_ponad_2000": 0.41
+    },
+    "po": {
+      "n_chunks": 1925,
+      "avg": 1091,
+      "p50": 1112,
+      "p99": 1199,
+      "max": 1736,
+      "pct_ponad_1500": 0.21,
+      "pct_ponad_2000": 0.0
+    }
+  }
+}

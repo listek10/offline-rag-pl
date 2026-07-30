@@ -90,6 +90,68 @@ def split_sentences(text: str) -> list[str]:
     return sentences
 
 
+# --- Reguła awaryjna: za długie "zdanie" (dokumenty wypunktowane) -------------
+
+# Granica punktu listy: pozycja PRZED znacznikiem wypunktowania (•, ▪, ‣) albo przed
+# myślnikiem rozpoczynającym podpunkt ("- wzmocnienie…"). `(?<=\s)` pilnuje, żeby nie ciąć
+# na myślniku WEWNĄTRZ wyrazu ("polsko-niemiecki") ani w liczbie ("2022–2025").
+_BULLET = re.compile(r"(?<=\s)(?=[•▪‣]|[-–—]\s)")
+
+
+def split_overlong(sent: str, max_chars: int, target: int) -> list[str]:
+    """Dzieli JEDNO za długie „zdanie" na kawałki ≤ max_chars. Poniżej limitu zwraca [sent].
+
+    DLACZEGO TO ISTNIEJE (przyczyna zmierzona, nie domyślona): `split_sentences` szuka końca
+    zdania jako [.!?…] + biały znak. Raport pisany WYPUNKTOWANIAMI nie ma kropek na końcu
+    punktów, więc cały akapit-lista wraca jako jedno „zdanie" (zmierzone: 2867 zn. na raporcie
+    `IV ROK WOJNY`). `pack_chunks` z zasady nie tnie w środku zdania, więc taki moloch wchodził
+    do chunka w całości. Skutki były policzone: 3% chunków >2000 zn., generacja 43,5 s i
+    weryfikacja guardem #3 aż 264 s (vs 26,7 s na korpusie bazowym), bo koszt guarda to
+    liczba tez × wielkość kontekstu.
+
+    DLACZEGO OSOBNA FUNKCJA, A NIE POPRAWKA W `split_sentences`: tamta jest współdzielona
+    z guardem #3 (`verify.to_claims`), guardem #4 (`attribution.py`) i harnessem z etapu 13.
+    Zmiana w niej po cichu przedefiniowałaby „tezę" u sędziego i unieważniła tamte pomiary.
+    Reguła awaryjna należy do INGESTU i tylko do niego.
+
+    DLACZEGO PRÓG, A NIE ZAWSZE: to zawór bezpieczeństwa, nie nowa strategia cięcia. Zdanie
+    pod limitem wraca BIT W BIT — dzięki temu naprawa nie rusza korpusu, na którym zmierzone
+    są liczby (recall@1, MRR, A/B chunkingu z etapu 8), poza policzonymi wyjątkami.
+    """
+    if len(sent) <= max_chars:
+        return [sent]
+
+    # 1. Najpierw granice naturalne: punkty listy. Sklejamy drobne punkty z powrotem
+    #    do ~target, bo lista pojedynczych myślników to sieczka bez kontekstu.
+    parts: list[str] = []
+    cur = ""
+    for p in (x.strip() for x in _BULLET.split(sent)):
+        if not p:
+            continue
+        if cur and len(cur) + 1 + len(p) > target:
+            parts.append(cur)
+            cur = p
+        else:
+            cur = f"{cur} {p}".strip()
+    if cur:
+        parts.append(cur)
+
+    # 2. Co nadal za długie (np. wyciąg z tabeli, gdzie nie ma żadnych znaczników) — cięcie
+    #    po SPACJI, nigdy w środku słowa: rozbity wyraz to dla embeddingu i BM25 czysty szum,
+    #    a cytat przerwany w połowie przestaje występować w korpusie znak w znak.
+    out: list[str] = []
+    for p in parts:
+        while len(p) > max_chars:
+            cut = p.rfind(" ", 0, target)
+            if cut <= 0:                  # jeden wyraz dłuższy niż target (patologia) — tnij twardo
+                cut = target
+            out.append(p[:cut].strip())
+            p = p[cut:].strip()
+        if p:
+            out.append(p)
+    return out
+
+
 # --- Pakowanie zdań w chunki z zakładką ---------------------------------------
 
 def pack_chunks(
@@ -97,11 +159,23 @@ def pack_chunks(
     target: int,
     overlap: int,
     min_chars: int,
+    carry_max: int = config.CHUNK_CARRY_MAX_CHARS,
 ) -> list[str]:
     """
     Zachłannie dokłada zdania do chunka aż do ~target znaków, potem zaczyna nowy chunk,
     PRZENOSZĄC na jego początek ostatnie zdania (~overlap znaków). Overlap też jest
     liczony w całych zdaniach — spójnie z naszą strategią (nie tniemy w połowie zdania).
+
+    `carry_max` = najdłuższe JEDNO zdanie, które wolno przenieść do zakładki. DLACZEGO ten
+    parametr istnieje (druga warstwa dziury z etapu 14, przyczyna ujawniona pomiarem): pętla
+    zakładki brała zdania od końca i zabierała ZAWSZE co najmniej jedno — bez względu na jego
+    długość, bo warunek przerwania sprawdzał `keep` (czy już coś wzięliśmy). Gdy tym jednym
+    było zdanie-moloch, lądowało w nowym chunku w całości, a potem doklejało się do niego
+    następne zdanie: 2867 + 2854 = 5722 zn. Ten sam mechanizm dawał 2548 zn. w korpusie
+    bazowym (zdanie 1850 + 698), więc to NIE jest usterka samych dokumentów listowych —
+    to niezamierzone zachowanie zakładki, które na normalnej prozie się nie ujawnia,
+    bo tam zdania mają ~190 zn. Domyślna wartość z configu, bo wołający nie powinien mieć
+    możliwości przypadkowego przywrócenia patologii przez pominięcie argumentu.
     """
     chunks: list[str] = []
     cur: list[str] = []
@@ -117,6 +191,12 @@ def pack_chunks(
             klen = 0
             for t in reversed(cur):
                 if keep and klen + len(t) > overlap:
+                    break
+                # Pierwsze (najdalsze wstecz) zdanie wolno wziąć ponad budżet zakładki —
+                # tak działa zakładka na normalnej prozie, gdzie zdanie > overlap jest częste.
+                # Ale nie WIELOKROTNIE ponad: powyżej `carry_max` rezygnujemy z zakładki
+                # (chunk zaczyna się bez niej) zamiast duplikować moloch.
+                if not keep and len(t) > carry_max:
                     break
                 keep.insert(0, t)
                 klen += len(t) + 1
@@ -148,11 +228,20 @@ def chunk_text(text: str, source: str) -> list[dict]:
     (`config`), więc „chunking demo" nie może się rozjechać z „chunkingiem zmierzonym".
     """
     sentences = split_sentences(text)
+    # Reguła awaryjna PO podziale na zdania, PRZED pakowaniem: dokument wypunktowany bez kropek
+    # inaczej wpycha do chunka jedno „zdanie" wielkości kilku chunków (patrz `split_overlong`).
+    sentences = [
+        part
+        for sent in sentences
+        for part in split_overlong(sent, max_chars=config.CHUNK_MAX_SENTENCE_CHARS,
+                                   target=config.CHUNK_TARGET_CHARS)
+    ]
     chunks = pack_chunks(
         sentences,
         target=config.CHUNK_TARGET_CHARS,
         overlap=config.CHUNK_OVERLAP_CHARS,
         min_chars=config.CHUNK_MIN_CHARS,
+        carry_max=config.CHUNK_CARRY_MAX_CHARS,
     )
 
     records = []

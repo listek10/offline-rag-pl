@@ -1,12 +1,12 @@
-# TODO — co dalej (stan: 2026-07-29)
+# TODO — co dalej (stan: 2026-07-30)
 
 Jedno źródło prawdy o tym, co zostało. Wcześniej ta lista żyła w rozmowie i w `PROJECT_BRIEF.md`,
 który jest w `.gitignore` — czyli nie istniała dla nikogo, kto otwiera repo. Trzymam ją tutaj,
 w repo, a brief tylko na nią wskazuje: dwie kopie jednej prawdy zawsze się rozjeżdżają.
 
-**Stan bazowy:** wszystkie 5 etapów z briefu + 8 ponad plan zamknięte, 12/12 checkpointów
-z `CLAUDE.md` pokrytych, 157 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
-/ `qdrant-client`; w env projektu 166), CI na GitHub Actions zielone.
+**Stan bazowy:** wszystkie 5 etapów z briefu + 9 ponad plan zamknięte, 12/12 checkpointów
+z `CLAUDE.md` pokrytych, 169 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
+/ `qdrant-client`; w env projektu 178), CI na GitHub Actions zielone.
 Liczby: `README.md`. Historia decyzji: `NOTATKI_REKRUTER.md`.
 
 Kolejność = rekomendacja, nie zależności. Każda pozycja ma **jak zmierzyć**, bo w tym projekcie
@@ -14,32 +14,7 @@ zmiana bez pomiaru nie jest zrobiona.
 
 ---
 
-## 1. Chunking na dokumentach listowych  ⬜ NOWE (wynik uboczny etapu 12)
-
-**Problem (zmierzony 29.07 na wgranym raporcie `IV ROK WOJNY`, 100 stron):** `split_sentences`
-tnie po interpunkcji, a raport pisany **wypunktowaniami** nie ma kropek — więc `pack_chunks` nie
-ma gdzie przerwać. Rozkład: korpus bazowy max **2548** zn., 0% chunków >2000 zn.; wgrany dokument
-max **5614** zn., **3% chunków >2000 zn.** przy podobnej średniej (1151 vs 1092 — średnia kłamie).
-
-**Dlaczego to boli, a nie jest kosmetyką:** na wielkim chunku pytanie ogólne dało generację 43,5 s
-i **weryfikację 264 s** (vs 26,7 s na korpusie bazowym), a guard #3 odrzucił odpowiedź
-(`grounded_fraction` 0,0). Koszt guardu #3 rośnie z liczbą tez × wielkością kontekstu.
-
-**Czego NIE robić od razu:** zmiana `split_sentences`/`pack_chunks` dotyka korpusu bazowego, więc
-unieważnia zmierzone liczby (recall@1 0,83, MRR 0,89, A/B chunkingu z etapu 8) do czasu ponownego
-pomiaru. Kandydat na najtańszy wariant: twardy limit długości „zdania" (dzielenie po `\n`/`•`
-dopiero, gdy fragment przekracza np. 1,5× target) — czyli reguła awaryjna, nie nowa strategia.
-
-**Jak zmierzyć:** `src/eval/ab_chunking.py` istnieje i mierzy warianty w osobnych kolekcjach;
-warunek wejścia to **brak regresji** na gold secie (`run_eval.py`) plus rozkład długości chunków
-przed/po na dokumencie listowym.
-
-**Definicja zrobienia:** liczba „przed/po" dla obu korpusów (bazowy bez regresji, listowy z max
-chunkiem w granicach targetu) albo wynik negatywny z nazwaną ceną.
-
----
-
-## 2. Zbiór pułapek `n=7` → uczciwe `n`  ⬜ (etap 11 podniósł wagę tej pozycji)
+## 1. Zbiór pułapek `n=7` → uczciwe `n`  ⬜ (etap 11 podniósł wagę tej pozycji)
 
 **Po co:** wynik negatywny guardu #4 (etap 10) opiera się na 7 pytaniach, z czego podmiana
 zaszła realnie w **jednym**. Mogę więc powiedzieć „nie zadziałał tam, gdzie mogłem zmierzyć",
@@ -65,7 +40,7 @@ z mocniejszym n.
 
 ---
 
-## 3. Kontrakt payloadu w Qdrancie  ⬜ najmniej pilne
+## 2. Kontrakt payloadu w Qdrancie  ⬜ najmniej pilne
 
 **Problem:** `build_index.py` zapisuje payload (`chunk_id`, `source`, `chunk_index`, `text`),
 a `search.py` go czyta — dwa niezależne opisy jednego kształtu. Dokładnie ta klasa dryfu, którą
@@ -80,6 +55,30 @@ z liczbami identycznymi jak przed zmianą.
 ---
 
 ## Zamknięte (dla kontekstu, żeby nie wracać)
+
+- **Ogon rozkładu długości chunków na dokumentach wypunktowanych — ZAMKNIĘTY z pomiarem**,
+  etap 14 (30.07). Poprawka dwuczęściowa, bo **pomiar wywrócił diagnozę zapisaną w tej pozycji**:
+  sam limit długości „zdania" zostawiał chunk 2417 zn. Druga, prawdziwa przyczyna siedziała w pętli
+  zakładki `pack_chunks` — brała **zawsze co najmniej jedno** zdanie bez względu na długość, więc
+  moloch wchodził do nowego chunka i doklejało się do niego następne zdanie (2867 + 2854 = 5722).
+  Ten sam mechanizm dawał 2548 zn. w korpusie bazowym, czyli nie była to usterka dokumentów
+  listowych, a niezamierzone zachowanie zakładki niewidoczne na prozie (zdania ~190 zn.).
+  Naprawa: `split_overlong()` (limit 1800 zn. = 1,5 × target, cięcie na `•`/`- `, w ostateczności
+  po spacji) + `carry_max` = 600 zn. w `pack_chunks`; oba progi w `config`, nadpisywalne
+  środowiskiem, więc stan „przed" odtwarza jedna zmienna. Reguła awaryjna jest **osobną funkcją
+  wołaną tylko z ingestu** — `split_sentences` jest współdzielone z guardem #3, więc zmiana w niej
+  unieważniłaby pomiary z etapu 13. Wybór progów z siatki limit × kap (kap 180 odrzucony: likwiduje
+  zakładkę na prozie, −9% chunków). **DOWÓD:** korpus bazowy max 2548 → 1621 zn., >2000: 1 → 0
+  chunków, 96,7% chunków identycznych znak w znak, żaden cytat `evidence` z gold setu w ruszonym
+  chunku, wszystkie 40 `chunk_id` wskazują ten sam tekst; dokument listowy max 5722 → 1736 zn.,
+  >2000: 0,62% → 0,00%. Ewaluacja: `hybrid+rr` bez zmian w ANI JEDNYM polu (0,793/0,931/0,966/
+  0,966/MRR 0,863), dense tylko `g02` z pozycji 7 na 8 (MRR −0,0006); tryb domyślny odtworzył
+  nagłówek README (0,828 / 0,966 / 0,886, odmowa 1,000). Harness: `src/eval/ab_ogon.py`
+  (`--rozklad` / `--zasieg`), wyniki: `results/ab_ogon.json`, `results/ab_ogon_listowy.json`,
+  `results/ab_chunking_ogon.json`. Testy 166 → 178 w env projektu (169 bez GPU).
+  Granica dowodu (w README): liczby z sesji na żywo z etapu 12 (max 5614, 3%) pochodzą z ulotnego
+  dokumentu 100-stronicowego i **nie odtwarzają się** — plik w `data/raw_deferred/` to inny
+  egzemplarz (518 stron). Klasa defektu ta sama, wartości bezwzględne inne.
 
 - **Dziura fail-open w guardzie #3 (odpowiedzi bez ani jednej tezy) — ZAMKNIĘTA z pomiarem**,
   etap 13 (29.07). Poprawka dwuczęściowa, bo dziura miała dwie warstwy: tezą jest fragment z choć

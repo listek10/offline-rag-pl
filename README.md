@@ -2,7 +2,7 @@
 
 [![testy](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml/badge.svg)](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml)
 
-*Badge pokazuje testy kontraktowe (obecnie 157) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
+*Badge pokazuje testy kontraktowe (obecnie 169) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
 gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
 
 System **Retrieval-Augmented Generation** działający **w pełni offline**: odpowiada na pytania
@@ -121,6 +121,65 @@ dają różne liczby bezwzględne, więc nie wolno ich mieszać w jednym porówn
 ```bash
 python src/eval/ab_chunking.py                 # 3 warianty: chunking -> indeks -> ewaluacja
 python src/eval/run_eval.py --truth evidence   # ewaluacja z prawdą przez cytat-dowód
+```
+
+*Tabela powyżej pochodzi z pomiaru przed naprawą ogona rozkładu (sekcja niżej). Przy 1200 zn.
+zmierzyłem różnicę, jaką ta naprawa robi: −0.0006 MRR w dense i **zero** w ścieżce produkcyjnej —
+więc uporządkowanie wariantów i wniosek się nie zmieniają.*
+
+### Ogon rozkładu długości chunków — dokumenty wypunktowane
+
+Wgrany przez UI raport pisany **wypunktowaniami** (briefingi, zestawienia) łamał chunking, choć na
+korpusie bazowym nic tego nie zdradzało: `split_sentences` szuka `[.!?…]`, a punkty listy nie mają
+kropek, więc cały akapit-lista wracał jako **jedno „zdanie"** (2867 zn.). **Średnia tego nie
+pokazywała** (1105 vs 1093 zn.) — patologia siedzi w ogonie, dlatego mierzę `max` i `p99`.
+
+Bolało przez guarda #3, którego koszt to *liczba tez × wielkość kontekstu*: weryfikacja **264 s**
+zamiast 26,7 s i `grounded_fraction` 0,0, czyli poprawna odpowiedź odrzucona.
+
+**Pomiar wywrócił diagnozę.** Sprawcą nie był tylko podział zdań: po utnięciu „zdań" na 1800 zn.
+dokument listowy nadal miał chunk 2417 zn. Prawdziwa przyczyna siedziała w pętli zakładki
+w `pack_chunks` — brała zdania od końca i zabierała **zawsze co najmniej jedno**, bez względu na
+długość, więc moloch wchodził do nowego chunka jako zakładka, a potem doklejało się następne
+zdanie: 2867 + 2854 = 5722 zn. Ten sam mechanizm dawał 2548 zn. w korpusie bazowym (1850 + 698) —
+to **nie usterka dokumentów listowych, a niezamierzone zachowanie zakładki**, niewidoczne na
+normalnej prozie, gdzie zdania mają ~190 zn. Naprawa jest więc dwuczęściowa: limit długości
+„zdania" (1800 = 1,5 × target, cięcie na `•`/`- `, w ostateczności po spacji — nigdy w słowie)
+plus kap na jedno zdanie przenoszone w zakładce (600 zn.).
+
+| | chunków | śr. | p99 | max | >1500 | >2000 |
+|---|--:|--:|--:|--:|--:|--:|
+| korpus bazowy, przed | 1509 | 1093 | 1199 | **2548** | 0.33% | 0.07% |
+| korpus bazowy, tylko limit zdania | 1510 | 1092 | 1199 | 1850 | 0.33% | 0.00% |
+| **korpus bazowy, po** | 1497 | 1090 | 1198 | **1621** | **0.07%** | **0.00%** |
+| dokument listowy (518 stron), przed | 1939 | 1105 | 1363 | **5722** | 0.88% | 0.62% |
+| dokument listowy, tylko limit zdania | 1947 | 1100 | 1416 | 2417 | 0.98% | 0.41% |
+| **dokument listowy, po** | 1925 | 1091 | 1199 | **1736** | **0.21%** | **0.00%** |
+
+Wiersze „tylko limit zdania" są w tabeli celowo: to **dowód, że jedna warstwa naprawy nie
+wystarczała**, a nie ozdoba.
+
+**Gdzie naprawy NIE ma i dlaczego to najważniejsza decyzja tego etapu:** `split_sentences` jest
+współdzielone z guardem #3 (`verify.to_claims`), guardem #4 i harnessem z etapu 13. Zmiana w niej
+po cichu przedefiniowałaby „tezę" u sędziego i unieważniła tamte pomiary — więc reguła awaryjna
+jest osobną funkcją wołaną **wyłącznie na ścieżce ingestu**, a test tego pilnuje.
+
+**Ważność zmierzonych liczb udowodniona najpierw BEZ GPU** (ten sam chwyt co w etapie 13):
+96,7% chunków identycznych znak w znak (1459/1509), **żaden cytat `evidence` z gold setu nie leży
+w ruszonym chunku**, wszystkie 40 `chunk_id` wskazują ten sam tekst. Potem i tak ewaluacja, bo
+identyczność cytatów chroni *prawdę pomiaru*, nie *ranking* — 50 dystraktorów wymieniono na 38
+innych. Wynik: w `hybrid+rr` **nie ruszyło się ani jedno pole ani jednego pytania**; w czystym
+dense `g02` spadł z pozycji 7 na 8 (MRR 0.613095 → 0.612479). Tryb domyślny odtworzył nagłówek
+dokładnie: recall@1 0.828 · recall@5 0.966 · MRR 0.886, odmowa 1.000.
+
+**Granica dowodu:** liczby z sesji na żywo z etapu 12 (max 5614 zn., 3% chunków >2000) pochodzą
+z wgranego dokumentu 100-stronicowego, którego nie ma na dysku — był ulotny. Plik zachowany
+w `data/raw_deferred/` to inny egzemplarz (518 stron), stąd inne wartości bezwzględne. Klasa
+defektu ta sama, konkretne liczby — nie.
+
+```bash
+python src/eval/ab_ogon.py --rozklad --zasieg          # korpus bazowy: rozkład + zasięg vs gold set
+python src/eval/ab_ogon.py --rozklad sciezka/do.pdf    # dowolny dokument (nie wymaga GPU ani Qdranta)
 ```
 
 ### Jakość odpowiedzi
@@ -396,15 +455,15 @@ Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
-pytest                                   # -> 157 passed, 9 skipped in 0,7 s
+pytest                                   # -> 169 passed, 9 skipped in 0,7 s
 ```
 
 Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`, `fitz`) są
 **leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
 w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
-`ModuleNotFoundError`, a mimo to **157 passed**. Pominięte 9 to testy wymagające `pymupdf`
+`ModuleNotFoundError`, a mimo to **169 passed**. Pominięte 9 to testy wymagające `pymupdf`
 (prawdziwy PDF budowany w pamięci) i `qdrant-client` (kształt punktów) — w env projektu przechodzą:
-**166 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
+**178 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
 logiki UI**) pomija się jeszcze jeden test. Pierwszy przebieg CI: **82 passed w 2,13 s**.
 
 **Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,
@@ -520,6 +579,10 @@ Zmierzone na 100 stronach raportu świadomie trzymanego poza korpusem (`IV ROK W
 | kolekcja zmierzona po demo | **1509 punktów — bez zmian** |
 | `run_eval.py` po demo (hybrid+rerank) | **recall@1 0,828 · recall@5 0,966 · MRR 0,886** — identycznie |
 
+*Liczby z tej sesji (29.07): kolekcja zmierzona miała wtedy 1509 punktów — po naprawie ogona
+rozkładu ma 1497, a metryki są identyczne (patrz sekcja „Ogon rozkładu…"). Ta sesja ujawniła też
+sam defekt chunkingu na dokumencie wypunktowanym.*
+
 **Co to udowadnia, a czego nie:** nie to, że „model generalizuje" (jego wagi są zamrożone, wiedza
 wchodzi przez prompt), a to, że **nowa wiedza kosztuje sekundy indeksowania, nie godziny treningu**.
 
@@ -539,9 +602,11 @@ Cztery decyzje, które trzymają to w ryzach:
   gwarancje się nie przenoszą.
 
 **Dwa wyniki uboczne, które znalazł dopiero prawdziwy dokument** (szczegóły: `NOTATKI_REKRUTER.md`):
-- **chunking zakłada prozę analityczną.** Raport pisany wypunktowaniami (bez kropek) nie daje
-  `split_sentences` gdzie ciąć: korpus bazowy ma max 2548 zn. i 0% chunków >2000 zn., wgrany
-  dokument **max 5614 zn. i 3% chunków >2000 zn.** przy podobnej średniej (średnia kłamie).
+- **chunking zakładał prozę analityczną — NAPRAWIONE w etapie 14** (sekcja „Ogon rozkładu długości
+  chunków"). Raport pisany wypunktowaniami (bez kropek) nie dawał `split_sentences` gdzie ciąć:
+  korpus bazowy miał max 2548 zn., wgrany dokument **max 5614 zn. i 3% chunków >2000 zn.** przy
+  podobnej średniej (średnia kłamie). Po naprawie: korpus bazowy 1621 zn., dokument listowy
+  1736 zn., 0,00% chunków >2000 w obu.
 - **koszt guardu #3 nie jest stały.** Pytanie ogólne na wielkim chunku: generacja 43,5 s
   i **weryfikacja 264 s** (vs 26,7 s na korpusie bazowym), z odrzuceniem odpowiedzi
   (`grounded_fraction` 0,0). Sędzia per-teza skaluje się z długością odpowiedzi — dlatego „~20 s

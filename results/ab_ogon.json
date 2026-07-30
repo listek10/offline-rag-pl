@@ -1,0 +1,45 @@
+{
+  "rozklad": {
+    "zrodlo": "korpus bazowy (5 raportów)",
+    "przed": {
+      "n_chunks": 1509,
+      "avg": 1093,
+      "p50": 1112,
+      "p99": 1199,
+      "max": 2548,
+      "pct_ponad_1500": 0.33,
+      "pct_ponad_2000": 0.07
+    },
+    "tylko_limit_zdania": {
+      "n_chunks": 1510,
+      "avg": 1092,
+      "p50": 1112,
+      "p99": 1199,
+      "max": 1850,
+      "pct_ponad_1500": 0.33,
+      "pct_ponad_2000": 0.0
+    },
+    "po": {
+      "n_chunks": 1497,
+      "avg": 1090,
+      "p50": 1110,
+      "p99": 1198,
+      "max": 1621,
+      "pct_ponad_1500": 0.07,
+      "pct_ponad_2000": 0.0
+    }
+  },
+  "zasieg": {
+    "chunkow_przed": 1509,
+    "chunkow_po": 1497,
+    "identycznych": 1459,
+    "pct_identycznych": 96.7,
+    "zniknelo": 50,
+    "pojawilo_sie": 38,
+    "max_przed": 2548,
+    "max_po": 1621,
+    "gold_pytan": 29,
+    "cytat_w_ruszonym_chunku": [],
+    "zmiana_liczby_trafnych_chunkow": []
+  }
+}
