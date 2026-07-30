@@ -31,6 +31,17 @@ CHUNK_TARGET_CHARS = int(os.environ.get("CHUNK_TARGET_CHARS", 1200))   # docelow
 CHUNK_OVERLAP_CHARS = int(os.environ.get("CHUNK_OVERLAP_CHARS", 180))  # ~15% zakładki — by myśl na styku dwóch chunków nie wypadła
 CHUNK_MIN_CHARS = 250          # krótsze "ochłapy" doklejamy do poprzedniego, nie emitujemy osobno
 
+# --- Reguła awaryjna dla dokumentów WYPUNKTOWANYCH (etap 14) ---
+# PROBLEM (zmierzony na 100-stronicowym raporcie pisanym wypunktowaniami): tekst bez kropek
+# wraca z `split_sentences` jako jedno "zdanie" długości 2867 zn., a chunk sięgał 5722 zn.
+# Dwa progi, bo dziura miała dwie warstwy — szczegóły w `src/ingest/chunk.py`.
+CHUNK_MAX_SENTENCE_CHARS = int(os.environ.get("CHUNK_MAX_SENTENCE_CHARS", 1800))  # 1,5 × target
+# Kap zakładki: najdłuższe JEDNO zdanie, które wolno przenieść do następnego chunka.
+# 600 zn. dobrane POMIAREM (siatka limit × kap): ogon ginie na obu korpusach przy koszcie
+# 38 z 1509 ruszonych chunków bazowych. Kap 180 (= sam budżet zakładki) likwidowałby zakładkę
+# na normalnej prozie (−9% chunków), czyli unieważniał decyzję o 15% zakładki z etapu 8.
+CHUNK_CARRY_MAX_CHARS = int(os.environ.get("CHUNK_CARRY_MAX_CHARS", 600))
+
 # --- Embeddingi (etap 2: indeks) ---
 # BGE-M3: wielojęzyczny (dobry polski), 1024 wymiary, normalizuje wektory -> używamy cosine.
 # DLACZEGO wielojęzyczny: model EN-only nie był trenowany na polskim, źle radzi sobie z
