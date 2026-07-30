@@ -1,0 +1,173 @@
+{
+  "n": 10,
+  "kandydaci": [
+    {
+      "entity": "Dania",
+      "value": "0.9",
+      "unit": "mln",
+      "chunk_id": "Raport-OSW_Polarny-kwartet-NATO_net_4__25",
+      "source": "Raport-OSW_Polarny-kwartet-NATO_net_4",
+      "evidence": "Wyjątek stanowią spory o podział „arktycznego tortu”, czyli nakładające się roszczenia Danii (0,9 mln km2), Kanady (1,2 mln km2) i Rosji (2,1 mln km2) do szelfu bieguna północnego11.",
+      "rywale": [
+        "Kanada:1.2mln",
+        "Rosja:2.1mln"
+      ],
+      "rywale_ta_jednostka": [
+        "Kanada:1.2mln",
+        "Rosja:2.1mln"
+      ],
+      "sila": 2,
+      "już_w_zbiorze": false
+    },
+    {
+      "entity": "Estonia",
+      "value": "2.316",
+      "unit": "mld",
+      "chunk_id": "Raport__Nowe-pomysly-na-obrone-totalna_net_0__113",
+      "source": "Raport__Nowe-pomysly-na-obrone-totalna_net_0",
+      "evidence": "106 Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów.",
+      "rywale": [
+        "Łotwa:1.548mld",
+        "Litwa:2.048mld"
+      ],
+      "rywale_ta_jednostka": [
+        "Łotwa:1.548mld",
+        "Litwa:2.048mld"
+      ],
+      "sila": 2,
+      "już_w_zbiorze": true
+    },
+    {
+      "entity": "Kanada",
+      "value": "1.2",
+      "unit": "mln",
+      "chunk_id": "Raport-OSW_Polarny-kwartet-NATO_net_4__25",
+      "source": "Raport-OSW_Polarny-kwartet-NATO_net_4",
+      "evidence": "Wyjątek stanowią spory o podział „arktycznego tortu”, czyli nakładające się roszczenia Danii (0,9 mln km2), Kanady (1,2 mln km2) i Rosji (2,1 mln km2) do szelfu bieguna północnego11.",
+      "rywale": [
+        "Dania:0.9mln",
+        "Rosja:2.1mln"
+      ],
+      "rywale_ta_jednostka": [
+        "Dania:0.9mln",
+        "Rosja:2.1mln"
+      ],
+      "sila": 2,
+      "już_w_zbiorze": false
+    },
+    {
+      "entity": "Litwa",
+      "value": "2.048",
+      "unit": "mld",
+      "chunk_id": "Raport__Nowe-pomysly-na-obrone-totalna_net_0__113",
+      "source": "Raport__Nowe-pomysly-na-obrone-totalna_net_0",
+      "evidence": "106 Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów.",
+      "rywale": [
+        "Łotwa:1.548mld",
+        "Estonia:2.316mld"
+      ],
+      "rywale_ta_jednostka": [
+        "Łotwa:1.548mld",
+        "Estonia:2.316mld"
+      ],
+      "sila": 2,
+      "już_w_zbiorze": true
+    },
+    {
+      "entity": "Rosja",
+      "value": "2.1",
+      "unit": "mln",
+      "chunk_id": "Raport-OSW_Polarny-kwartet-NATO_net_4__25",
+      "source": "Raport-OSW_Polarny-kwartet-NATO_net_4",
+      "evidence": "Wyjątek stanowią spory o podział „arktycznego tortu”, czyli nakładające się roszczenia Danii (0,9 mln km2), Kanady (1,2 mln km2) i Rosji (2,1 mln km2) do szelfu bieguna północnego11.",
+      "rywale": [
+        "Dania:0.9mln",
+        "Kanada:1.2mln"
+      ],
+      "rywale_ta_jednostka": [
+        "Dania:0.9mln",
+        "Kanada:1.2mln"
+      ],
+      "sila": 2,
+      "już_w_zbiorze": false
+    },
+    {
+      "entity": "Łotwa",
+      "value": "1.548",
+      "unit": "mld",
+      "chunk_id": "Raport__Nowe-pomysly-na-obrone-totalna_net_0__113",
+      "source": "Raport__Nowe-pomysly-na-obrone-totalna_net_0",
+      "evidence": "106 Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów.",
+      "rywale": [
+        "Litwa:2.048mld",
+        "Estonia:2.316mld"
+      ],
+      "rywale_ta_jednostka": [
+        "Litwa:2.048mld",
+        "Estonia:2.316mld"
+      ],
+      "sila": 2,
+      "już_w_zbiorze": true
+    },
+    {
+      "entity": "Estonia",
+      "value": "11",
+      "unit": "%",
+      "chunk_id": "Raport__Nowe-pomysly-na-obrone-totalna_net_0__152",
+      "source": "Raport__Nowe-pomysly-na-obrone-totalna_net_0",
+      "evidence": "Wśród osób estońskojęzycznych rewizjonistyczna polityka Moskwy zajmuje drugie miejsce na liście największych zagrożeń dla globalnego bezpieczeństwa (na pierwszym miejscu są ataki cybernetyczne), podczas gdy grupa rosyjskojęzyczna najbardziej obawia się terroryzmu, a działania Rosji znajdują się na samym końcu (obawia się jej 52% Estończyków i zaledwie 11% grupy określonej jako „inne narodowości”)143. Nowe wnioski i rekomendacje dotyczące rozwoju systemów bezpieczeństwa całościowego w Finlandii i Estonii przyniesie analiza działań podjętych przez oba państwa wobec zagrożenia epidemicznego związanego z rozprzestrzenianiem się wirusa SARS-CoV-2. Można spodziewać się, że dotyczyć będą one funkcjonowania władz centralnych i samorządowych, instytucji publicznych i społeczeństwa w sytuacji kryzysowej (stanu wyjątkowego).",
+      "rywale": [
+        "Rosja:52%"
+      ],
+      "rywale_ta_jednostka": [
+        "Rosja:52%"
+      ],
+      "sila": 1,
+      "już_w_zbiorze": false
+    },
+    {
+      "entity": "Rosja",
+      "value": "52",
+      "unit": "%",
+      "chunk_id": "Raport__Nowe-pomysly-na-obrone-totalna_net_0__152",
+      "source": "Raport__Nowe-pomysly-na-obrone-totalna_net_0",
+      "evidence": "Wśród osób estońskojęzycznych rewizjonistyczna polityka Moskwy zajmuje drugie miejsce na liście największych zagrożeń dla globalnego bezpieczeństwa (na pierwszym miejscu są ataki cybernetyczne), podczas gdy grupa rosyjskojęzyczna najbardziej obawia się terroryzmu, a działania Rosji znajdują się na samym końcu (obawia się jej 52% Estończyków i zaledwie 11% grupy określonej jako „inne narodowości”)143. Nowe wnioski i rekomendacje dotyczące rozwoju systemów bezpieczeństwa całościowego w Finlandii i Estonii przyniesie analiza działań podjętych przez oba państwa wobec zagrożenia epidemicznego związanego z rozprzestrzenianiem się wirusa SARS-CoV-2. Można spodziewać się, że dotyczyć będą one funkcjonowania władz centralnych i samorządowych, instytucji publicznych i społeczeństwa w sytuacji kryzysowej (stanu wyjątkowego).",
+      "rywale": [
+        "Estonia:11%"
+      ],
+      "rywale_ta_jednostka": [
+        "Estonia:11%"
+      ],
+      "sila": 1,
+      "już_w_zbiorze": false
+    },
+    {
+      "entity": "Litwa",
+      "value": "6.5",
+      "unit": "%",
+      "chunk_id": "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__562",
+      "source": "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW",
+      "evidence": "Warto brać pod uwagę zwłaszcza korzyści Polski, ale też uszanować trwanie przy polskości mieszkających na Wileńszczyźnie ponad 183 tys. obywateli Litwy (6,5% populacji) deklarujących narodowość polską (to największa mniejszość narodowa w kraju).",
+      "rywale": [
+        "Polska:183tys."
+      ],
+      "rywale_ta_jednostka": [],
+      "sila": 0,
+      "już_w_zbiorze": false
+    },
+    {
+      "entity": "Polska",
+      "value": "183",
+      "unit": "tys.",
+      "chunk_id": "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW__562",
+      "source": "Uporządkować rzeczywistość-poradnik analityczny-OSW_WWW",
+      "evidence": "Warto brać pod uwagę zwłaszcza korzyści Polski, ale też uszanować trwanie przy polskości mieszkających na Wileńszczyźnie ponad 183 tys. obywateli Litwy (6,5% populacji) deklarujących narodowość polską (to największa mniejszość narodowa w kraju).",
+      "rywale": [
+        "Litwa:6.5%"
+      ],
+      "rywale_ta_jednostka": [],
+      "sila": 0,
+      "już_w_zbiorze": false
+    }
+  ]
+}

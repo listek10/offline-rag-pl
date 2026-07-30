@@ -4,43 +4,96 @@ Jedno źródło prawdy o tym, co zostało. Wcześniej ta lista żyła w rozmowie
 który jest w `.gitignore` — czyli nie istniała dla nikogo, kto otwiera repo. Trzymam ją tutaj,
 w repo, a brief tylko na nią wskazuje: dwie kopie jednej prawdy zawsze się rozjeżdżają.
 
-**Stan bazowy:** wszystkie 5 etapów z briefu + 10 ponad plan zamknięte, 12/12 checkpointów
-z `CLAUDE.md` pokrytych, 178 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
-/ `qdrant-client`; w env projektu 187), CI na GitHub Actions zielone.
+**Stan bazowy:** wszystkie 5 etapów z briefu + 11 ponad plan zamknięte, 12/12 checkpointów
+z `CLAUDE.md` pokrytych, 196 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
+/ `qdrant-client`; w env projektu 205), CI na GitHub Actions zielone.
 Liczby: `README.md`. Historia decyzji: `NOTATKI_REKRUTER.md`.
 
-Kolejność = rekomendacja, nie zależności. Każda pozycja ma **jak zmierzyć**, bo w tym projekcie
-zmiana bez pomiaru nie jest zrobiona.
+**Lista planowanych pozycji jest PUSTA** — ostatnia (powiększenie zbioru pułapek) zamknięta
+w etapie 16. Poniżej cztery pozycje OPCJONALNE (żadna nie blokuje niczego), każda z ceną zapisaną
+wprost — żeby „robić / nie robić" było decyzją, a nie zapomnieniem. Kolejność = wartość poznawcza.
 
 ---
 
-## 1. Zbiór pułapek `n=7` → uczciwe `n`  ⬜ OSTATNIA POZYCJA (etap 11 podniósł jej wagę)
+## A. (opcjonalne, wartość ŚREDNIA) Korpus, w którym model podmienia podmiot częściej  ⬜
 
-**Po co:** wynik negatywny guardu #4 (etap 10) opiera się na 7 pytaniach, z czego podmiana
-zaszła realnie w **jednym**. Mogę więc powiedzieć „nie zadziałał tam, gdzie mogłem zmierzyć",
-a nie „nie działa". To jedyna droga, żeby ten guard dostał uczciwą drugą szansę.
+**Po co:** etap 16 pokazał, że dalsze powiększanie zbioru pułapek NIE rozstrzygnie dwóch pytań,
+które zostały otwarte: (a) czy guard #4 miałby zysk, (b) czy istnieje brzmienie reguły sędziego
+kupujące zniesienie fałszywej odmowy bez rozbrojenia detekcji podmiany (etap 11, `n=2`).
+Przyczyna jest zmierzona: na **19 realnych pułapek model podmienił podmiot raz**, i to w typie
+anaforycznym. Brakuje nie pytań, a **przypadków awarii** — te zależą od korpusu, nie od zbioru.
 
-**Drugi powód, mocniejszy (etap 11):** decyzja o prompcie sędziego stoi na JEDNYM pytaniu z
-prawdziwą podmianą (`t01`) i JEDNYM z fałszywą odmową (`t06`). Zmierzona wymiana (fałszywa odmowa
-9/9 → 0/9 blokad kosztem podmiany 18/18 → 10/18) jest wyraźna, ale opiera się na dwóch pytaniach.
-Przy większym `n` może się okazać, że da się znaleźć brzmienie reguły, które kupuje jedno bez
-drugiego — dziś nie mam podstawy, żeby to twierdzić ani temu zaprzeczyć.
+**Cena, którą trzeba zapłacić świadomie:** dodanie dokumentu (np. `data/raw_deferred/IV ROK
+WOJNY_2.pdf`, 518 stron) zmienia korpus, więc **unieważnia zmierzone recall/MRR w README** —
+trzeba je przeliczyć (`run_eval.py`, ~15 min) i opisać jako nową bazę. To osobna decyzja,
+nie skutek uboczny rozbudowy zbioru testowego.
 
-**Czego dokładnie potrzeba:** pułapek typu **bałtyckiego** — wielkość i podmiot w JEDNYM zdaniu
-(tam guard ma podstawę do werdyktu). Typ polarny (anafora „wyniosły *one* 8,4 mld") sprawia,
-że guard abstynuje, więc dokładanie takich pytań nic nie rozstrzygnie.
-Warunek powrotu guardu jest zapisany w `src/generate/attribution.py` (nagłówek statusu).
+**Jak zmierzyć:** `mine_traps.py --rywal dokument` na nowym korpusie (ile par typu bałtyckiego
+dochodzi), potem `eval_traps.py --prepare --audyt --compare`. Guard #4 wraca do rozmowy tylko
+wtedy, gdy nowy zbiór ma pułapki, w których model REALNIE podmienia, a wielkość stoi w jednym
+zdaniu z nazwą.
 
-**Wymóg jakości danych:** każdy cytat walidowany programowo — musi występować w korpusie znak
-w znak (tak jak `evidence` w gold secie). Skrypt sprawdzający był użyty przy budowie zbioru.
+---
 
-**Definicja zrobienia:** `eval_traps.py --compare` na powiększonym zbiorze; guard #4 albo
-pokazuje zysk przy zerowym koszcie (wtedy wraca do rozmowy o włączeniu), albo zostaje odrzucony
-z mocniejszym n.
+## B. (opcjonalne, wartość NISKA) A/B promptu sędziego na 21 pułapkach  ⬜
+
+**Po co:** decyzja z etapu 11 stoi na dwóch pytaniach. Powiększony zbiór dokłada do strony
+fałszywych odmów jedno pytanie (`t09` obok `t05`/`t06`), a do strony podmiany **nic**. Zysk
+poznawczy jest więc mały i trzeba to wiedzieć PRZED uruchomieniem, żeby nie kupić 20 minut GPU
+za złudzenie mocniejszego dowodu.
+
+**Jak zmierzyć:** `ab_prompt.py --tylko zysk --warianty v2 v3` (generacja na 21 pułapkach, ~10 min),
+potem `--sedzia --warianty v2 v3 --pytania t01 t05 t06 t09` (~5–10 min). Uwaga: nadpisuje
+`results/ab_prompt.json` — najpierw kopia zapasowa, bo tam siedzi artefakt etapu 11.
+
+---
+
+## C. (opcjonalne, wartość NISKA) Odświeżenie tabeli A/B chunkingu (600/1200/2000)  ⬜
+
+**Po co:** tabela w README pochodzi z pomiaru sprzed naprawy ogona (etap 14). Zmierzona różnica
+to −0,0006 MRR w dense i **zero w produkcyjnym `hybrid+rr`**, więc odświeżenie usuwa tylko
+przypis „tabela sprzed naprawy". ~25 min czystego GPU.
+
+**Jak zmierzyć:** `src/eval/ab_chunking.py` na trzech rozmiarach, podmiana tabeli w README.
+
+---
+
+## D. (dług techniczny, wartość NISKA, ale ZNANY) `extract_values` widzi „km2" jako wartość 2  ⬜
+
+**Po co:** ekstraktor liczb w metryce („km2" → `2`, bo cyfra jest przyklejona do jednostki)
+zaślepił mi trzy nowe pułapki w etapie 16 i musiałem to obejść w danych (`answer` z „km²").
+W obecnym gold secie i zbiorze pułapek **nie szkodzi** (sprawdzone), ale to mina: pierwsze
+pytanie o powierzchnię albo o CO2 w gold secie znowu ją odpali.
+
+**Cena:** poprawka w `extract_values` dotyka `value_match` w `eval_answers.py`, więc **może
+zmienić zmierzone liczby odpowiedzi w README**. Trzeba to zrobić wzorcem z etapu 13: najpierw
+udowodnić zasięg zmiany BEZ LLM-a (na zapisanych odpowiedziach), potem decydować.
 
 ---
 
 ## Zamknięte (dla kontekstu, żeby nie wracać)
+
+- **Zbiór pułapek `n=7` → `n=21` — ZAMKNIĘTY z pomiarem**, etap 16 (30.07). Nowy zbiór zbudowany
+  **minerem** (`src/eval/mine_traps.py`), który przeszukuje korpus FUNKCJAMI PRODUKCYJNYMI guardu
+  #4 — „typ bałtycki" przestaje być oceną autora, a staje się definicją operacyjną (kandydat
+  przechodzi wtedy i tylko wtedy, gdy `attributed_entities()` wskaże jednoznacznego właściciela).
+  Leksykon guardu CELOWO niezmieniony (rozszerzanie go = strojenie guardu pod test).
+  **DOWÓD:** zasięg pomiaru 1 → **11 pytań rozstrzygających** (audyt `--audyt`: 19/21 realnych
+  pułapek, 13/21 w zasięgu guardu, 21/21 odpowiadalnych); guard #4 **odrzucony po raz drugi** —
+  0 blokad przy 13 poprawnych werdyktach (bez zmian z szerszymi jednostkami), podmiana 3/63 zbite
+  do 0 wyłącznie przez guard #3. **Trzy wyniki uboczne:** (a) miner znalazł defekt w mierzonym
+  guardzie — `ENTITY_FORMS` dopasowywał podciąg, więc „ba-DANI-a" → Dania (335 z 463 trafień),
+  „b-RYG-ada" → Łotwa, „finansowanie" → Finlandia; 1010 fałszywych wzmianek, które przy regule
+  „najbliższa wzmianka" ODWRACAJĄ werdykt (zmierzone w `src/eval/ab_lexicon.py`: −19 fałszywych
+  właścicielstw, 4 poprawione, 0 utraconego zasięgu, werdykty z etapu 10 identyczne); (b) część
+  abstynencji brała się z listy jednostek („25 tys." w korpusie vs „25 tysięcy" w odpowiedzi),
+  a nie z projektu — wariant z szerszymi jednostkami daje +2 werdykty i nadal 0 blokad;
+  (c) walidator zbioru (`--waliduj`) złapał dwa błędy w danych: nieaktualny `source_chunk`
+  w `t04`-`t06` (granice chunków ruszyła naprawa z etapu 14) oraz DWA pytania mające w korpusie
+  po dwie prawdziwe odpowiedzi — metryka karała model za wybór drugiej, czyli **poprawną odpowiedź
+  liczyła jako awarię**. Detektor tej klasy jest teraz w `--audyt`. Testy 187 → **205** w env
+  projektu. Granica dowodu (w README): decyzji o prompcie sędziego z etapu 11 to NIE rozstrzyga —
+  na 19 realnych pułapek model podmienił podmiot raz, więc `n` dla podmiany się nie zmieniło.
 
 - **Kontrakt payloadu w Qdrancie — ZAMKNIĘTY z pomiarem**, etap 15 (30.07). Ta pozycja mówiła
   o DWÓCH niezależnych opisach kształtu; było ich **trzy**: zapis (`index_records`), odczyt z bazy

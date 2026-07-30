@@ -43,6 +43,62 @@ Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, 
 łotewskie 1,548 mld, a litewskie 2,048 mld dolarów."""
 
 
+# Fragmenty DOSŁOWNE z korpusu, na których leksykon „podciągowy" przypisywał wielkość
+# NIE TEMU PODMIOTOWI: „finansowanie" liczyło się jako wzmianka Finlandii, a „brygady"
+# jako wzmianka Łotwy (b-RYG-ady) — i obie stały BLIŻEJ liczby niż prawdziwy właściciel.
+CTX_ESTONSKI_BUDZET = """[1] (źródło: Raport Nowe pomysły na obronę totalną #6)
+Estoński budżet obronny ma zapewnione stabilne finansowanie na poziomie co najmniej 2% PKB."""
+
+CTX_ESTONSKI_PLAN = """[1] (źródło: Raport Nowe pomysły na obronę totalną #112)
+Priorytetami estońskiego Planu rozwoju obrony narodowej na lata 2017-2026 są pełna \
+mechanizacja 1. brygady wojsk lądowych oraz stopniowe powiększanie sił zbrojnych \
+(z 21 do 25 tys. po mobilizacji)107 i liczby poborowych (z 3,2 do 4 tys. rocznie)."""
+
+
+def test_REGRESJA_forma_w_srodku_slowa_NIE_jest_wzmianka_podmiotu():
+    """Rdzeń naprawy leksykonu (błąd znaleziony przez miner pułapek, nie przez przegląd kodu).
+
+    Reguła „forma jako dowolny podciąg" znajdowała 1010 fałszywych wzmianek w korpusie:
+    „ba-DANI-a" -> Dania (335 trafień), „b-RYG-ada" -> Łotwa (85), „cy-WILNO-wojskowy" -> Litwa,
+    „jezusa" -> USA. Dla guardu, który przypisuje wielkość NAJBLIŻSZEJ wcześniejszej wzmiance,
+    taka fałszywka nie szumi — ona odwraca werdykt.
+    """
+    assert entity_in("Co pokazują badania opinii publicznej?") is None
+    assert entity_in("Skąd pochodzi finansowanie tego programu?") is None
+    assert entity_in("Ile żołnierzy ma ta brygada?") is None
+    assert entity_in("Czym jest system cywilno-wojskowy?") is None
+
+
+def test_REGRESJA_prawdziwe_formy_nadal_rozpoznane():
+    """Test kosztu naprawy: zawężenie do prefiksu słowa nie mogło zabrać zasięgu prawdziwym
+    odmianom. Formy, które były PREFIKSEM zwykłych słów, są dziś wypisane w pełnych odmianach —
+    ten test pilnuje, że wypisane są wszystkie potrzebne."""
+    assert entity_in("Ilu Finów jest gotowych walczyć za kraj?") == "Finlandia"
+    assert entity_in("Co zapowiedziała Ryga?") == "Łotwa"
+    assert entity_in("Jakie wydatki obronne ma Dania?") == "Dania"
+    assert entity_in("Co robi USA w Arktyce?") == "USA"
+    assert entity_in("Jakie stanowisko zajęło Wilno?") == "Litwa"
+
+
+def test_REGRESJA_falszywa_wzmianka_NIE_porywa_przypisania():
+    """Ten sam mechanizm co pułapka „przy granicy z Rosją", ale groźniejszy, bo niewidoczny:
+    fałszywa wzmianka stoi WEWNĄTRZ zdania, między podmiotem a liczbą, więc wygrywa jako
+    „najbliższa wcześniejsza". Przed naprawą 2% PKB należało do Finlandii, a 25 tys. do Łotwy."""
+    assert attributed_entities(CTX_ESTONSKI_BUDZET, "2") == {"Estonia"}
+    assert attributed_entities(CTX_ESTONSKI_PLAN, "25") == {"Estonia"}
+    assert attributed_entities(CTX_ESTONSKI_PLAN, "4") == {"Estonia"}
+
+
+def test_REGRESJA_falszywa_wzmianka_dawala_FALSZYWA_ODMOWE():
+    """Koszt błędu wyrażony w jednostce, która ma znaczenie dla użytkownika: przed naprawą
+    guard zapytany o Estonię widział „2% należy do Finlandii" i BLOKOWAŁ poprawną odpowiedź."""
+    ok, det = check_attribution("Jaki jest estoński budżet obronny w relacji do PKB?",
+                                "Estoński budżet obronny ma zapewnione co najmniej 2% PKB [1].",
+                                CTX_ESTONSKI_BUDZET)
+    assert ok is True
+    assert det[0]["przypisana"] == ["Estonia"]
+
+
 def test_entity_in_rozpoznaje_odmienione_nazwy():
     assert entity_in("Ile wynosiły wydatki obronne Danii w 2021 r.?") == "Dania"
     assert entity_in("Ile wynosiły wydatki obronne Norwegii w 2021 r.?") == "Norwegia"

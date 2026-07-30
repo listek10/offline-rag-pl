@@ -1,69 +1,101 @@
 {
   "repeats": 3,
-  "n_traps": 7,
+  "n_traps": 21,
   "warianty": {
     "bez guardów post": {
       "licznik": {
-        "poprawna": 9,
-        "niejednoznaczna": 3,
+        "poprawna": 51,
+        "niejednoznaczna": 0,
         "podmiana": 3,
         "inna-bledna": 0,
-        "odmowa": 6
+        "odmowa": 9
       },
       "udziały": {
-        "poprawna": 0.429,
-        "niejednoznaczna": 0.143,
-        "podmiana": 0.143,
+        "poprawna": 0.81,
+        "niejednoznaczna": 0.0,
+        "podmiana": 0.048,
         "inna-bledna": 0.0,
-        "odmowa": 0.286
+        "odmowa": 0.143
       }
     },
     "guard #3 (sędzia)": {
       "licznik": {
-        "poprawna": 9,
-        "niejednoznaczna": 3,
+        "poprawna": 51,
+        "niejednoznaczna": 0,
         "podmiana": 0,
         "inna-bledna": 0,
-        "odmowa": 9
+        "odmowa": 12
       },
       "udziały": {
-        "poprawna": 0.429,
-        "niejednoznaczna": 0.143,
+        "poprawna": 0.81,
+        "niejednoznaczna": 0.0,
         "podmiana": 0.0,
         "inna-bledna": 0.0,
-        "odmowa": 0.429
+        "odmowa": 0.19
       }
     },
     "guard #4 (przypis.)": {
       "licznik": {
-        "poprawna": 9,
-        "niejednoznaczna": 3,
+        "poprawna": 51,
+        "niejednoznaczna": 0,
         "podmiana": 3,
-        "inna-bledna": 0,
-        "odmowa": 6
-      },
-      "udziały": {
-        "poprawna": 0.429,
-        "niejednoznaczna": 0.143,
-        "podmiana": 0.143,
-        "inna-bledna": 0.0,
-        "odmowa": 0.286
-      }
-    },
-    "guard #3 + #4": {
-      "licznik": {
-        "poprawna": 9,
-        "niejednoznaczna": 3,
-        "podmiana": 0,
         "inna-bledna": 0,
         "odmowa": 9
       },
       "udziały": {
-        "poprawna": 0.429,
-        "niejednoznaczna": 0.143,
+        "poprawna": 0.81,
+        "niejednoznaczna": 0.0,
+        "podmiana": 0.048,
+        "inna-bledna": 0.0,
+        "odmowa": 0.143
+      }
+    },
+    "guard #4 + jednostki": {
+      "licznik": {
+        "poprawna": 51,
+        "niejednoznaczna": 0,
+        "podmiana": 3,
+        "inna-bledna": 0,
+        "odmowa": 9
+      },
+      "udziały": {
+        "poprawna": 0.81,
+        "niejednoznaczna": 0.0,
+        "podmiana": 0.048,
+        "inna-bledna": 0.0,
+        "odmowa": 0.143
+      }
+    },
+    "guard #3 + #4": {
+      "licznik": {
+        "poprawna": 51,
+        "niejednoznaczna": 0,
+        "podmiana": 0,
+        "inna-bledna": 0,
+        "odmowa": 12
+      },
+      "udziały": {
+        "poprawna": 0.81,
+        "niejednoznaczna": 0.0,
         "podmiana": 0.0,
         "inna-bledna": 0.0,
-        "odmowa": 0.429
+        "odmowa": 0.19
+      }
+    },
+    "guard #3 + #4 + jedn.": {
+      "licznik": {
+        "poprawna": 51,
+        "niejednoznaczna": 0,
+        "podmiana": 0,
+        "inna-bledna": 0,
+        "odmowa": 12
+      },
+      "udziały": {
+        "poprawna": 0.81,
+        "niejednoznaczna": 0.0,
+        "podmiana": 0.0,
+        "inna-bledna": 0.0,
+        "odmowa": 0.19
       }
     }
   },
@@ -73,7 +105,22 @@
       "refused_by_model": false,
       "guard3_blokad": 3,
       "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
       "guard4_szczegoly": [
+        {
+          "wartość": "1.75",
+          "przypisana": null,
+          "pytanie_o": "Dania",
+          "ocena": "brak wzmianki w zasięgu — bez oceny"
+        },
+        {
+          "wartość": "8.4",
+          "przypisana": null,
+          "pytanie_o": "Dania",
+          "ocena": "brak wzmianki w zasięgu — bez oceny"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
         {
           "wartość": "1.75",
           "przypisana": null,
@@ -94,7 +141,22 @@
       "refused_by_model": false,
       "guard3_blokad": 0,
       "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
       "guard4_szczegoly": [
+        {
+          "wartość": "1.75",
+          "przypisana": null,
+          "pytanie_o": "Norwegia",
+          "ocena": "brak wzmianki w zasięgu — bez oceny"
+        },
+        {
+          "wartość": "8.4",
+          "przypisana": null,
+          "pytanie_o": "Norwegia",
+          "ocena": "brak wzmianki w zasięgu — bez oceny"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
         {
           "wartość": "1.75",
           "przypisana": null,
@@ -115,7 +177,26 @@
       "refused_by_model": false,
       "guard3_blokad": 0,
       "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
       "guard4_szczegoly": [
+        {
+          "wartość": "1.3",
+          "przypisana": [
+            "Kanada"
+          ],
+          "pytanie_o": "Kanada",
+          "ocena": "zgodna"
+        },
+        {
+          "wartość": "26",
+          "przypisana": [
+            "Kanada"
+          ],
+          "pytanie_o": "Kanada",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
         {
           "wartość": "1.3",
           "przypisana": [
@@ -140,23 +221,8 @@
       "refused_by_model": false,
       "guard3_blokad": 0,
       "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
       "guard4_szczegoly": [
-        {
-          "wartość": "1.548",
-          "przypisana": [
-            "Łotwa"
-          ],
-          "pytanie_o": "Estonia",
-          "ocena": "należy do innego podmiotu"
-        },
-        {
-          "wartość": "2.048",
-          "przypisana": [
-            "Litwa"
-          ],
-          "pytanie_o": "Estonia",
-          "ocena": "należy do innego podmiotu"
-        },
         {
           "wartość": "2.316",
           "przypisana": [
@@ -166,14 +232,30 @@
           "ocena": "zgodna"
         }
       ],
-      "answer": "Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów, podczas gdy łotewskie 1,548 mld, a litewskie 2,048 mld dolarów. [1]"
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "2.316",
+          "przypisana": [
+            "Estonia"
+          ],
+          "pytanie_o": "Estonia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Zagregowane wydatki obronne Estonii w tym okresie wyniosły 2,316 mld dolarów. [1]"
     },
     "t05": {
       "entity": "Łotwa",
       "refused_by_model": true,
       "guard3_blokad": 0,
       "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
       "guard4_szczegoly": [
+        {
+          "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
         {
           "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
         }
@@ -185,7 +267,13 @@
       "refused_by_model": true,
       "guard3_blokad": 0,
       "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
       "guard4_szczegoly": [
+        {
+          "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
         {
           "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
         }
@@ -197,6 +285,7 @@
       "refused_by_model": false,
       "guard3_blokad": 0,
       "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
       "guard4_szczegoly": [
         {
           "wartość": "3",
@@ -207,7 +296,409 @@
           "ocena": "zgodna"
         }
       ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "3",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        }
+      ],
       "answer": "Roczne wydatki obronne Finlandii wyniosły ok. 3 mld euro [1]."
+    },
+    "t08": {
+      "entity": "Dania",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "900",
+          "przypisana": [
+            "Dania"
+          ],
+          "pytanie_o": "Dania",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Rozscienia Danii do szelfu bieguna północnego obejmują ok. 900 km2 [1]."
+    },
+    "t09": {
+      "entity": "Kanada",
+      "refused_by_model": true,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
+        }
+      ],
+      "answer": "Nie znajduję odpowiedzi w źródłach."
+    },
+    "t10": {
+      "entity": "Rosja",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "70",
+          "przypisana": null,
+          "pytanie_o": "Rosja",
+          "ocena": "brak wzmianki w zasięgu — bez oceny"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "70",
+          "przypisana": null,
+          "pytanie_o": "Rosja",
+          "ocena": "brak wzmianki w zasięgu — bez oceny"
+        }
+      ],
+      "answer": "Rosja zgłasza najszersze roszczenia do bieguna północnego, obejmujące ok. 70% szelfu Oceanu Arktycznego wykraczającego poza wyłączną strefę ekonomiczną FR [1]."
+    },
+    "t11": {
+      "entity": "Finlandia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "280",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "280",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Finlandia planuje rozwinięcie mobilizacyjne sił zbrojnych na czas wojny do 280 tys. żołnierzy [2]."
+    },
+    "t12": {
+      "entity": "Szwecja",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "90",
+          "przypisana": [
+            "Szwecja"
+          ],
+          "pytanie_o": "Szwecja",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "90",
+          "przypisana": [
+            "Szwecja"
+          ],
+          "pytanie_o": "Szwecja",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Do 90 tys. żołnierzy. Zgodnie z informacją z źródła [1]: \"Rozwinięcie mobilizacyjne szwedzkich sił zbrojnych na czas wojny powinno wzrosnąć z ok. 60 do 90 tys. żołnierzy.\""
+    },
+    "t13": {
+      "entity": "Estonia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "powód": "odpowiedź nie zawiera wielkości (liczba + jednostka)"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "25",
+          "przypisana": [
+            "Estonia"
+          ],
+          "pytanie_o": "Estonia",
+          "ocena": "zgodna"
+        },
+        {
+          "wartość": "4",
+          "przypisana": [
+            "Estonia"
+          ],
+          "pytanie_o": "Estonia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Do 25 tysięcy żołnierzy po mobilizacji, co jest o 4 tysiące więcej niż obecnie [1]."
+    },
+    "t14": {
+      "entity": "Dania",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "500",
+          "przypisana": [
+            "Dania"
+          ],
+          "pytanie_o": "Dania",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "500",
+          "przypisana": [
+            "Dania"
+          ],
+          "pytanie_o": "Dania",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Dania za swoją \"przepustkę\" do Arktyki płaci ok. 500 mln euro rocznie w postaci grantu dla Nuuk z kasy centralnej [1]."
+    },
+    "t15": {
+      "entity": "Grenlandia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "225",
+          "przypisana": [
+            "Grenlandia"
+          ],
+          "pytanie_o": "Grenlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "225",
+          "przypisana": [
+            "Grenlandia"
+          ],
+          "pytanie_o": "Grenlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Pomoc rozwojowa UE dla Grenlandii w obszarze edukacji wyniosła 225 mln euro na lata 2021–2027. [1]"
+    },
+    "t16": {
+      "entity": "Grenlandia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "80",
+          "przypisana": [
+            "Grenlandia"
+          ],
+          "pytanie_o": "Grenlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "80",
+          "przypisana": [
+            "Grenlandia"
+          ],
+          "pytanie_o": "Grenlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Lądolód pokrywa ok. 80% powierzchni Grenlandii [3]."
+    },
+    "t17": {
+      "entity": "Norwegia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "9",
+          "przypisana": [
+            "Norwegia"
+          ],
+          "pytanie_o": "Norwegia",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "9",
+          "przypisana": [
+            "Norwegia"
+          ],
+          "pytanie_o": "Norwegia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "9% [1]"
+    },
+    "t18": {
+      "entity": "Estonia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "2",
+          "przypisana": [
+            "Estonia"
+          ],
+          "pytanie_o": "Estonia",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "2",
+          "przypisana": [
+            "Estonia"
+          ],
+          "pytanie_o": "Estonia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Estoński budżet obronny ma zapewnione stabilne finansowanie na poziomie co najmniej 2% PKB. [1, 2, 4]"
+    },
+    "t19": {
+      "entity": "Finlandia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "45",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "45",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Ok. 45 tys. schronów [1]."
+    },
+    "t20": {
+      "entity": "Finlandia",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "3.6",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        },
+        {
+          "wartość": "65",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "3.6",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        },
+        {
+          "wartość": "65",
+          "przypisana": [
+            "Finlandia"
+          ],
+          "pytanie_o": "Finlandia",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Schrony w Finlandii mogą przyjąć ok. 3,6 mln osób, co stanowi około 65% populacji [1]."
+    },
+    "t21": {
+      "entity": "Kanada",
+      "refused_by_model": false,
+      "guard3_blokad": 0,
+      "guard4_blokuje": false,
+      "guard4_jednostki_blokuje": false,
+      "guard4_szczegoly": [
+        {
+          "wartość": "4",
+          "przypisana": [
+            "Kanada"
+          ],
+          "pytanie_o": "Kanada",
+          "ocena": "zgodna"
+        }
+      ],
+      "guard4_jednostki_szczegoly": [
+        {
+          "wartość": "4",
+          "przypisana": [
+            "Kanada"
+          ],
+          "pytanie_o": "Kanada",
+          "ocena": "zgodna"
+        }
+      ],
+      "answer": "Nagroda odpowiada na pytanie: \"Ile wyniesie ogłoszony przez Ottawę pakiet inwestycji w NORAD?\"\n\nOdpowiedź: Niemal 4 mld dolarów. [1]"
     }
   }
 }
