@@ -1,0 +1,13 @@
+{
+  "collection": "osw_reports_bge_m3",
+  "chunks_path": "/home/maciek/Pulpit/offline-rag-pl/data/processed/chunks.jsonl",
+  "punktow_w_kolekcji": 1497,
+  "rekordow_w_pliku": 1497,
+  "zgodnych": 1497,
+  "roznych": 0,
+  "bez_chunk_id": 0,
+  "sierot_w_kolekcji": 0,
+  "brakuje_w_kolekcji": 0,
+  "przyklady_roznic": [],
+  "ok": true
+}

@@ -27,8 +27,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.index.payload import hit_from_payload
 from src.retrieve import corpus as corpus_mod
-from src.retrieve.hit import make_hit
 
 # Leniwe singletony — ładowane przy pierwszym użyciu, potem reużywane.
 _model = None
@@ -86,18 +86,10 @@ def search(
         limit=n,
     ).points
 
-    # Kształt trafienia pochodzi z `make_hit` (src/retrieve/hit.py) — jedno źródło nazw pól
-    # dla dense, hybrydy i atrap w testach. Dlaczego to ważne: patrz docstring tamtego modułu.
-    hits = [
-        make_hit(
-            score=p.score,
-            source=p.payload["source"],
-            chunk_index=p.payload["chunk_index"],
-            chunk_id=p.payload["chunk_id"],
-            text=p.payload["text"],
-        )
-        for p in points
-    ]
+    # Payload czytamy JEDNĄ funkcją, tą samą, którą go zapisano (src/index/payload.py) — inaczej
+    # nazwy pól byłyby opisane niezależnie przy zapisie i przy odczycie. Kształt samego trafienia
+    # pochodzi z `make_hit` (src/retrieve/hit.py). Powody obu warstw: docstringi tamtych modułów.
+    hits = [hit_from_payload(score=p.score, payload=p.payload) for p in points]
 
     if rerank:
         from src.retrieve.rerank import rerank_hits

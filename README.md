@@ -2,7 +2,7 @@
 
 [![testy](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml/badge.svg)](https://github.com/listek10/offline-rag-pl/actions/workflows/tests.yml)
 
-*Badge pokazuje testy kontraktowe (obecnie 169) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
+*Badge pokazuje testy kontraktowe (obecnie 178) na czystej maszynie bez GPU. Jakość odpowiedzi mierzy
 gold set lokalnie — patrz „Uruchomienie", punkt A vs B.*
 
 System **Retrieval-Augmented Generation** działający **w pełni offline**: odpowiada na pytania
@@ -455,15 +455,15 @@ Zależności są rozbite na dwa pliki, bo odpowiadają na dwa różne pytania:
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt      # 4 paczki bezpośrednie, 61 MB, ~5 s (bez cache)
-pytest                                   # -> 169 passed, 9 skipped in 0,7 s
+pytest                                   # -> 178 passed, 9 skipped in 0,7 s
 ```
 
 Działa, bo ciężkie importy (`sentence_transformers`, `qdrant_client`, `CrossEncoder`, `fitz`) są
 **leniwe** — siedzą w środku funkcji jako singletony, nie na poziomie modułu — a retrieval i LLM
 w testach są podmienione atrapami. Zmierzone w czystym venvie: `import torch` →
-`ModuleNotFoundError`, a mimo to **169 passed**. Pominięte 9 to testy wymagające `pymupdf`
+`ModuleNotFoundError`, a mimo to **178 passed**. Pominięte 9 to testy wymagające `pymupdf`
 (prawdziwy PDF budowany w pamięci) i `qdrant-client` (kształt punktów) — w env projektu przechodzą:
-**178 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
+**187 passed**. Bez `node` (opcjonalna zależność dev dla `tests/check_app_js.js`, **31 kontroli
 logiki UI**) pomija się jeszcze jeden test. Pierwszy przebieg CI: **82 passed w 2,13 s**.
 
 **Co to udowadnia, a czego nie.** `pytest` dowodzi *kontraktów*: kształtu odpowiedzi API,
@@ -637,6 +637,22 @@ w pipeline). Każda odmowa mówi, **co zrobić** — limit stron ma inny komunik
   odmowa na **każde** pytanie. Argumenty fabryki są tylko po nazwie, a atrapa `hybrid_search`
   powstaje przez `create_autospec` z prawdziwej funkcji — zmiana kontraktu daje `TypeError`
   w teście, nie ciszę. Sprawdzone eksperymentalnie: oba dryfy wprowadzone celowo → suite czerwony.
+- **Kontrakt payloadu Qdranta też w jednym miejscu (`src/index/payload.py`)** — ten sam kształt był
+  opisany niezależnie trzy razy: przy zapisie (`index_records`), przy odczycie z bazy (`search.py`)
+  i przy składaniu trafienia z rekordu (`hybrid.py` — trafienia z samego BM25 nie przechodzą przez
+  Qdranta). Dryf jest cichy w obie strony: przemianowanie klucza przy zapisie nie rusza testów (tam
+  retrieval jest atrapą, więc nikt nie czyta prawdziwego payloadu), a rozjechanie się odczytu
+  z bazy z odczytem z rekordu nie daje wyjątku — daje trafienie z metadanymi **innego dokumentu**,
+  czyli zły cytat wyglądający na poprawną odpowiedź. Zapis i odczyt siedzą w jednym module celowo,
+  żeby zmiana klucza łamała obie strony w tym samym pliku; wiąże je test round-trip (testy zapisu
+  i odczytu OSOBNO przechodzą także na przesuniętych nazwach). Zgodność samych **danych** w bazie
+  z plikiem chunków mierzy osobne narzędzie `src/index/verify_payload.py` (kod wyjścia ≠ 0 przy
+  niezgodności): zmierzone **1497/1497 payloadów znak w znak**, zero sierot.
+
+  *Dowód, że refaktor nic nie zmienił:* `run_eval.py` przed i po — **identyczny bit w bit** na
+  4 konfiguracjach × 29 pytaniach × każdym polu (`recall@1` 0.828 · `recall@5` 0.966 · MRR 0.886,
+  odmowa 1.000). Tutaj „identyczny" jest wymogiem, nie sukcesem: payload w bazie jest ten sam,
+  więc ten sam tekst → ten sam wektor → ten sam ranking. Każda różnica znaczyłaby błąd w refaktorze.
 
 ---
 

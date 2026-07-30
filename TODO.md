@@ -4,9 +4,9 @@ Jedno źródło prawdy o tym, co zostało. Wcześniej ta lista żyła w rozmowie
 który jest w `.gitignore` — czyli nie istniała dla nikogo, kto otwiera repo. Trzymam ją tutaj,
 w repo, a brief tylko na nią wskazuje: dwie kopie jednej prawdy zawsze się rozjeżdżają.
 
-**Stan bazowy:** wszystkie 5 etapów z briefu + 9 ponad plan zamknięte, 12/12 checkpointów
-z `CLAUDE.md` pokrytych, 169 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
-/ `qdrant-client`; w env projektu 178), CI na GitHub Actions zielone.
+**Stan bazowy:** wszystkie 5 etapów z briefu + 10 ponad plan zamknięte, 12/12 checkpointów
+z `CLAUDE.md` pokrytych, 178 testów zielonych bez GPU (+9 pominiętych, bo wymagają `pymupdf`
+/ `qdrant-client`; w env projektu 187), CI na GitHub Actions zielone.
 Liczby: `README.md`. Historia decyzji: `NOTATKI_REKRUTER.md`.
 
 Kolejność = rekomendacja, nie zależności. Każda pozycja ma **jak zmierzyć**, bo w tym projekcie
@@ -14,7 +14,7 @@ zmiana bez pomiaru nie jest zrobiona.
 
 ---
 
-## 1. Zbiór pułapek `n=7` → uczciwe `n`  ⬜ (etap 11 podniósł wagę tej pozycji)
+## 1. Zbiór pułapek `n=7` → uczciwe `n`  ⬜ OSTATNIA POZYCJA (etap 11 podniósł jej wagę)
 
 **Po co:** wynik negatywny guardu #4 (etap 10) opiera się na 7 pytaniach, z czego podmiana
 zaszła realnie w **jednym**. Mogę więc powiedzieć „nie zadziałał tam, gdzie mogłem zmierzyć",
@@ -40,21 +40,28 @@ z mocniejszym n.
 
 ---
 
-## 2. Kontrakt payloadu w Qdrancie  ⬜ najmniej pilne
-
-**Problem:** `build_index.py` zapisuje payload (`chunk_id`, `source`, `chunk_index`, `text`),
-a `search.py` go czyta — dwa niezależne opisy jednego kształtu. Dokładnie ta klasa dryfu, którą
-zamknęliśmy dla trafień przez `src/retrieve/hit.py` (commit `177c36e`), tylko po stronie indeksu.
-
-**Dlaczego nie zrobione od razu:** domknięcie sensownie wymaga przebudowy indeksu, a ta unieważnia
-zmierzone liczby do czasu ponownej ewaluacji. Koszt większy od ryzyka.
-
-**Definicja zrobienia:** jedna fabryka payloadu używana przez zapis i odczyt + `run_eval.py`
-z liczbami identycznymi jak przed zmianą.
-
----
-
 ## Zamknięte (dla kontekstu, żeby nie wracać)
+
+- **Kontrakt payloadu w Qdrancie — ZAMKNIĘTY z pomiarem**, etap 15 (30.07). Ta pozycja mówiła
+  o DWÓCH niezależnych opisach kształtu; było ich **trzy**: zapis (`index_records`), odczyt z bazy
+  (`search.py`) i składanie trafienia z rekordu (`hybrid.py` — trafienia z samego BM25 nie
+  przechodzą przez Qdranta). Ta trzecia jest najgroźniejsza, bo jej rozjechanie się z odczytem
+  z bazy **nie daje wyjątku**, tylko trafienie z metadanymi innego dokumentu — czyli zły cytat
+  wyglądający na poprawną odpowiedź. Rozwiązanie: `src/index/payload.py` (`make_payload`
+  z argumentami tylko po nazwie, `payload_from_record`, `hit_from_payload`, `hit_from_record`);
+  zapis i odczyt w JEDNYM module celowo, żeby rename łamał obie strony naraz. `make_hit()` jest
+  teraz wołane wyłącznie z tej fabryki. Test `test_ad_hoc_index` zostawiony z LITERALNYM payloadem
+  (pin formatu w bazie — asercja przez stałą z modułu podążałaby za kodem). Dodatkowo narzędzie na
+  DANE, a nie na kod: `src/index/verify_payload.py` (kod wyjścia ≠ 0 przy niezgodności) rozróżnia
+  payload różny od fabryki, sierotę w kolekcji i chunk brakujący po przerwanym buildzie — czego
+  żaden test w `pytest` nie zobaczy, bo tam retrieval jest atrapą. **DOWÓD:** payload w bazie vs
+  fabryka **1497/1497 znak w znak** (`results/payload_contract.json`), zero sierot; po przebudowie
+  nową ścieżką zapisu ponownie 1497/1497; `run_eval.py` przed i po **identyczny BIT W BIT** —
+  4 konfiguracje × 29 pytań × każde pole + identyczna lista odmów (0,828 / 0,966 / 0,886,
+  odmowa 1,000). Testy 178 → **187** w env projektu. Uwaga metodologiczna: tutaj „identyczny" to
+  **wymóg, nie sukces** — payload jest ten sam, więc ten sam tekst → ten sam wektor → ten sam
+  ranking; każda różnica znaczyłaby błąd w refaktorze. Obawa z tej pozycji („przebudowa unieważnia
+  zmierzone liczby") okazała się nieaktualna: przebudowa to ~3 min, a liczby są odtwarzalne.
 
 - **Ogon rozkładu długości chunków na dokumentach wypunktowanych — ZAMKNIĘTY z pomiarem**,
   etap 14 (30.07). Poprawka dwuczęściowa, bo **pomiar wywrócił diagnozę zapisaną w tej pozycji**:

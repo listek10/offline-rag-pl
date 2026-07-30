@@ -21,9 +21,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.index.payload import hit_from_record
 from src.retrieve import corpus as corpus_mod
 from src.retrieve.bm25 import get_bm25
-from src.retrieve.hit import make_hit
 from src.retrieve.search import search as dense_search
 
 # Cache map chunków, kluczowany korpusem — te same powody co przy `get_bm25()` (patrz bm25.py).
@@ -73,16 +73,11 @@ def hybrid_search(
     ranked_ids = sorted(fused, key=lambda c_id: fused[c_id], reverse=True)[:n]
 
     chunks = _get_chunks(c)
-    hits = [
-        make_hit(
-            score=fused[cid],
-            source=chunks[cid]["source"],
-            chunk_index=chunks[cid]["chunk_index"],
-            chunk_id=cid,
-            text=chunks[cid]["text"],
-        )
-        for cid in ranked_ids
-    ]
+    # Trafienia z samego BM25 nie przechodzą przez Qdranta, więc metadane bierzemy z REKORDU —
+    # ale przez tę samą fabrykę, co odczyt payloadu (src/index/payload.py). Gdyby te dwie ścieżki
+    # opisywały pola niezależnie, hybryda mieszałaby trafienia o różnych kształtach metadanych,
+    # czyli cytowała zły dokument, nie rzucając błędu.
+    hits = [hit_from_record(score=fused[cid], record=chunks[cid]) for cid in ranked_ids]
 
     if rerank:
         from src.retrieve.rerank import rerank_hits

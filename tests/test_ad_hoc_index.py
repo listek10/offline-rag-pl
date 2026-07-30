@@ -127,8 +127,14 @@ def _podmien(monkeypatch, klient=None, records=None, stats=None) -> tuple[_Klien
 @wymaga_qdrant
 def test_index_records_zapisuje_payload_do_cytowania():
     """Payload musi mieć dokładnie te pola, które czyta `search.py` (chunk_id/source/
-    chunk_index/text). Po wyciągnięciu z `main()` ta funkcja jest JEDYNYM miejscem, które je
-    wypisuje — używa jej build wsadowy i upload, więc nie ma dwóch opisów jednego kształtu."""
+    chunk_index/text). Kształt pochodzi z `src/index/payload.py` (jedna fabryka dla zapisu
+    i odczytu), a `index_records` używa jej i dla buildu wsadowego, i dla uploadu.
+
+    DLACZEGO TEN TEST TRZYMA LITERAŁ, A NIE `PAYLOAD_FIELDS`: to PIN formatu zapisanego w bazie,
+    czyli artefaktu zewnętrznego wobec kodu. Asercja przez stałą z modułu podążałaby za kodem —
+    przemianowanie klucza przeszłoby wtedy po cichu, a w Qdrancie leżałyby punkty w starym
+    kształcie. Test round-trip (`tests/test_payload.py`) pilnuje spójności zapisu z odczytem;
+    ten pilnuje, żeby wspólny kształt nie zmienił się NIEZAUWAŻENIE."""
     klient, model = _Klient(), _Model()
 
     n = build_mod.index_records(_rekordy(2), "kolekcja-x", model=model, client=klient)

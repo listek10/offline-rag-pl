@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from config import config
+from src.index.payload import hit_from_payload, payload_from_record
 
 
 def load_chunks(path: Path) -> list[dict]:
@@ -43,11 +44,14 @@ def index_records(records: list[dict], collection: str, *, model, client,
     Dlatego wołający MUSI wiedzieć, jaką nazwę podaje: podanie tu kolekcji zmierzonej niszczy
     indeks, na którym stoją liczby z README (patrz `src/index/ad_hoc.py`, który się przed tym broni).
 
-    DLACZEGO TO JEST OSOBNA FUNKCJA (wyciągnięta z `main()` w etapie 2 UI): payload punktu
-    (`chunk_id`, `source`, `chunk_index`, `text`) czyta `search.py`, więc jego kształt to kontrakt.
-    Wgrywanie PDF-u w UI potrzebuje tej samej ścieżki — a dwa opisy jednego payloadu rozjechałyby
-    się przy pierwszej zmianie. `model` i `client` WSTRZYKUJEMY, bo serwer ma już wczytany BGE-M3
-    (drugi egzemplarz w 12 GB VRAM = OOM) i otwartego klienta Qdranta.
+    DLACZEGO TO JEST OSOBNA FUNKCJA (wyciągnięta z `main()` w etapie 2 UI): wgrywanie PDF-u w UI
+    potrzebuje tej samej ścieżki, a dwie ścieżki indeksowania rozjechałyby się przy pierwszej
+    zmianie. `model` i `client` WSTRZYKUJEMY, bo serwer ma już wczytany BGE-M3 (drugi egzemplarz
+    w 12 GB VRAM = OOM) i otwartego klienta Qdranta.
+
+    Kształt payloadu NIE jest tutaj — należy do `src/index/payload.py`, bo czyta go także
+    `search.py` (odczyt z Qdranta) i `hybrid.py` (ścieżka BM25). Trzy niezależne opisy jednego
+    kształtu to cichy dryf; powody i mechanizm obrony: docstring tamtego modułu.
     """
     from qdrant_client.models import Distance, PointStruct, VectorParams
 
@@ -73,16 +77,7 @@ def index_records(records: list[dict], collection: str, *, model, client,
 
     # Punkt Qdrant: id (int), wektor, payload z metadanymi do cytowania i podglądu.
     points = [
-        PointStruct(
-            id=i,
-            vector=vectors[i].tolist(),
-            payload={
-                "chunk_id": r["id"],
-                "source": r["source"],
-                "chunk_index": r["chunk_index"],
-                "text": r["text"],
-            },
-        )
+        PointStruct(id=i, vector=vectors[i].tolist(), payload=payload_from_record(r))
         for i, r in enumerate(records)
     ]
 
@@ -115,11 +110,13 @@ def main() -> None:
     print("[4/4] Smoke test retrievalu:")
     query = "Dlaczego Szwecja i Finlandia wstąpiły do NATO?"
     qv = model.encode([query], normalize_embeddings=config.EMBED_NORMALIZE)[0]
-    hits = client.query_points(collection_name=name, query=qv.tolist(), limit=3).points
+    points = client.query_points(collection_name=name, query=qv.tolist(), limit=3).points
     print(f'      Pytanie: "{query}"')
-    for h in hits:
-        snippet = h.payload["text"][:140].replace("\n", " ")
-        print(f"      [{h.score:.3f}] {h.payload['source'][:35]}… | {snippet}…")
+    # Smoke test czyta payload TĄ SAMĄ funkcją co retrieval produkcyjny — więc sprawdza nie tylko
+    # „czy coś wróciło", ale też czy zapisany payload da się odczytać kontraktem odczytu.
+    for h in (hit_from_payload(score=p.score, payload=p.payload) for p in points):
+        snippet = h["text"][:140].replace("\n", " ")
+        print(f"      [{h['score']:.3f}] {h['source'][:35]}… | {snippet}…")
 
 
 if __name__ == "__main__":

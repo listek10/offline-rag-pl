@@ -16,6 +16,10 @@ MECHANIZM OBRONY: argumenty `make_hit()` są TYLKO PO NAZWIE (`*`). Zmiana kontr
 zmiana sygnatury = `TypeError` w atrapie testowej, natychmiast i bez type-checkera.
 Atrapa przestaje OPISYWAĆ kształt — zaczyna go PYTAĆ.
 
+DRUGA WARSTWA (etap 15): skąd BIORĄ SIĘ pola trafienia — z payloadu punktu Qdranta albo z rekordu
+chunka — wie `src/index/payload.py`. Ten moduł opisuje, czym trafienie JEST; tamten, jak się je
+czyta z bazy i z pliku. Dlatego `make_hit()` jest tu wołane tylko przez tamtą fabrykę.
+
 DLACZEGO DICT, A NIE dataclass: te słowniki płyną prosto do UI jako JSON (`_hits_payload`
 w `api.py`, zdarzenia `on_event`). Dataclass wymuszałby `asdict()` na każdej granicy —
 koszt większy niż zysk. Zysk (jedno źródło nazw) dostajemy bez zmiany typu danych.
